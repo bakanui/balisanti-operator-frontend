@@ -22,6 +22,7 @@ export default function AddKapal(){
     const [panjang, setPanjang] = useState('');
     const [kilometer, setKilometer] = useState('');
     const [kedalaman, setKedalaman] = useState('');
+    const [callsign, setCallsign] = useState('');
     const [GRT, setGRT] = useState('');
     const [DWT, setDWT] = useState('');
     const [status, setStatus] = useState({value: '1', label: 'Aktif'});
@@ -76,6 +77,7 @@ export default function AddKapal(){
             kedalaman: kedalaman,
             grt: GRT,
             dwt: DWT,
+            callsign: callsign,
             status_kapal: status.value,
             id_jenis_kapal: selectedJenisKapal.value,
             kapasitas_awak: kapasitasAwak,
@@ -142,7 +144,11 @@ export default function AddKapal(){
                         label="DWT"
                         placeholder="Masukkan DWT"
                         onChangeText={(e)=>setDWT(e.target.value)}
-
+                    />
+                    <Input 
+                        label="Call Sign"
+                        placeholder="Masukkan Call Sign"
+                        onChangeText={(e)=>setCallsign(e.target.value)}
                     />
                     <SelectBox 
                         label="Status Kapal"

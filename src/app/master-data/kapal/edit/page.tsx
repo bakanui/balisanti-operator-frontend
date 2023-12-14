@@ -25,6 +25,7 @@ export default function EditKapal(){
     const [kedalaman, setKedalaman] = useState<any>(0);
     const [GRT, setGRT] = useState('');
     const [DWT, setDWT] = useState('');
+    const [callsign, setCallsign] = useState('');
     const [status, setStatus] = useState({value: '1', label: 'Aktif'});
     const [jenisKapal, setJenisKapal] = useState([]);
     const [kapasitasAwak, setKapasitasAwak] = useState<any>(0);
@@ -49,6 +50,7 @@ export default function EditKapal(){
                 setKedalaman(data.kedalaman);
                 setGRT(data.grt);
                 setDWT(data.dwt);
+                setCallsign(data.callsign);
                 setStatus({ value: `${data.status_kapal}`, label: data.status_kapal == 1 ? 'Aktif' : 'Tidak Aktif' });
                 setSelectedJenisKapal({value: `${data.id_jenis_kapal}`, label: data.nama_jenis_kapal});
                 setKapasitasAwak(data.kapasitas_awak);
@@ -98,6 +100,7 @@ export default function EditKapal(){
             kedalaman: kedalaman,
             grt: GRT,
             dwt: DWT,
+            callsign: callsign,
             status_kapal: status.value,
             id_jenis_kapal: selectedJenisKapal.value,
             kapasitas_awak: kapasitasAwak,
@@ -172,7 +175,12 @@ export default function EditKapal(){
                         placeholder="Masukkan DWT"
                         onChangeText={(e)=>setDWT(e.target.value)}
                         value={DWT}
-
+                    />
+                    <Input 
+                        label="Call Sign"
+                        placeholder="Masukkan Call Sign"
+                        onChangeText={(e)=>setCallsign(e.target.value)}
+                        value={callsign}
                     />
                     <SelectBox 
                         label="Status Kapal"

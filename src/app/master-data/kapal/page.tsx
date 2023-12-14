@@ -202,6 +202,7 @@ export default function Kapal(){
                     <thead className="border border-[black] border-x-0 ">
                         <tr>
                             <th className="text-sm font-robotomedium pl-4 py-2">No</th>
+                            <th className="text-sm font-robotomedium py-2">Call Sign</th>
                             <th className="text-sm font-robotomedium py-2">Nama Kapal</th>
                             <th className="text-sm font-robotomedium py-2">Mesin Kapal</th>
                             <th className="text-sm font-robotomedium py-2">Jenis Kapal</th>
@@ -216,6 +217,7 @@ export default function Kapal(){
                             return(
                                 <TableRow key={item.id} strip={index%2 == 1}>
                                     <td className="pl-4 py-2">{startingNumber+index+1}</td>
+                                    <td className="py-2">{item.callsign}</td>
                                     <td className="py-2">{item.nama_kapal}</td>
                                     <td className="py-2">{item.mesin}</td>
                                     <td className="py-2">{item.nama_jenis_kapal}</td>

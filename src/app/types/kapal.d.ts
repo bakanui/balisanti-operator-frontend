@@ -9,6 +9,7 @@ export interface IKapal {
     kedalaman: number;
     grt: string;
     dwt: string;
+    callsign: string;
     status_kapal: number;
     id_jenis_kapal: number;
     id_armada: string;
