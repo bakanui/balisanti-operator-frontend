@@ -1,0 +1,327 @@
+'use client'
+import { BaseCard } from "@/app/components/BaseCard";
+import { CustomBreadcumb } from "@/app/components/Breadcumb";
+import { Button } from "@/app/components/Button";
+import { ButtonGroup } from "@/app/components/ButtonGroup";
+import { BaseContainer } from "@/app/components/Container";
+import { SelectBox } from "@/app/components/SelectBox";
+import { convertLabelPriceToNumeberPrice, timeList, toastErrorConfig, toastSuccessConfig, jenisPenumpangSpawner, parseDateIncludeHours } from "@/app/utils/utility";
+import { useRouter } from "next/navigation";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { TiketPriceInput } from "./components/TiketPriceInput";
+import { useEffect, useState } from "react";
+import { IOptions } from "@/app/types/auth";
+import { LoadingOverlay } from "@/app/components/LoadingOverlay";
+import { toast, ToastContainer } from "react-toastify";
+import { getJenisPenumpangAction } from "../../penumpang/penumpang.service";
+import { IJenisPenumpang } from "@/app/types/penumpang";
+import { JENIS_JADWAL } from "@/app/constants/jenisJadwal";
+import { getNahkodaAction } from "../../nahkoda/nahkoda.service";
+import { INahkoda } from "@/app/types/nahkoda";
+import { getKapalAction } from "../../kapal/kapal.service";
+import { IKapal } from "@/app/types/kapal";
+import { getRuteAction } from "../../rute/rute.service";
+import { getDermagaAction } from "../../dermaga/dermaga.service";
+import { IDermaga } from "@/app/types/dermaga";
+import { IRute } from "@/app/types/rute";
+import { createjadwalAction, createjadwalSiwalatriAction } from "../jadwal.service";
+import { STATUS } from "@/app/constants/status";
+import uniqid from 'uniqid';
+
+export default function AddJadwal(){
+    const router = useRouter();
+    const [tiket, setTiket] = useState([
+        {
+            id: new Date().getTime(),
+            penumpang: { value: '', label: 'Pilih Data', jenis: '', tipe: '' },
+            harga: '',
+        }
+    ]);
+    const [jenisPenumpang, setJenisPenumpang] = useState<IOptions[]>([]);
+    const [kapal, setKapal] = useState<IOptions[]>([]);
+    const [selectedKapal, setselectedKapal] = useState({ value: '', label: 'Pilih Data', armada: '' });
+    const [nahkoda, setNahkoda] = useState<IOptions[]>([]);
+    const [selectedNahkoda, setselectedNahkoda] = useState({ value: '', label: 'Pilih Data' });
+    const [rute, setRute] = useState<IOptions[]>([]);
+    const [selectedRute, setselectedRute] = useState({ value: '', label: 'Pilih Data' });
+    const [dermaga, setDermaga] = useState<IOptions[]>([]);
+    const [selectedDermaga, setselectedDermaga] = useState({ value: '', label: 'Pilih Data' });
+    const [jenisJawal, setJenisJawal] = useState({ value: '', label: 'Pilih Data' });
+    const [waktuKeberangkatan, setWaktuKeberangkatan] = useState({ value: '1', label: 'Pilih Data' });
+    const [status, setStatus] = useState({ value: '1', label: 'Aktif' });
+    const [loading, setLoading] = useState(false);
+    const [loadingMessage, setLoadingMessage] = useState('Memuat Data...');
+    const uid = uniqid();
+
+    useEffect(()=> {
+        setLoading(true);
+        getKapalAction(
+            {
+                status: 1,
+                limit: 100
+            },
+            (data) => {
+                let tmp = data.data.map((item: IKapal)=> ({
+                    value: item.id,
+                    label: item.nama_kapal,
+                    armada: item.id_armada
+                }));
+                setKapal(tmp);
+                getNahkodaAction(
+                    {
+                        limit: 100
+                    },
+                    (data) => {
+                        let tmp = data.data.map((item: INahkoda)=> ({
+                            value: item.id,
+                            label: item.nama_nahkoda
+                        }));
+                        setNahkoda(tmp);
+                        getRuteAction(
+                            {
+                                limit: 100
+                            },
+                            (data) => {
+                                let tmp = data.data.map((item: IRute)=> ({
+                                    value: item.id,
+                                    label: item.nama_rute
+                                }));
+                                setRute(tmp);
+                                getDermagaAction(
+                                    {
+                                        limit: 100
+                                    },
+                                    (data) => {
+                                        let tmp = data.data.map((item: IDermaga)=> ({
+                                            value: item.id,
+                                            label: item.nama_dermaga
+                                        }));
+                                        setDermaga(tmp);
+                                        getJenisPenumpangAction(
+                                            {
+                                                limit: 100
+                                            },
+                                            (data) => {
+                                                let tmp = data.data.map((item: IJenisPenumpang)=> ({
+                                                    value: item.id,
+                                                    label: `${item.tipe} - ${item.jenis}`,
+                                                    tipe: item.tipe,
+                                                    jenis: item.jenis
+                                                }));
+                                                setJenisPenumpang(tmp);
+                                                setLoading(false);
+                                            },
+                                            (err)=> setLoading(false),
+                                            () => router.replace('/login')
+                                        );
+                                    },
+                                    (err)=> setLoading(false),
+                                    () => router.replace('/login')
+                                );
+                            },
+                            (err)=> setLoading(false),
+                            () => router.replace('/login')
+                        );
+                    },
+                    (err)=> setLoading(false),
+                    () => router.replace('/login')
+                );
+            },
+            (err)=> setLoading(false),
+            () => router.replace('/login')
+        );
+    }, []);
+
+    const save = () => {
+        setLoadingMessage('Menyimpan Data...');
+        setLoading(true);
+        createjadwalAction(
+            {
+                id: uid,
+                jenis_jadwal: jenisJawal.value,
+                id_kapal: selectedKapal.value,
+                id_nahkoda: selectedNahkoda.value,
+                id_rute: selectedRute.value,
+                id_armada: selectedKapal.armada,
+                waktu_berangkat: waktuKeberangkatan.value,
+                id_loket: selectedDermaga.value,
+                status_jadwal: status.value,
+                harga_tiket: tiket.map((item => ({
+                    id_jenis_penumpang: item.penumpang.value,
+                    harga: convertLabelPriceToNumeberPrice(item.harga)
+                })))
+            },
+            ()=>{
+                toast.success('Data Berhasil Disimpan', toastSuccessConfig);
+                setTimeout(() => {
+                    back();
+                }, 500);
+                setLoading(false);
+            },
+            (err)=>{
+                setLoading(false);
+                toast.error(err, toastErrorConfig);
+            },
+            () => router.replace('/login')
+        );
+        createjadwalSiwalatriAction(
+            {
+                id: uid,
+                id_kapal: selectedKapal.value,
+                id_nahkoda: selectedNahkoda.value,
+                id_rute: selectedRute.value,
+                id_armada: selectedKapal.armada,
+                jadwal: waktuKeberangkatan.value,
+                id_loket: 88,
+                status: "Berlayar",
+                ekstra: 0,
+                harga_tiket: tiket.map((item => ({
+                    nama_tiket: item.penumpang.tipe,
+                    id_jns_penum: jenisPenumpangSpawner(item.penumpang.jenis),
+                    harga: convertLabelPriceToNumeberPrice(item.harga)
+                }))),
+                tanggal_berangkat: parseDateIncludeHours(new Date(), false),
+                tanggal_sampai: parseDateIncludeHours(new Date(), false)
+            },
+            ()=>{
+                toast.success('Data Berhasil Disimpan', toastSuccessConfig);
+                setTimeout(() => {
+                    back();
+                }, 500);
+                setLoading(false);
+            },
+            (err)=>{
+                setLoading(false);
+                toast.error(err, toastErrorConfig);
+            }
+        );
+    }
+
+    const back = () => {
+        router.back();
+    }
+
+    const addTiket = () => {
+        setTiket([...tiket, {id: new Date().getTime() , penumpang: {value: '', label: 'Pilih Data', jenis: '', tipe: ''}, harga: '0' }]);
+    }
+
+    const deleteTiket = (index: number) => {
+        if (index > -1) {
+            let tmp = [...tiket];
+            tmp.splice(index, 1);
+            setTiket(tmp);
+        }
+    }
+
+    const selectOption = (data: any, index: number) => {
+        let tmp = JSON.parse(JSON.stringify(tiket));
+        tmp[index].penumpang = data;
+        setTiket(tmp);
+    }
+
+    const setHargaTiket = (value: string, index: number) => {
+        let tmp = JSON.parse(JSON.stringify(tiket));
+        tmp[index].harga = value;
+        setTiket(tmp);
+    }
+
+    return(
+        <BaseContainer>
+            <CustomBreadcumb
+             title="Tambah Jadwal Berlayar"
+             onBack={back}
+            />
+            <BaseCard>
+                <SelectBox 
+                    label="Jenis Jadwal"
+                    placeholder="Pilih data"
+                    option={JENIS_JADWAL}
+                    value={jenisJawal}
+                    onChange={setJenisJawal}
+                />
+                <div className="sm:grid gap-x-6 grid-cols-2">
+                    <SelectBox 
+                        label="Kapal"
+                        placeholder="Pilih data"
+                        option={kapal}
+                        value={selectedKapal}
+                        onChange={setselectedKapal}
+                    />
+                    <SelectBox 
+                        label="Nahkoda"
+                        placeholder="Pilih data"
+                        option={nahkoda}
+                        value={selectedNahkoda}
+                        onChange={setselectedNahkoda}
+                    />
+                    <SelectBox 
+                        label="Rute Perjalanan"
+                        placeholder="Pilih data"
+                        option={rute}
+                        value={selectedRute}
+                        onChange={setselectedRute}
+                    />
+                    <SelectBox 
+                        label="Waktu Keberangkatan"
+                        placeholder="Pilih data"
+                        option={timeList}
+                        value={waktuKeberangkatan}
+                        onChange={setWaktuKeberangkatan}
+                    />
+                </div>
+                <SelectBox 
+                    label="Loket"
+                    placeholder="Pilih data"
+                    option={dermaga}
+                    value={selectedDermaga}
+                    onChange={setselectedDermaga}
+                />
+                <SelectBox
+                    label="Status"
+                    placeholder="Pilih data"
+                    option={STATUS}
+                    value={status}
+                    onChange={setStatus}
+                />
+            </BaseCard>
+            <div className="mb-4"/>
+            <CustomBreadcumb
+                title="Harga Tiket"
+                noRoute={true}
+             />
+            <BaseCard>
+                {tiket.map((item, index)=>{
+                    return(
+                        <TiketPriceInput 
+                            key={item.id}
+                            onDelete={()=>deleteTiket(index)}
+                            deleteAble={tiket.length > 1}
+                            value={item.penumpang}
+                            options={jenisPenumpang}
+                            onOptionChange={(e)=> selectOption(e, index)}
+                            priceValue={item.harga}
+                            priceChange={(val)=>setHargaTiket(val, index)}
+                        />
+                    );
+                })}
+                <div className="w-[180px]">
+                    <Button 
+                        label="Tambah Harga Tiket"
+                        icon={faPlus}
+                        onClick={addTiket}
+                    />
+                </div>
+                
+            </BaseCard>
+            <ButtonGroup 
+                onCancel={back}
+                onConfirm={save}
+            />
+            <LoadingOverlay
+                loading={loading}
+                title={loadingMessage}
+            />
+            <ToastContainer />
+        </BaseContainer>
+    );
+}
