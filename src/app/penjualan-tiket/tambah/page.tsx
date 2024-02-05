@@ -38,13 +38,14 @@ import { PaketModal } from "../components/PaketModal";
 import { Alert } from "@/app/components/Alert";
 import { PriceInput } from "@/app/components/PriceInput"
 import { createPembayaranAction } from "@/app/pembayaran-agen/pembayaran.service";
+import seat from './../../../assets/seat.png';
 
 export default function AddPenjualanTiket() {
     const router = useRouter();
     const queryParams: any = useSearchParams();
     const [jenisPenumpang, setJenisPenumpang] = useState<IOptions[]>([]);
     const [agen, setAgen] = useState<IOptions[]>([]);
-    const [selectedAgen, setSelectedAgen] = useState({ value: '', label: 'Pilih Data' });
+    const [selectedAgen, setSelectedAgen] = useState({ value: '61', label: 'Gangga Express' });
     const [agenOrigin, setAgenOrigin] = useState<IAgen[]>([]);
     const [agenHolder, setAgenHolder] = useState<IAgen | null>(null);
     const [tiket, setTiket] = useState<IPenjualanTiket | null>(null);
@@ -98,7 +99,7 @@ export default function AddPenjualanTiket() {
         isCollect: false,
         total: ''
     });
-    const [discon, setDiscon] = useState("0");
+    const [discon, setDiscon] = useState("");
 
     useEffect(() => {
         let tmp = getStorageValue('auth');
@@ -185,7 +186,7 @@ export default function AddPenjualanTiket() {
                 let harga = tmp[0].harga,
                     newService = {
                         id: new Date().getTime(),
-                        keterangan: 'Penjemputan',
+                        keterangan: 'Bagasi - 5KG',
                         jenisPenumpang: { value: 'service', label: '-' },
                         qty: jenisPerjalanan == 'pulang_pergi' ? qty / 2 : qty,
                         tarif: harga,
@@ -221,6 +222,10 @@ export default function AddPenjualanTiket() {
     useEffect(() => {
         onValueChanged();
     }, [ppInfo.id_tiket, jenisPerjalanan]);
+
+    useEffect(() => {
+        onValueChanged();
+    }, [discon]);
 
     // useEffect(() => {
     //     if (agenHolder?.id) {
@@ -337,7 +342,9 @@ export default function AddPenjualanTiket() {
                     //     diskon = agenHolder.nominal_diskon * (tmp.length * 2); //kali 2karena PP (pulang pergi)
                     //     subtotal = subtotal - diskon;
                     // }
-                    diskon = parseInt(discon) * 2;
+                    if (discon !== '') {
+                        diskon = parseFloat(discon) * 2;
+                    }
                     subtotal = subtotal - diskon;
                     summary.push({
                         id: new Date().getTime(),
@@ -358,7 +365,9 @@ export default function AddPenjualanTiket() {
                     //     diskon = agenHolder.nominal_diskon * tmp.length;
                     //     subtotal = subtotal - diskon;
                     // }
-                    diskon = parseInt(discon);
+                    if (discon !== '') {
+                        diskon = parseFloat(discon);
+                    }
                     subtotal = subtotal - diskon;
                     summary.push({
                         id: new Date().getTime(),
@@ -755,6 +764,15 @@ export default function AddPenjualanTiket() {
                         console.log(e.target.value);
                     }}
                 />
+                {/* <PriceInput 
+                    label="Masukkan Nominal"
+                    placeholder="Rp. 2.000.000"
+                    value={discon}
+                    onChangeText={(e) => {
+                        setDiscon(e);
+                        console.log(e);
+                    }}
+                /> */}
             </BaseCard>
             <div className="mt-4"></div>
             <BaseCard>
@@ -1000,11 +1018,15 @@ export default function AddPenjualanTiket() {
                 </Tabs>
             </BaseCard>
             <div className="mt-4"></div>
+            {/* <BaseCard>
+                <img src={seat.src} />
+            </BaseCard>
+            <div className="mt-4"></div> */}
             <BaseCard>
                 <div className="sm:grid gap-x-6 grid-cols-2">
-                    {/* <div>
+                    <div>
                         <CheckBox
-                            text="Tambahan Service"
+                            text="Tambahan Bagasi"
                             selected={tambahanService.isTambahanService}
                             onClick={() => setTambahanService({
                                 ...tambahanService,
@@ -1015,7 +1037,7 @@ export default function AddPenjualanTiket() {
                             <>
                                 <div className="mt-4" />
                                 <SelectBox
-                                    label="Area Penjemputan"
+                                    label="Bagasi"
                                     placeholder="Pilih data"
                                     option={service}
                                     onChange={(e) => setTambahanService({
@@ -1026,7 +1048,7 @@ export default function AddPenjualanTiket() {
                                 />
                             </>
                         : null}
-                    </div> */}
+                    </div>
                     <div>
                         <CheckBox
                             text="Collect"
