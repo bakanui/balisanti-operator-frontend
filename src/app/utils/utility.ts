@@ -240,3 +240,45 @@ export const timeList = [
     return retVal;
   }
   
+export const isBeforeCurrentTime = (inpTime: String): boolean => {
+  const currentDate = new Date();
+  // Split the time string into hours and minutes
+  const [hours, minutes] = inpTime.split(':').map(Number);
+
+  // Create a new Date object with the given date and time
+  const resultDate = new Date();
+  resultDate.setHours(hours, minutes, 0, 0);
+
+  // Extract time components from inputDate
+  const inputHours = resultDate.getHours();
+  const inputMinutes = resultDate.getMinutes();
+  const inputSeconds = resultDate.getSeconds();
+
+  // Extract time components from current date
+  const currentHours = currentDate.getHours();
+  const currentMinutes = currentDate.getMinutes();
+  const currentSeconds = currentDate.getSeconds();
+
+  // Compare time components
+  if (inputHours < currentHours) {
+      return true;
+  } else if (inputHours === currentHours) {
+      if (inputMinutes < currentMinutes) {
+          return true;
+      } else if (inputMinutes === currentMinutes) {
+          return inputSeconds < currentSeconds;
+      }
+  }
+
+  return false;
+};
+  
+export const isBeforeCurrentDate = (inputDate: Date): boolean => {
+  const currentDate = new Date();
+  const inputDateWithoutTime = new Date(
+      inputDate.getFullYear(),
+      inputDate.getMonth(),
+      inputDate.getDate()
+  );
+  return inputDateWithoutTime <= currentDate;
+};

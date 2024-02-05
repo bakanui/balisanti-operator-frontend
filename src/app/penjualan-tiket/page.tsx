@@ -16,7 +16,7 @@ import { IOptions } from "../types/auth";
 import { IDermaga } from "../types/dermaga";
 import { IPenjualanTiket } from "../types/jadwal";
 import { getStorageValue, setStorageValue } from "../utils/localstoreage";
-import { parseDateToBackendFormat, timeList, toastErrorConfig } from "../utils/utility";
+import { parseDateToBackendFormat, timeList, toastErrorConfig, isBeforeCurrentDate, isBeforeCurrentTime } from "../utils/utility";
 import { TiketCard } from "./components/TiketCard";
 import { getPenjualanAction } from "./penjualanTiket.service";
 
@@ -29,7 +29,7 @@ export default function PenjualanTiket(){
     const [dermagaAwal, setDermagaAwal] = useState<IOptions>({value: '', label: 'Semua'});
     const [dermagaTujuan, setDermagaTujuan] = useState<IOptions>({value: '', label: 'Semua'});
     const [waktuKeberangkatan, setWaktuKeberangkatan] = useState<IOptions>({value: '', label: 'Semua'});
-    const [tanggalKeberangkatan, setTanggalKeberangkatan] = useState<Date | undefined>(undefined);
+    const [tanggalKeberangkatan, setTanggalKeberangkatan] = useState<Date>(new Date());
     const [pagination, setPagination] = useState({
         totalItems: 0,
         totalPage: 0,
@@ -75,19 +75,38 @@ export default function PenjualanTiket(){
         setLoading(true);
         getPenjualanAction(
             {
-                limit: 10,
+                limit: 100,
                 dermaga_asal: dermagaAwal.value || undefined,
                 dermaga_tujuan: dermagaTujuan.value || undefined,
                 jam: waktuKeberangkatan.value || undefined,
                 tanggal: tanggalKeberangkatan ? parseDateToBackendFormat(tanggalKeberangkatan) : undefined
             },
             (data)=>{
-                setData(data.data);
-                setPagination({
-                    totalItems: data.cnt,
-                    totalPage: data.totalPage,
-                    currentPage: page || 1
-                });
+                if (!data.data) {
+                    setData([]);
+                } else {
+                    let fusion: IPenjualanTiket[] = [];
+                    if (isBeforeCurrentDate(tanggalKeberangkatan)) {
+                        data.data.map((item: any) => {
+                            if(!isBeforeCurrentTime(item.waktu_berangkat)){
+                                fusion.push(item);
+                            }
+                        });
+                        setData(fusion);
+                        setPagination({
+                            totalItems: data.cnt | 1,
+                            totalPage: data.totalPage | 1,
+                            currentPage: page || 1
+                        });
+                    } else {
+                        setData(data.data);
+                        setPagination({
+                            totalItems: data.cnt,
+                            totalPage: data.totalPage,
+                            currentPage: page || 1
+                        });
+                    }
+                }
                 setLoading(false);
             },
             (err)=>{
