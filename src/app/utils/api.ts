@@ -1,5 +1,5 @@
 
-export const BASE_URL = "http://103.139.193.10:3001/api";
+export const BASE_URL = "https://api-gangga.siwalatri.klungkungkab.go.id/api";
 export const BASE_URL_SIWALATRI = "https://backend-balisanti.siwalatri.klungkungkab.go.id/api";
 export const API_AUTH = {
     LOGIN: `${BASE_URL}/login`    
