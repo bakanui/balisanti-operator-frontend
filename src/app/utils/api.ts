@@ -1,7 +1,7 @@
 
 export const BASE_URL = "https://api-angkal.siwalatri.klungkungkab.go.id/api";
 export const BASE_URL_SIWALATRI = "https://backend-balisanti.siwalatri.klungkungkab.go.id/api";
-export const BASE_ARMADA = '60dff1192581b';
+export const BASE_ARMADA = '62396bbb2bac8';
 
 export const API_AUTH = {
     LOGIN: `${BASE_URL}/login`    
