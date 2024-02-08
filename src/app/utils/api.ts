@@ -1,6 +1,8 @@
 
 export const BASE_URL = "https://api-gangga.siwalatri.klungkungkab.go.id/api";
 export const BASE_URL_SIWALATRI = "https://backend-balisanti.siwalatri.klungkungkab.go.id/api";
+export const BASE_ARMADA = '60dff1192581b';
+
 export const API_AUTH = {
     LOGIN: `${BASE_URL}/login`    
 };
@@ -32,6 +34,7 @@ export const API_PENJUALAN_TIKET = {
 export const API_SIWALATRI = {
     PENUMPANG_GROUP: `${BASE_URL_SIWALATRI}/penumpang-group`,
     JADWAL_KEBERANGKATAN: `${BASE_URL_SIWALATRI}/jadwal_keberangkatan`,
+    MASTER_KAPAL: `${BASE_URL_SIWALATRI}/operator/kapal`,
 }
 
 export const API_PEMBAYARAN = {
