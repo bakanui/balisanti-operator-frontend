@@ -27,6 +27,7 @@ import { IRute } from "@/app/types/rute";
 import { createjadwalAction, createjadwalSiwalatriAction } from "../jadwal.service";
 import { STATUS } from "@/app/constants/status";
 import uniqid from 'uniqid';
+import { BASE_ARMADA } from "@/app/utils/api";
 
 export default function AddJadwal(){
     const router = useRouter();
@@ -142,7 +143,7 @@ export default function AddJadwal(){
                 id_kapal: selectedKapal.value,
                 id_nahkoda: selectedNahkoda.value,
                 id_rute: selectedRute.value,
-                id_armada: selectedKapal.armada,
+                id_armada: BASE_ARMADA,
                 waktu_berangkat: waktuKeberangkatan.value,
                 id_loket: selectedDermaga.value,
                 status_jadwal: status.value,
@@ -152,48 +153,43 @@ export default function AddJadwal(){
                 })))
             },
             ()=>{
-                toast.success('Data Berhasil Disimpan', toastSuccessConfig);
-                setTimeout(() => {
-                    back();
-                }, 500);
-                setLoading(false);
+                createjadwalSiwalatriAction(
+                    {
+                        id: uid,
+                        id_kapal: selectedKapal.value,
+                        id_nahkoda: selectedNahkoda.value,
+                        id_rute: selectedRute.value,
+                        id_armada: BASE_ARMADA,
+                        jadwal: waktuKeberangkatan.value,
+                        id_loket: 88,
+                        status: "Berlayar",
+                        ekstra: 0,
+                        harga_tiket: tiket.map((item => ({
+                            nama_tiket: item.penumpang.tipe,
+                            id_jns_penum: jenisPenumpangSpawner(item.penumpang.jenis),
+                            harga: convertLabelPriceToNumeberPrice(item.harga)
+                        }))),
+                        tanggal_berangkat: parseDateIncludeHours(new Date(), false),
+                        tanggal_sampai: parseDateIncludeHours(new Date(), false)
+                    },
+                    ()=>{
+                        toast.success('Data Berhasil Disimpan', toastSuccessConfig);
+                        setTimeout(() => {
+                            back();
+                        }, 500);
+                        setLoading(false);
+                    },
+                    (err)=>{
+                        setLoading(false);
+                        toast.error(err, toastErrorConfig);
+                    }
+                );
             },
             (err)=>{
                 setLoading(false);
                 toast.error(err, toastErrorConfig);
             },
             () => router.replace('/login')
-        );
-        createjadwalSiwalatriAction(
-            {
-                id: uid,
-                id_kapal: selectedKapal.value,
-                id_nahkoda: selectedNahkoda.value,
-                id_rute: selectedRute.value,
-                id_armada: selectedKapal.armada,
-                jadwal: waktuKeberangkatan.value,
-                id_loket: 88,
-                status: "Berlayar",
-                ekstra: 0,
-                harga_tiket: tiket.map((item => ({
-                    nama_tiket: item.penumpang.tipe,
-                    id_jns_penum: jenisPenumpangSpawner(item.penumpang.jenis),
-                    harga: convertLabelPriceToNumeberPrice(item.harga)
-                }))),
-                tanggal_berangkat: parseDateIncludeHours(new Date(), false),
-                tanggal_sampai: parseDateIncludeHours(new Date(), false)
-            },
-            ()=>{
-                toast.success('Data Berhasil Disimpan', toastSuccessConfig);
-                setTimeout(() => {
-                    back();
-                }, 500);
-                setLoading(false);
-            },
-            (err)=>{
-                setLoading(false);
-                toast.error(err, toastErrorConfig);
-            }
         );
     }
 

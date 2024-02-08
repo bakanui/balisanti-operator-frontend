@@ -8,11 +8,12 @@ import { LoadingOverlay } from "@/app/components/LoadingOverlay";
 import { SelectBox } from "@/app/components/SelectBox";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { createKapalAction } from "../kapal.service";
+import { createKapalAction, createKapalSiwalatriAction } from "../kapal.service";
 import { ToastContainer, toast } from 'react-toastify';
 import { toastErrorConfig, toastSuccessConfig } from "@/app/utils/utility";
 import { getJenisKapalAction } from "../../jenis-kapal/jenis-kapal.service";
 import { IJenisKapal } from "@/app/types/kapal";
+import { BASE_ARMADA } from "@/app/utils/api";
 
 export default function AddKapal(){
     const router = useRouter();
@@ -85,16 +86,43 @@ export default function AddKapal(){
         };
         createKapalAction(
             params,
-            ()=>{
-                toast.success('Data Berhasil Disimpan', toastSuccessConfig);
-                setLoading(false);
-                back();
+            (data)=>{
+                const params_siwalatri = {
+                    id: data.id,
+                    nama_kapal: namaKapal,
+                    mesin: mesin,
+                    panjang: panjang,
+                    lebar: lebar,
+                    dimension: kedalaman,
+                    kapasitas_penumpang: kapasitasPenumpang,
+                    kapasitas_crew: kapasitasAwak,
+                    id_armada: BASE_ARMADA,
+                    id_jenis: 4,
+                    id_status: 1,
+                    kilometer: kilometer,
+                    callsign: callsign,
+                    grt: GRT,
+                    dwt: DWT,
+                };
+                createKapalSiwalatriAction(
+                    params_siwalatri,
+                    ()=>{
+                        toast.success('Data Berhasil Disimpan', toastSuccessConfig);
+                        setLoading(false);
+                        back();
+                    },
+                    (err)=>{
+                        setLoading(false);
+                        toast.error(err, toastErrorConfig);
+                    }
+                );
             },
             (err)=>{
                 setLoading(false);
                 toast.error(err, toastErrorConfig);
             }
         );
+
     }
 
     return(

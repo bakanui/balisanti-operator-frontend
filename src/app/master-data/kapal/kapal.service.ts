@@ -4,6 +4,7 @@ import { API_MASTER_DATA } from '@/app/utils/api';
 import { getStorageValue } from '@/app/utils/localstoreage';
 import { errorHandler } from '@/app/utils/utility';
 import axios from 'axios';
+import { API_SIWALATRI } from '../../utils/api';
 
 export const getKapalAction = (
     params: any,
@@ -58,6 +59,29 @@ export const createKapalAction = (
         onFailed(err);
     });
 }
+
+export const createKapalSiwalatriAction = (
+    params: any,
+    onSuccess: (data: any) => void,
+    onFailed: (error:any) => void,
+    onUnAuth?: ()=> void
+) => {
+    const auth: IAuth = getStorageValue('auth');
+    axios.post<IAuth>(API_SIWALATRI.MASTER_KAPAL, 
+        {...params}
+    )
+    .then((response)=> {
+        onSuccess(response.data);
+    })
+    .catch(function (error) {
+        process.env.NODE_ENV && console.log(error);
+        let err = errorHandler(error, ()=> {
+            onUnAuth && onUnAuth();
+        });
+        onFailed(err);
+    });
+}
+
 
 export const deleteKapalAction = (
     id: string,
