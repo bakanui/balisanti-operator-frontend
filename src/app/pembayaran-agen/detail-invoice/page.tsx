@@ -118,20 +118,25 @@ export default function DetailInvoice() {
               setHistory(data.history);
               setLink('http://localhost/bali-santi-printer/?kode_booking='+ data.penumpang[0].kode_booking + '&jenis_tiket=' + data.penumpang[0].tipe_penumpang + " - " + data.penumpang[0].jenis_penumpang + '&tanggal=' + data.penumpang[0].waktu_berangkat + '&rute_from=' + data.penumpang[0].dermaga_awal + '&rute_to=' + data.penumpang[0].dermaga_tujuan + '&total=' + data.pembayaran.total_tagihan);
               let tempJenisPerjalanan = false;
+              console.log(data.data.map((item: any, index: number)=> {
+                return {
+                  keterangan: 'Tiket',
+                }
+              }));
               const tiket = data.data.map((item: any, index: number)=> {
-                if (item.is_pp == 'true') { tempJenisPerjalanan = true; }
                 return {
                   id: new Date().getTime(),
                   keterangan: 'Tiket',
                   jenisPenumpang: { value: item.jenis_penumpang, label: item.jenis_penumpang },
                   qty: item.jumlah_tiket,
                   tarif: item.harga_tiket,
-                  subtotal: item.subtotal_tiket - item.subtotal_diskon,
+                  subtotal: item.subtotal_tiket,
                   harga_service: item.harga_service,
                   jumlah_service: item.jumlah_service,
-                  diskon: 'Rp. '+  convertLabelToPrice(item.subtotal_diskon)
+                  diskon: 'Rp. '+  convertLabelToPrice("0")
                 }
               });
+              console.log(tiket);
               // penjemputan
               if (tiket.length > 0) {
                 const temp = tiket[0],
@@ -159,10 +164,7 @@ export default function DetailInvoice() {
               if (!tempJenisPerjalanan) {
                 setjenisPerjalanan('sekali_jalan');
               }
-              let tmpTotal = tiket.reduce((acc: number, prev: any)=> {
-                return acc + prev.subtotal;
-              }, 0)
-              setTotal(tmpTotal);
+              setTotal(data.pembayaran.total_tagihan);
               setSummaryTabel(tiket);
               if(data.collect){
                     setCollect(data.collect.jumlah);
