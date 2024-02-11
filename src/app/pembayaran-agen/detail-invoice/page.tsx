@@ -130,10 +130,10 @@ export default function DetailInvoice() {
                   jenisPenumpang: { value: item.jenis_penumpang, label: item.jenis_penumpang },
                   qty: item.jumlah_tiket,
                   tarif: item.harga_tiket,
-                  subtotal: item.subtotal_tiket,
+                  subtotal: item.diskon_agen !== null ? item.subtotal_tiket - item.diskon_agen : item.subtotal_tiket,
                   harga_service: item.harga_service,
                   jumlah_service: item.jumlah_service,
-                  diskon: 'Rp. '+  convertLabelToPrice("0")
+                  diskon: 'Rp. '+  convertLabelToPrice(item.diskon_agen !== null ? item.diskon_agen : "0")
                 }
               });
               console.log(tiket);
