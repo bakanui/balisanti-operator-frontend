@@ -118,11 +118,6 @@ export default function DetailInvoice() {
               setHistory(data.history);
               setLink('http://localhost/bali-santi-printer/?kode_booking='+ data.penumpang[0].kode_booking + '&jenis_tiket=' + data.penumpang[0].tipe_penumpang + " - " + data.penumpang[0].jenis_penumpang + '&tanggal=' + data.penumpang[0].waktu_berangkat + '&rute_from=' + data.penumpang[0].dermaga_awal + '&rute_to=' + data.penumpang[0].dermaga_tujuan + '&total=' + data.pembayaran.total_tagihan);
               let tempJenisPerjalanan = false;
-              console.log(data.data.map((item: any, index: number)=> {
-                return {
-                  keterangan: 'Tiket',
-                }
-              }));
               const tiket = data.data.map((item: any, index: number)=> {
                 return {
                   id: new Date().getTime(),
