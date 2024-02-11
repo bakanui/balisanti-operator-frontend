@@ -50,6 +50,7 @@ export default function EditCoreInvoice() {
     const [agenHolder, setAgenHolder] = useState<IAgen | null>(null);
     const [tiket, setTiket] = useState<IPenjualanTiket | null>(null);
     const [tanggalKeberangkatan, setTanggalKeberangkatan] = useState(new Date());
+    const [tanggalBalik, setTanggalBalik2] = useState(new Date());
     const [jenisPerjalanan, setjenisPerjalanan] = useState<'sekali_jalan' | 'pulang_pergi'>('sekali_jalan');
     const [ppInfo, setPpInfo] = useState({
         id_tiket: '',
@@ -179,7 +180,7 @@ export default function EditCoreInvoice() {
                 const jadwalPulang = detail.detail_jadwal_pulang;
                 setPpInfo({
                     id_tiket: jadwalPulang.id,
-                    tanggal_balik: new Date(),
+                    tanggal_balik: jadwalPulang.tanggal_berangkat,
                     jamBalik: jadwalPulang.waktu_berangkat,
                     demagaAsal: { value: jadwalPulang.id_dermaga_awal, label: jadwalPulang.dermaga_awal },
                     demagaTujuan: { value: jadwalPulang.id_dermaga_tujuan, label: jadwalPulang.dermaga_tujuan }
@@ -405,6 +406,7 @@ export default function EditCoreInvoice() {
             ...ppInfo,
             tanggal_balik: date
         });
+        setTanggalBalik2(date);
     }
 
     const onSelectJadwalKeberangkatan = (e: any) => {
@@ -802,7 +804,7 @@ export default function EditCoreInvoice() {
                 <SearchTiketModal
                     rute={rute!}
                     close={() => setShowModal(false)}
-                    tglKebrangkatan={tanggalKeberangkatan}
+                    tglKebrangkatan={tanggalBalik}
                     waktuKeberangkatan={tiket?.waktu_berangkat}
                     onJadwalSelect={(e) => setPpInfo(e)}
                 />

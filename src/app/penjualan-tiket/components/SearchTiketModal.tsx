@@ -111,7 +111,7 @@ export const SearchTiketModal = (props: IProps) => {
 
     const selectTiket = (item: IPenjualanTiket) => {
         props.onJadwalSelect({
-            id_tiket: item.id,
+            id_tiket: item.id_jadwal,
             id_jadwal: item.id_jadwal,
             tanggal_balik: tanggalKeberangkatan,
             jamBalik: item.waktu_berangkat,
@@ -185,7 +185,7 @@ export const SearchTiketModal = (props: IProps) => {
                     {data.map((item)=> {
                         return(
                             <TiketCard
-                                key={item.id}
+                                key={item.id_jadwal}
                                 onClick={()=> selectTiket(item)}
                                 jadwal={item}
                                 shadow
