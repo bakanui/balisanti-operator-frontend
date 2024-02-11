@@ -20,7 +20,7 @@ const ComponentToPrint = React.forwardRef((props: IProps, ref: any) => {
                             <br/>
                             <img src={logos.src}/>
                             <div className="flex justify-center items-center flex-col p-2">
-                                <img className="w-[200px] h-[200px] mt-2" src={'http://' + item.qrcode}/>
+                                <img className="w-[200px] h-[200px] mt-2" src={'https://' + item.qrcode}/>
                                 <div className="font-bold mt-4 text-lg">
                                     Booking ID
                                     ({item.keterangan ? (item.keterangan == 'GO' ? 'OW' : 'RT') : ''})
