@@ -50,6 +50,7 @@ export default function AddPenjualanTiket() {
     const [agenHolder, setAgenHolder] = useState<IAgen | null>(null);
     const [tiket, setTiket] = useState<IPenjualanTiket | null>(null);
     const [tanggalKeberangkatan, setTanggalKeberangkatan] = useState(new Date());
+    const [tanggalBalik, setTanggalBalik2] = useState(new Date());
     const [jenisPerjalanan, setjenisPerjalanan] = useState<'sekali_jalan' | 'pulang_pergi'>('sekali_jalan');
     const [ppInfo, setPpInfo] = useState({
         id_tiket: '',
@@ -495,7 +496,8 @@ export default function AddPenjualanTiket() {
                 no_identitas: item.noIdentitas,
                 no_telepon: item.noTelepon,
                 jenis_kelamin: item.jenisKelamin.value == 'Laki-laki' ? 'l' : 'p',
-                email: item.email
+                email: item.email,
+
             }
         });
         const people = rombongan.map((item, index) => {
@@ -644,6 +646,7 @@ export default function AddPenjualanTiket() {
             ...ppInfo,
             tanggal_balik: date
         });
+        setTanggalBalik2(date);
     }
 
     return (
@@ -1101,7 +1104,7 @@ export default function AddPenjualanTiket() {
                 <SearchTiketModal
                     rute={rute!}
                     close={() => setShowModal(false)}
-                    tglKebrangkatan={tanggalKeberangkatan}
+                    tglKebrangkatan={tanggalBalik}
                     waktuKeberangkatan={tiket?.waktu_berangkat}
                     onJadwalSelect={(e) => setPpInfo(e)}
                 />
