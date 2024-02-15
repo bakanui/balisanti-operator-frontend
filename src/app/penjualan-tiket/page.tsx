@@ -85,27 +85,27 @@ export default function PenjualanTiket(){
                 if (!data.data) {
                     setData([]);
                 } else {
-                    let fusion: IPenjualanTiket[] = [];
-                    if (isBeforeCurrentDate(tanggalKeberangkatan)) {
-                        data.data.map((item: any) => {
-                            if(!isBeforeCurrentTime(item.waktu_berangkat)){
-                                fusion.push(item);
-                            }
-                        });
-                        setData(fusion);
-                        setPagination({
-                            totalItems: data.cnt | 1,
-                            totalPage: data.totalPage | 1,
-                            currentPage: page || 1
-                        });
-                    } else {
+                    // let fusion: IPenjualanTiket[] = [];
+                    // if (isBeforeCurrentDate(tanggalKeberangkatan)) {
+                    //     data.data.map((item: any) => {
+                    //         if(!isBeforeCurrentTime(item.waktu_berangkat)){
+                    //             fusion.push(item);
+                    //         }
+                    //     });
+                    //     setData(fusion);
+                    //     setPagination({
+                    //         totalItems: data.cnt | 1,
+                    //         totalPage: data.totalPage | 1,
+                    //         currentPage: page || 1
+                    //     });
+                    // } else {
                         setData(data.data);
                         setPagination({
                             totalItems: data.cnt,
                             totalPage: data.totalPage,
                             currentPage: page || 1
                         });
-                    }
+                    // }
                 }
                 setLoading(false);
             },
