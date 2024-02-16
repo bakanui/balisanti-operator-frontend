@@ -1,6 +1,7 @@
 
 export const BASE_URL = "https://api-sekarjaya.siwalatri.klungkungkab.go.id/api";
-export const BASE_URL_SIWALATRI = "https://backend-balisanti.siwalatri.klungkungkab.go.id/api";
+// export const BASE_URL_SIWALATRI = "https://backend-balisanti.siwalatri.klungkungkab.go.id/api";
+export const BASE_URL_SIWALATRI = "https://maiharta.ddns.net:3100/http://103.139.193.10:3002/api";
 export const BASE_ARMADA = '6108da9e65c2c';
 
 export const API_AUTH = {
