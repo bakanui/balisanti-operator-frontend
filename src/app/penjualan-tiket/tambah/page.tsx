@@ -45,7 +45,7 @@ export default function AddPenjualanTiket() {
     const queryParams: any = useSearchParams();
     const [jenisPenumpang, setJenisPenumpang] = useState<IOptions[]>([]);
     const [agen, setAgen] = useState<IOptions[]>([]);
-    const [selectedAgen, setSelectedAgen] = useState({ value: '61', label: 'Gangga Express' });
+    const [selectedAgen, setSelectedAgen] = useState({ value: '61', label: 'The Angkal' });
     const [agenOrigin, setAgenOrigin] = useState<IAgen[]>([]);
     const [agenHolder, setAgenHolder] = useState<IAgen | null>(null);
     const [tiket, setTiket] = useState<IPenjualanTiket | null>(null);
