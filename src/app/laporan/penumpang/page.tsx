@@ -9,7 +9,7 @@ import { editManifestKedatanganAction, getPenumpangByJadwalAction, getPenumpangB
 import { Loading } from '@/app/components/Loading';
 import { Empty } from '@/app/components/Empty';
 import { CustomPagination } from '@/app/components/CustomPagination';
-import { convertLabelToPrice, getFirstAndLastDate, parseDateIncludeHours, parseDateToBackendFormat, toastErrorConfig} from '@/app/utils/utility';
+import { convertLabelToPrice, getFirstAndLastDate, parseDateIncludeHours, parseDateToBackendFormat, toastErrorConfig, isSameDate, parseDateToShortFormat} from '@/app/utils/utility';
 import { TableFilter } from '@/app/components/TableFilter';
 import { debounce } from 'lodash';
 import { RangeDatePicker } from '@/app/components/RangeDatePicker';
@@ -24,6 +24,9 @@ import { getStorageValue } from '@/app/utils/localstoreage';
 import { useReactToPrint } from 'react-to-print';
 import { Button } from '@/app/components/Button';
 import { HeadTb, TableRow } from '@/app/components/MyTable';
+import { saveAs } from 'file-saver';
+import PizZip from 'pizzip';
+import Docxtemplater from 'docxtemplater';
 import { FROM_ROUTE_ID, FROM_ROUTE_LABEL, TO_ROUTE_ID, TO_ROUTE_LABEL } from '@/constants/customRoute';
 export interface IPagination {
   totalItems: number;
@@ -31,11 +34,35 @@ export interface IPagination {
   currentPage: number;
 }
 
+export interface IPassengers {
+  no_index: number,
+  kode_booking: string,
+  no_invoice: string,
+  nama_penumpang: string,
+  email: string,
+  tujuan: string,
+  jenis_kelamin: string,
+  no_identitas: string,
+  tanggal: string,
+  waktu_berangkat: string,
+  tipe: string,
+  warganegara: string,
+  status_manifest: string,
+  id_created_by: number,
+  created_by: string,
+  nama_agen: string,
+  service: number,
+  flag_cancel: number,
+  status_collect: number,
+  tanggal_rt: null
+}
+
 export default function LaporanPenumpang() {
   const router = useRouter();
   const [user, setUser] = useState<any>();
   const componentRef: any = useRef();
   const [data, setData] = useState<any[]>([]);
+  const [dataAll, setDataAll] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingOverlay, setLoadingOverlay] = useState(false);
   const [pagination, setPagination] = useState<IPagination>({
@@ -118,7 +145,6 @@ export default function LaporanPenumpang() {
               cancel: data.jml_cancel,
               real: data.jml_real
             });
-            setLoading(false);
         },
         ()=>{
             setLoading(false);
@@ -144,7 +170,24 @@ export default function LaporanPenumpang() {
                 totalPage: data.totalPage,
                 currentPage: page || 1
             });
-            setLoading(false);
+            getPenumpangByJadwalAction(
+              {
+                  id_jadwal: selectedJadwal.value,
+                  limit: 10000,
+                  nama_penumpang: keyword,
+                  pagenumber: page || 1,
+                  tanggal: parseDateToBackendFormat(dateRange.startDate || new Date()),
+                  tanggal_akhir: parseDateToBackendFormat(dateRange.endDate || new Date()),
+                  manifest: true
+              },
+              (data2)=>{
+                  setDataAll(data2);
+                  setLoading(false);
+              },
+              ()=>{
+                  setLoading(false);
+              }
+          );
         },
         ()=>{
             setLoading(false);
@@ -304,6 +347,27 @@ export default function LaporanPenumpang() {
     setLoading(false);
   }
 
+  const handleDocxDownload = async () => {
+    let fileName = 'ManifestPenumpang_';
+          if (isSameDate(dateRange.startDate || new Date(), dateRange.endDate || new Date())) {
+            fileName = fileName + parseDateToShortFormat(dateRange.startDate || new Date()) + '.docx';
+          } else {
+            fileName = fileName + parseDateToShortFormat(dateRange.startDate || new Date()) + "-" + parseDateToShortFormat(dateRange.endDate || new Date()) + '.docx';
+          }
+    try {
+      const content = await fetch('/PASSENGER LIST.docx').then((response) => response.arrayBuffer());
+      const zip = new PizZip(content);
+      const doc = new Docxtemplater(zip);
+      console.log(dataAll);
+      doc.setData(dataAll);
+      doc.render();
+      const blob = doc.getZip().generate({ type: 'blob' });
+      saveAs(blob, fileName);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const tandaiKeberangkatan = () => {
     if(selectedPenumpang.length == 0) {
       toast.error('Mohon pilih penumpang terlebih dahulu!');
@@ -377,8 +441,8 @@ export default function LaporanPenumpang() {
             <>
               <div className='w-1/4'>
                 <Button 
-                  label='Download'
-                  onClick={handleDownload}
+                  label='Download Manifest'
+                  onClick={handleDocxDownload}
                 />
               </div>
             </>

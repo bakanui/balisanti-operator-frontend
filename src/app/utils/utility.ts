@@ -153,6 +153,14 @@ export const timeList = [
       tahun = date.getFullYear();
     return `${tahun}-${bulan}-${tanggal}`;
   }
+
+  export const parseDateToShortFormat = (date: Date) => {
+    var day = date.getDate().toString().padStart(2, '0');
+    var month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date);
+    var year = date.getFullYear();
+  
+    return `${day}${month}${year}`;
+  }
   
   export const daysInMonth = (month: number, year: number) => {
     return new Date(year, month, 0).getDate();
@@ -282,3 +290,11 @@ export const isBeforeCurrentDate = (inputDate: Date): boolean => {
   );
   return inputDateWithoutTime <= currentDate;
 };
+
+export const isSameDate = (dateA: Date, dateB: Date): boolean => {
+  return (
+    dateA.getDate() === dateB.getDate() &&
+    dateA.getMonth() === dateB.getMonth() &&
+    dateA.getFullYear() === dateB.getFullYear()
+  );
+}
