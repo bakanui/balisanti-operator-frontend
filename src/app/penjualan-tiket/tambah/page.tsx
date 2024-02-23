@@ -674,7 +674,7 @@ export default function AddPenjualanTiket() {
                 </BaseCard>
             : null}
             <div className="my-4 relative flex justify-between">
-                <div className="w-full h-auto mr-4 bg-white p-2 sm:p-8 rounded-xl">
+                <div className="w-full h-auto mr-4 bg-white dark:bg-slate-700 p-2 sm:p-8 rounded-xl">
                     <div className="sm:grid gap-x-6 grid-cols-2">
                         <Input
                             label="Dermaga Asal"

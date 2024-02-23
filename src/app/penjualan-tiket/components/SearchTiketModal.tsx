@@ -126,7 +126,7 @@ export const SearchTiketModal = (props: IProps) => {
     }
 
     return(
-        <div className="w-[80vw] h-[90vh] p-2">
+        <div className="w-[80vw] h-[90vh] p-2 dark:bg-slate-700">
             <div onClick={props.close} className='h-[24px] w-[24px] rounded-full flex justify-center items-center bg-primary absolute right-2 top-2 cursor-pointer'>
                 <FontAwesomeIcon className='text-white' icon={faClose}/>
             </div>
