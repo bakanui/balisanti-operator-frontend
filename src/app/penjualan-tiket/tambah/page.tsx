@@ -26,6 +26,7 @@ import { IAgen } from "@/app/types/agen";
 import { IPenjualanTiket, IPenumpangInfo } from "@/app/types/jadwal";
 import { getStorageValue } from "@/app/utils/localstoreage";
 import { JENIS_KELAMIN } from "@/app/constants/jenisKelamin";
+import { JENIS_PEMBAYARAN } from "@/app/constants/jenisPembayaran";
 import { IHargaService } from "@/app/types/hargaService";
 import { getHargaServiceAction } from "@/app/master-data/service/hargaService.service";
 import { getDetailRuteAction } from "@/app/master-data/rute/rute.service";
@@ -67,7 +68,9 @@ export default function AddPenjualanTiket() {
             noIdentitas: '0',
             noTelepon: '',
             jenisKelamin: { value: '', label: 'Pilih Data' },
-            email: 'test@example.com'
+            email: 'test@example.com',
+            catatan: '',
+            jenisPembayaran: { value: 'tunai', label: 'Tunai' }
         }
     ]);
     const [telepon, setTelepon] = useState("");
@@ -298,7 +301,9 @@ export default function AddPenjualanTiket() {
             nama: '',
             noIdentitas: '',
             jenisKelamin: { value: '', label: 'Pilih Data' },
-            email: 'test@example.com'
+            email: 'test@example.com',
+            catatan: '-',
+            jenisPembayaran: { value: '', label: 'Pilih Data' }
         }]);
     }
 
@@ -446,7 +451,7 @@ export default function AddPenjualanTiket() {
                             nama: data.nama,
                             noIdentitas: data.no_identitas,
                             jenisKelamin: { value: data.jenis_kelamin, label: kelamin },
-                            email: data.email
+                            email: data.email 
                         }
                     }
                     return itm;
@@ -497,7 +502,8 @@ export default function AddPenjualanTiket() {
                 no_telepon: item.noTelepon,
                 jenis_kelamin: item.jenisKelamin.value == 'Laki-laki' ? 'l' : 'p',
                 email: item.email,
-
+                catatan: item.catatan,
+                jenisPembayaran: item.jenisPembayaran
             }
         });
         const people = rombongan.map((item, index) => {
@@ -507,7 +513,7 @@ export default function AddPenjualanTiket() {
             }
             return {
                 alamat: "ditempat",
-                catatan: "pesan di loket",
+                catatan: item.catatan,
                 email: item.email,
                 freepass: 0,
                 harga_tiket: 100000,
@@ -668,7 +674,7 @@ export default function AddPenjualanTiket() {
                 </BaseCard>
             : null}
             <div className="my-4 relative flex justify-between">
-                <div className="w-full h-auto mr-4 bg-white p-2 sm:p-8 rounded-xl">
+                <div className="w-full h-auto mr-4 bg-white dark:bg-slate-700 p-2 sm:p-8 rounded-xl">
                     <div className="sm:grid gap-x-6 grid-cols-2">
                         <Input
                             label="Dermaga Asal"
@@ -871,17 +877,48 @@ export default function AddPenjualanTiket() {
                                             }))}
                                         />
                                     </div>
+                                    <div className="sm:grid gap-x-6 grid-cols-2 mt-4">
+                                        <Input
+                                            label="Email"
+                                            subtitle={'*(Digunakan untuk mengirimkan kode booking)'}
+                                            placeholder="Masukkan email penumpang"
+                                            type='email'
+                                            value={item.email}
+                                            onChangeText={(e) => setRombongan(rombongan.map((itm, idx) => {
+                                                if (index == idx) {
+                                                    return {
+                                                        ...item,
+                                                        email: e.target.value
+                                                    }
+                                                }
+                                                return itm;
+                                            }))}
+                                        />
+                                        <SelectBox
+                                            label="Jenis Pembayaran"
+                                            placeholder="Pilih data"
+                                            option={JENIS_PEMBAYARAN}
+                                            value={item.jenisPembayaran}
+                                            onChange={(e) => setRombongan(rombongan.map((itm, idx) => {
+                                                if (index == idx) {
+                                                    return {
+                                                        ...item,
+                                                        jenisPembayaran: e
+                                                    }
+                                                }
+                                                return itm;
+                                            }))}
+                                        />
+                                    </div>
                                     <Input
-                                        label="Email"
-                                        subtitle={'*(Digunakan untuk mengirimkan kode booking)'}
-                                        placeholder="Masukkan email penumpang"
-                                        type='email'
-                                        value={item.email}
+                                        label="Catatan"
+                                        placeholder="Masukkan catatan"
+                                        value={item.catatan}
                                         onChangeText={(e) => setRombongan(rombongan.map((itm, idx) => {
                                             if (index == idx) {
                                                 return {
                                                     ...item,
-                                                    email: e.target.value
+                                                    catatan: e.target.value
                                                 }
                                             }
                                             return itm;

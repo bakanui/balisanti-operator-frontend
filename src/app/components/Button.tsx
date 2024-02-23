@@ -11,7 +11,7 @@ interface IProps {
 }
 export const Button = (props: IProps) => {
     if(props.outline) {
-        return <button onClick={props.onClick} className="h-[48px] w-full text-sm rounded-lg font-robotoregular border-solid border-2 border-primary hover:bg-slate-200 dark:text-black">{props.label}</button>
+        return <button onClick={props.onClick} className="h-[48px] w-full text-sm rounded-lg font-robotoregular border-solid border-2 border-primary hover:bg-slate-200 dark:text-white hover:dark:text-white">{props.label}</button>
     }
     return(
         <button onClick={props.onClick} className="bg-primary h-[48px] w-full text-white text-sm rounded-lg font-robotoregular hover:bg-primary-dark">

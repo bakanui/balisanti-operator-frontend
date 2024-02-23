@@ -11,7 +11,7 @@ interface IProps {
 }
 export const TiketCard = (props: IProps) => {
     return(
-        <div onClick={props.onClick} className={`w-full bg-white ${props.shadow ? 'shadow-md': undefined} rounded-xl hover:scale-[1.05] transform-gpu cursor-pointer duration-200`}>
+        <div onClick={props.onClick} className={`w-full bg-white dark:bg-slate-700 ${props.shadow ? 'shadow-md': undefined} rounded-xl hover:scale-[1.05] transform-gpu cursor-pointer duration-200`}>
             <div className="bg-primary h-[50px] w-full text-sm text-white font-robotomedium flex items-center justify-center rounded-t-xl">
                 {props.title ||  props.jadwal.waktu_berangkat}
             </div>

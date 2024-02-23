@@ -60,7 +60,7 @@ export default function Home() {
             />
         </BaseCard>
         <div className='flex mt-4'>
-          <div className="w-full h-fit mr-4 bg-white p-2 sm:p-8 rounded-xl">
+          <div className="w-full dark:bg-slate-700 h-fit mr-4 bg-white p-2 sm:p-8 rounded-xl">
             <div className='font-robotomedium text-md'>List Kapal</div>
             <table className="border-collapse w-full p-8 my-4 text-left">
               <thead className="border border-[black] border-x-0 ">
@@ -96,7 +96,7 @@ export default function Home() {
             <SeeMore onClick={()=> router.push('/master-data/kapal')}/>
           </div>
 
-          <div className="w-full h-fit bg-white p-2 sm:p-8 rounded-xl">
+          <div className="w-full h-fit bg-white dark:bg-slate-700 p-2 sm:p-8 rounded-xl">
             <div className='font-robotomedium text-md'>List Keberangkatan</div>
             <table className="border-collapse w-full p-8 my-4 text-left">
                 <thead className="border border-[black] border-x-0 ">
