@@ -208,7 +208,7 @@ const Login = () => {
 
     return(
         <div className="flex bg-white h-screen">
-            <div className="flex flex-col w-full bg-[white] px-[5%] pt-8">
+            <div className="flex flex-col w-full bg-white dark:bg-slate-800 px-[5%] pt-8">
                 <div>
                     <div className='w-full h-[60px] bg-[url(./../assets/logo-primary.png)] bg-contain bg-no-repeat bg-left'></div>
                 </div>

@@ -219,7 +219,7 @@ export default function Operator() {
                     placeholder="Ketik kode pemesanan atau nama pemesan di sini"
                     classNames={{
                         control: () => 'text-input text-sm font-robotoregular mb-4 cursor-pointer dark:bg-[#3b3b3b] text-white',
-                        option: () => 'dark:text-black',
+                        option: () => 'dark:text-blacks',
                         input: ()=> 'dark:text-white',
                         singleValue: () => 'dark:text-white',
                     }}
