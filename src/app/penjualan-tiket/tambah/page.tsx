@@ -503,7 +503,7 @@ export default function AddPenjualanTiket() {
                 jenis_kelamin: item.jenisKelamin.value == 'Laki-laki' ? 'l' : 'p',
                 email: item.email,
                 catatan: item.catatan,
-                jenisPembayaran: item.jenisPembayaran
+                jenisPembayaran: item.jenisPembayaran.value
             }
         });
         const people = rombongan.map((item, index) => {
