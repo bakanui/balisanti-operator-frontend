@@ -451,13 +451,13 @@ export default function LaporanPenumpang() {
           {
             user && user.id_role != 1 ?
             <>
-            <button 
+            {/* <button 
               onClick={tandaiKedatangan} 
               className='bg-primary h-[48px] w-1/4 text-white text-sm rounded-lg font-robotoregular hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed'
               disabled={selectedPenumpang.length > 0 ? false : true}
               >
                 Tandai Datang {selectedPenumpang.length > 1 ? `(${selectedPenumpang.length})` : null}
-              </button>
+              </button> */}
               <button 
               onClick={tandaiKeberangkatan} 
               className='bg-primary h-[48px] w-1/4 text-white text-sm rounded-lg font-robotoregular hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed'

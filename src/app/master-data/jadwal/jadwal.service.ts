@@ -1,6 +1,6 @@
 import { IAuth } from '@/app/types/auth';
 import { IJadwal } from '@/app/types/jadwal';
-import { API_MASTER_DATA, API_SIWALATRI } from '@/app/utils/api';
+import { API_MASTER_DATA, API_SIWALATRI, BASE_AUTH_SIWALATRI } from '@/app/utils/api';
 import { getStorageValue } from '@/app/utils/localstoreage';
 import { errorHandler } from '@/app/utils/utility';
 import axios from 'axios';
@@ -137,6 +137,32 @@ export const editjadwalAction = (
     )
     .then((response)=> {
         process.env.NODE_ENV && console.log('edit JADWAL ', response);
+        onSuccess(response.data);
+    })
+    .catch(function (error) {
+        let err = errorHandler(error, ()=> onUnAuth && onUnAuth());
+        onFailed(err);
+    });
+}
+
+export const editjadwalSiwalatriAction = (
+    id: string,
+    params: any,
+    onSuccess: (data: any) => void,
+    onFailed: (error:any) => void,
+    onUnAuth?: () => void
+) => {
+    const auth: IAuth = getStorageValue('auth');
+    axios.put<IJadwal>(API_SIWALATRI.JADWAL_KEBERANGKATAN + '/edit/' + id, 
+        {...params},
+        {
+            headers: {
+                Authorization: `Bearer ${BASE_AUTH_SIWALATRI}`
+            }
+        }
+    )
+    .then((response)=> {
+        process.env.NODE_ENV && console.log('edit JADWAL Siwalatri', response);
         onSuccess(response.data);
     })
     .catch(function (error) {
