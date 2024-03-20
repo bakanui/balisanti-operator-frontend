@@ -24,7 +24,7 @@ import { getRuteAction } from "../../rute/rute.service";
 import { getDermagaAction } from "../../dermaga/dermaga.service";
 import { IDermaga } from "@/app/types/dermaga";
 import { IRute } from "@/app/types/rute";
-import { editjadwalAction, getDetailjadwalAction, setJadwalImageAction } from "../jadwal.service";
+import { editjadwalAction, editjadwalSiwalatriAction, getDetailjadwalAction, setJadwalImageAction } from "../jadwal.service";
 import { STATUS } from "@/app/constants/status";
 import { IJadwal } from "@/app/types/jadwal";
 import { FilePicker } from "@/app/components/FilePicker";
@@ -162,7 +162,6 @@ export default function EditJadwal(){
         setWaktuKeberangkatan({value: `${data.waktu_berangkat}`, label: data.waktu_berangkat});
         setTiket(tmpTiket);
     }
-
     const save = () => {
         setLoading(true);
         setLoadingMessage('Menyimpan Data...');
@@ -182,11 +181,31 @@ export default function EditJadwal(){
                 })))
             },
             ()=>{
-                toast.success('Data Berhasil Disimpan', toastSuccessConfig);
-                setTimeout(() => {
-                    back();
-                }, 500);
-                setLoading(false);
+                editjadwalSiwalatriAction(
+                    queryParams.get('id'),
+                    {
+                        jadwal: waktuKeberangkatan.value + ":00",
+                        status: "Berlayar",
+                        id_nahkoda: selectedNahkoda.value,
+                        id_kapal: selectedKapal.value,
+                        id_rute: selectedRute.value,
+                        ekstra: 0,
+                        id_loket: 88,
+                        status_kirim_mitra: 0
+                    },
+                    ()=>{
+                        toast.success('Data Berhasil Disimpan', toastSuccessConfig);
+                        setTimeout(() => {
+                            back();
+                        }, 500);
+                        setLoading(false);
+                    },
+                    (err)=>{
+                        setLoading(false);
+                        toast.error(err, toastErrorConfig);
+                    },
+                    () => router.replace('/login')
+                );
             },
             (err)=>{
                 setLoading(false);
