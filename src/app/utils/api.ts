@@ -1,8 +1,8 @@
 
 export const BASE_URL = "https://api-angkal.siwalatri.klungkungkab.go.id/api";
-// export const BASE_URL_SIWALATRI = "https://backend-balisanti.siwalatri.klungkungkab.go.id/api";
-export const BASE_URL_SIWALATRI = "https://maiharta.ddns.net:3100/http://103.139.193.10:3002/api";
+export const BASE_URL_SIWALATRI = "https://api.siwalatri.klungkungkab.go.id/api";
 export const BASE_ARMADA = '62396bbb2bac8';
+export const BASE_AUTH_SIWALATRI = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTkyLjE2OC4wLjE5OTo4ODg4L2FwaS9hdXRoL2xvZ2luIiwiaWF0IjoxNzEwODM2NzgzLCJuYmYiOjE3MTA4MzY3ODMsImp0aSI6IjZqRDhEWEIweDRkd0NXZ1MiLCJzdWIiOiIxIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.aqLHxxeoorC7yProw_8BrBB3kj0miwlsXF-lx-TtsfA";
 
 export const API_AUTH = {
     LOGIN: `${BASE_URL}/login`    
