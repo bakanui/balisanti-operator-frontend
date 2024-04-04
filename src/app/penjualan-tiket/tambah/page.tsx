@@ -1037,6 +1037,36 @@ export default function AddPenjualanTiket() {
                                                 return itm;
                                             }))}
                                         />
+                                        {item.jenisPenumpang.label.includes("Mancanegara") ? <SelectBox
+                                            label="Negara Asal"
+                                            placeholder="Pilih data"
+                                            option={KEWARNEGARAAN}
+                                            value={item.kewarnegaraan}
+                                            onChange={(e) => setRombongan(rombongan.map((itm, idx) => {
+                                                if (index == idx) {
+                                                    return {
+                                                        ...item,
+                                                        alamat: e.label,
+                                                        kewarnegaraan: e
+                                                    }
+                                                }
+                                                return itm;
+                                            }))}
+                                        /> : <Input
+                                            label="Alamat"
+                                            placeholder="Masukkan alamat penumpang"
+                                            value={item.alamat}
+                                            onChangeText={(e) => setRombongan(rombongan.map((itm, idx) => {
+                                                if (index == idx) {
+                                                    return {
+                                                        ...item,
+                                                        alamat: e.target.value,
+                                                        kewarnegaraan: { value: 'ID', label: 'Indonesia' },
+                                                    }
+                                                }
+                                                return itm;
+                                            }))}
+                                        />}
                                         <SelectBox
                                             label="Jenis Kelamin"
                                             placeholder="Pilih data"
