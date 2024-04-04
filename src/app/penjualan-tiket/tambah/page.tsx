@@ -519,19 +519,19 @@ export default function AddPenjualanTiket() {
                 return;
             }
             return {
-                alamat: "ditempat",
+                alamat: item.alamat,
                 catatan: item.catatan,
                 email: item.email,
                 freepass: 0,
                 harga_tiket: 100000,
                 id_jadwal: queryParams.get('id'),
-                id_jns_penum: 1,
+                id_jns_penum: item.jenisPenumpang.label.includes("Mancanegara") ? 2 : item.jenisPenumpang.label.includes("Domestik") ? 1 : 3,
                 id_tiket: 1,
                 id_tujuan: "1",
                 jenis_kelamin: item.jenisKelamin.value == 'Laki-laki' ? 1 : 0,
                 nama_penumpang: item.nama,
                 no_identitas: item.noIdentitas,
-                payment_method: "cash",
+                payment_method: item.jenisPembayaran.value == "tunai" ? "cash" : "transfer",
                 status_verif: 0,
                 tanggal: parseDateToBackendFormat(tanggalKeberangkatan),
             }
