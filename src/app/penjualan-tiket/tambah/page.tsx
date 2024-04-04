@@ -25,6 +25,7 @@ import { getAgenAction } from "@/app/master-data/agen/agen.service";
 import { IAgen } from "@/app/types/agen";
 import { IPenjualanTiket, IPenumpangInfo } from "@/app/types/jadwal";
 import { getStorageValue } from "@/app/utils/localstoreage";
+import { KEWARNEGARAAN } from "@/app/constants/kewarnegaraan";
 import { JENIS_KELAMIN } from "@/app/constants/jenisKelamin";
 import { JENIS_PEMBAYARAN } from "@/app/constants/jenisPembayaran";
 import { IHargaService } from "@/app/types/hargaService";
@@ -70,6 +71,8 @@ export default function AddPenjualanTiket() {
             jenisKelamin: { value: '', label: 'Pilih Data' },
             email: 'test@example.com',
             catatan: '',
+            alamat: '',
+            kewarnegaraan: { value: 'ID', label: 'Indonesia' },
             jenisPembayaran: { value: 'tunai', label: 'Tunai' }
         }
     ]);
@@ -303,6 +306,8 @@ export default function AddPenjualanTiket() {
             jenisKelamin: { value: '', label: 'Pilih Data' },
             email: 'test@example.com',
             catatan: '-',
+            alamat: '',
+            kewarnegaraan: { value: '', label: 'Pilih Data' },
             jenisPembayaran: { value: '', label: 'Pilih Data' }
         }]);
     }
@@ -503,6 +508,8 @@ export default function AddPenjualanTiket() {
                 jenis_kelamin: item.jenisKelamin.value == 'Laki-laki' ? 'l' : 'p',
                 email: item.email,
                 catatan: item.catatan,
+                alamat: item.alamat,
+                kewarnegaraan: item.kewarnegaraan.value,
                 jenisPembayaran: item.jenisPembayaran.value
             }
         });
@@ -512,19 +519,19 @@ export default function AddPenjualanTiket() {
                 return;
             }
             return {
-                alamat: "ditempat",
+                alamat: item.alamat,
                 catatan: item.catatan,
                 email: item.email,
                 freepass: 0,
                 harga_tiket: 100000,
                 id_jadwal: queryParams.get('id'),
-                id_jns_penum: 1,
+                id_jns_penum: item.jenisPenumpang.label.includes("Mancanegara") ? 2 : item.jenisPenumpang.label.includes("Domestik") ? 1 : 3,
                 id_tiket: 1,
                 id_tujuan: "1",
                 jenis_kelamin: item.jenisKelamin.value == 'Laki-laki' ? 1 : 0,
                 nama_penumpang: item.nama,
                 no_identitas: item.noIdentitas,
-                payment_method: "cash",
+                payment_method: item.jenisPembayaran.value == "tunai" ? "cash" : "transfer",
                 status_verif: 0,
                 tanggal: parseDateToBackendFormat(tanggalKeberangkatan),
             }
@@ -861,6 +868,36 @@ export default function AddPenjualanTiket() {
                                                 return itm;
                                             }))}
                                         />
+                                        {item.jenisPenumpang.label.includes("Mancanegara") ? <SelectBox
+                                            label="Negara Asal"
+                                            placeholder="Pilih data"
+                                            option={KEWARNEGARAAN}
+                                            value={item.kewarnegaraan}
+                                            onChange={(e) => setRombongan(rombongan.map((itm, idx) => {
+                                                if (index == idx) {
+                                                    return {
+                                                        ...item,
+                                                        alamat: e.label,
+                                                        kewarnegaraan: e
+                                                    }
+                                                }
+                                                return itm;
+                                            }))}
+                                        /> : <Input
+                                            label="Alamat"
+                                            placeholder="Masukkan alamat penumpang"
+                                            value={item.alamat}
+                                            onChangeText={(e) => setRombongan(rombongan.map((itm, idx) => {
+                                                if (index == idx) {
+                                                    return {
+                                                        ...item,
+                                                        alamat: e.target.value,
+                                                        kewarnegaraan: { value: 'ID', label: 'Indonesia' },
+                                                    }
+                                                }
+                                                return itm;
+                                            }))}
+                                        />}
                                         <SelectBox
                                             label="Jenis Kelamin"
                                             placeholder="Pilih data"

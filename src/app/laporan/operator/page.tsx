@@ -225,8 +225,8 @@ export default function LaporanOperator() {
       },
       (data)=> {
         setRekapDetailLaporan({
-          tunai: data.data.tunai || 0,
-          non_tunai: data.data.non_tunai || 0
+          tunai: Number(data.data.tunai) || 0,
+          non_tunai: Number(data.data.non_tunai) || 0
         });
         setGraphicData({
           data: {
@@ -289,7 +289,7 @@ export default function LaporanOperator() {
         <BaseCard>
             <div className='mb-4'>
                 <span className='font-robotoregular text-md mr-8'>Total Pendapatan</span>
-                <span className='font-robotomedium text-md'>Rp. {convertLabelToPrice(`${rekapDetailLaporan.non_tunai + rekapDetailLaporan.tunai}`)}</span>
+                <span className='font-robotomedium text-md'>Rp. {convertLabelToPrice(`${Number(rekapDetailLaporan.non_tunai) + Number(rekapDetailLaporan.tunai)}`)}</span>
             </div>
             <Bar 
                 options={options} 
