@@ -46,6 +46,7 @@ export interface IPassengers {
   tanggal: string,
   waktu_berangkat: string,
   tipe: string,
+  alamat: string,
   warganegara: string,
   status_manifest: string,
   id_created_by: number,
@@ -486,6 +487,7 @@ export default function LaporanPenumpang() {
                      : null }
                        <th className="text-sm font-robotomedium pl-4 py-2">No</th>
                        <th className="text-sm font-robotomedium py-2">Nama Penumpang</th>
+                       <th className="text-sm font-robotomedium py-2">Alamat</th>
                        <th className="text-sm font-robotomedium py-2">Kode Booking</th>
                        <th className="text-sm font-robotomedium py-2">Tanggal Keberangkatan</th>
                        <th className="text-sm font-robotomedium py-2">Tanggal Return</th>
@@ -509,6 +511,7 @@ export default function LaporanPenumpang() {
                                : null }
                                <td className="pl-4 py-2">{startingNumber+index+1}</td>
                                <td className="py-2">{item.nama_penumpang}</td>
+                               <td className="py-2">{item.alamat}</td>
                                <td className="py-2">{item.kode_booking}</td>
                                <td className="py-2">{parseDateIncludeHours(new Date(item.tanggal || ''), true)}</td>
                                <td className="py-2">{item.tanggal_rt ? parseDateIncludeHours(new Date(item.tanggal_rt || ''), true) : '-'}</td>
