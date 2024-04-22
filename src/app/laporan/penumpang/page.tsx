@@ -24,9 +24,11 @@ import { getStorageValue } from '@/app/utils/localstoreage';
 import { useReactToPrint } from 'react-to-print';
 import { Button } from '@/app/components/Button';
 import { HeadTb, TableRow } from '@/app/components/MyTable';
+import { handleDownloadManifest } from "@/hooks/invoice.hook";
 import { saveAs } from 'file-saver';
 import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
+import fileDownload from 'js-file-download';
 import { FROM_ROUTE_ID, FROM_ROUTE_LABEL, TO_ROUTE_ID, TO_ROUTE_LABEL } from '@/constants/customRoute';
 export interface IPagination {
   totalItems: number;
@@ -143,8 +145,8 @@ export default function LaporanPenumpang() {
                 currentPage: page || 1
             });
             setStatistik({
-              cancel: data.jml_cancel,
-              real: data.jml_real
+              cancel: data.cntCancel,
+              real: data.jumlah[0].total
             });
         },
         ()=>{
@@ -171,24 +173,11 @@ export default function LaporanPenumpang() {
                 totalPage: data.totalPage,
                 currentPage: page || 1
             });
-            getPenumpangByJadwalAction(
-              {
-                  id_jadwal: selectedJadwal.value,
-                  limit: 10000,
-                  nama_penumpang: keyword,
-                  pagenumber: page || 1,
-                  tanggal: parseDateToBackendFormat(dateRange.startDate || new Date()),
-                  tanggal_akhir: parseDateToBackendFormat(dateRange.endDate || new Date()),
-                  manifest: true
-              },
-              (data2)=>{
-                  setDataAll(data2);
-                  setLoading(false);
-              },
-              ()=>{
-                  setLoading(false);
-              }
-          );
+            setStatistik({
+              cancel: data.cntCancel,
+              real: data.jumlah[0].total
+            });
+            setLoading(false);
         },
         ()=>{
             setLoading(false);
@@ -237,6 +226,34 @@ export default function LaporanPenumpang() {
     if (tmp.length > 0) {
       setSelectedJadwal(tmp[0]);
     }
+  }
+
+  const handleDownloadM = () => {
+    setLoading(true);
+    let fileName = 'ManifestPenumpang_';
+          if (isSameDate(dateRange.startDate || new Date(), dateRange.endDate || new Date())) {
+            fileName = fileName + parseDateToShortFormat(dateRange.startDate || new Date()) + '.pdf';
+          } else {
+            fileName = fileName + parseDateToShortFormat(dateRange.startDate || new Date()) + "-" + parseDateToShortFormat(dateRange.endDate || new Date()) + '.pdf';
+          }
+    handleDownloadManifest(
+      {
+          id_jadwal: selectedJadwal.value,
+          limit: limit.value,
+          nama_penumpang: keyword,
+          tanggal: parseDateToBackendFormat(dateRange.startDate || new Date()),
+          tanggal_akhir: parseDateToBackendFormat(dateRange.endDate || new Date()),
+          status_checker: 2,
+          manifest: true
+      },
+      (data)=>{
+          fileDownload(data, fileName);
+          setLoading(false);
+      },
+      ()=>{
+          setLoading(false);
+      }
+  );
   }
 
   const handleDownload = useReactToPrint({
@@ -443,7 +460,7 @@ export default function LaporanPenumpang() {
               <div className='w-1/4'>
                 <Button 
                   label='Download Manifest'
-                  onClick={handleDocxDownload}
+                  onClick={handleDownloadM}
                 />
               </div>
             </>

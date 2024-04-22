@@ -101,6 +101,7 @@ export const KEWARNEGARAAN: IOptions[] = [
     {value: 'GB', label: 'United Kingdom'},
     {value: 'US', label: 'United States'},
     {value: 'UY', label: 'Uruguay'},
+    {value: 'VE', label: 'Venezuela'},
     {value: 'VN', label: 'Vietnam'},
     {value: 'YE', label: 'Yemen'},
     {value: 'ZW', label: 'Zimbabwe'},
