@@ -54,6 +54,7 @@ export const API_PEMBAYARAN = {
 export const API_LAPORAN = {
     DETAIL_LAPORAN_OPERATOR: `${BASE_URL}/laporan/operator`,
     REKAP_LAPORAN_OPERATOR: `${BASE_URL}/laporan/operator/recap`,
+    DOWNLOAD_MANIFEST: `${BASE_URL}/pembayaran-agen/download-manifest/`,
 }
 
 export const API_TIKET_PENUMPANG  = {

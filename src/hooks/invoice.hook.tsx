@@ -1,12 +1,13 @@
 import { IAuth } from "@/app/types/auth";
 import { IPenumpang } from "@/app/types/jadwal";
-import { API_PEMBAYARAN, API_TIKET_PENUMPANG } from "@/app/utils/api";
+import { API_LAPORAN, API_PEMBAYARAN, API_TIKET_PENUMPANG } from "@/app/utils/api";
 import { getStorageValue } from "@/app/utils/localstoreage";
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify";
 import { useAuth, useError } from "./global.hook";
 import fileDownload from 'js-file-download';
+import { errorHandler } from '@/app/utils/utility';
 interface IProps {
     invoice: string;
 }
@@ -150,4 +151,48 @@ export const useDownloadMultipleInvoice = () => {
     }
 
     return [download, loading, error];
+}
+
+export const handleDownloadManifest = (
+    params: any,
+    onSuccess: (data: any) => void,
+    onFailed: (error:any) => void,
+    onUnAuth?: () => void
+ ) => {
+    const auth: IAuth = getStorageValue('auth');
+    axios.get<any[]>(API_LAPORAN.DOWNLOAD_MANIFEST+''+params.id_jadwal,
+    {
+        headers: {
+            Authorization: `Bearer ${auth.authorisation.token}`,
+        },
+        params,
+        responseType: 'blob'
+    })
+    .then((response)=> {
+        // process.env.NODE_ENV && console.log('GET getPenumpangByJadwalAction = ', response);
+        onSuccess(response.data);
+    })
+    .catch(function (error) {
+        let err = errorHandler(error, ()=> onUnAuth && onUnAuth());
+        onFailed(err);
+    });
+    // const [loading, setLoading] = useState(false);
+    // const [error,setError] = useState(null);
+    // const {handleError} = useError();
+    // const [token] = useAuth();
+
+    // const download: any = async()=> {
+    //     setLoading(true)
+    //     const response = await axios.get<any>(API_LAPORAN.DOWNLOAD_MANIFEST+''+params.id_jadwal,
+    //     {
+    //         headers: {
+    //             Authorization: `Bearer ${token}`,
+    //         },
+    //         params,
+    //         responseType: 'blob'
+    //     });
+    //     fileDownload(response.data, 'invoices.pdf');
+    // }
+
+    // return [download, loading, error];
 }
