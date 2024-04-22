@@ -239,8 +239,6 @@ export default function LaporanPenumpang() {
     handleDownloadManifest(
       {
           id_jadwal: selectedJadwal.value,
-          limit: limit.value,
-          nama_penumpang: keyword,
           tanggal: parseDateToBackendFormat(dateRange.startDate || new Date()),
           tanggal_akhir: parseDateToBackendFormat(dateRange.endDate || new Date()),
           status_checker: 2,
