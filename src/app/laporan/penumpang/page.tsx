@@ -138,7 +138,6 @@ export default function LaporanPenumpang() {
         },
         (data)=>{
             setData(data.data);
-            setJumlahPenumpang(data.cnt);
             setPagination({
                 totalItems: data.cnt,
                 totalPage: data.totalPage,
@@ -148,6 +147,9 @@ export default function LaporanPenumpang() {
               cancel: data.cntCancel,
               real: data.jumlah[0].total
             });
+            let total = parseInt(data.jumlah[0].total) - parseInt(data.cntCancel);
+            setJumlahPenumpang(total.toString());
+            setLoading(false);
         },
         ()=>{
             setLoading(false);
@@ -167,7 +169,6 @@ export default function LaporanPenumpang() {
         },
         (data)=>{
             setData(data.data);
-            setJumlahPenumpang(data.cnt);
             setPagination({
                 totalItems: data.cnt,
                 totalPage: data.totalPage,
@@ -177,6 +178,8 @@ export default function LaporanPenumpang() {
               cancel: data.cntCancel,
               real: data.jumlah[0].total
             });
+            let total = parseInt(data.jumlah[0].total) - parseInt(data.cntCancel);
+            setJumlahPenumpang(total.toString());
             setLoading(false);
         },
         ()=>{
