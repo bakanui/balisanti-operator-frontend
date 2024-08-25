@@ -30,6 +30,17 @@ import uniqid from 'uniqid';
 import { BASE_ARMADA } from "@/app/utils/api";
 
 export default function AddJadwal(){
+    interface HargaTiketItem {
+        id: number;
+        id_jadwal: string;
+        id_jenis_penumpang: number;
+        harga: number;
+        created_at: Date | string; // Use Date if you are working with Date objects, or string if JSON data
+        updated_at: Date | string; // Same as above
+        deleted_at: Date | null; // Nullable Date
+        tipe_penumpang: string;
+        jenis_penumpang: string;
+    }    
     const router = useRouter();
     const [tiket, setTiket] = useState([
         {
@@ -136,6 +147,7 @@ export default function AddJadwal(){
     const save = () => {
         setLoadingMessage('Menyimpan Data...');
         setLoading(true);
+    
         createjadwalAction(
             {
                 id: uid,
@@ -147,15 +159,16 @@ export default function AddJadwal(){
                 waktu_berangkat: waktuKeberangkatan.value,
                 id_loket: selectedDermaga.value,
                 status_jadwal: status.value,
-                harga_tiket: tiket.map((item => ({
+                harga_tiket: tiket.map(item => ({
                     id_jenis_penumpang: item.penumpang.value,
                     harga: convertLabelPriceToNumeberPrice(item.harga)
-                })))
+                }))
             },
-            ()=>{
+            (res) => {
                 createjadwalSiwalatriAction(
                     {
                         id: uid,
+                        jenis_jadwal: jenisJawal.value,
                         id_kapal: selectedKapal.value,
                         id_nahkoda: selectedNahkoda.value,
                         id_rute: selectedRute.value,
@@ -164,34 +177,36 @@ export default function AddJadwal(){
                         id_loket: 88,
                         status: "Berlayar",
                         ekstra: 0,
-                        harga_tiket: tiket.map((item => ({
-                            nama_tiket: item.penumpang.tipe,
-                            id_jns_penum: jenisPenumpangSpawner(item.penumpang.jenis),
-                            harga: convertLabelPriceToNumeberPrice(item.harga)
-                        }))),
+                        harga_tiket: res.harga_tiket.map((item: HargaTiketItem) => ({
+                            nama_tiket: item.tipe_penumpang,
+                            id_jns_penum: jenisPenumpangSpawner(item.jenis_penumpang),
+                            harga: item.harga,
+                            id_siwalatri: item.id
+                        })),
                         tanggal_berangkat: parseDateIncludeHours(new Date(), false),
                         tanggal_sampai: parseDateIncludeHours(new Date(), false)
                     },
-                    ()=>{
+                    () => {
                         toast.success('Data Berhasil Disimpan', toastSuccessConfig);
                         setTimeout(() => {
                             back();
                         }, 500);
                         setLoading(false);
                     },
-                    (err)=>{
+                    (err) => {
                         setLoading(false);
                         toast.error(err, toastErrorConfig);
                     }
                 );
             },
-            (err)=>{
+            (err) => {
                 setLoading(false);
                 toast.error(err, toastErrorConfig);
             },
             () => router.replace('/login')
         );
-    }
+    };
+    
 
     const back = () => {
         router.back();
