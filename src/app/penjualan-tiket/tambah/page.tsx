@@ -471,6 +471,23 @@ export default function AddPenjualanTiket() {
         );
     }
 
+    function jenisPenumpangSiwalatri(jenis: string) {
+        switch (jenis){
+            case "Domestik":
+                return 1;
+            case "Mancanegara":
+                return 2;
+            case "Lokal":
+                return 3;
+            case "Domestik (PP)":
+                return 4;
+            case "Mancanegara (PP)":
+                return 5;
+            case "Lokal (PP)":
+                return 6;
+        }
+    }
+
     const save = () => {
         if (!tiket) {
             toast.error('Jadwal tidak ditemukan!', toastErrorConfig);
@@ -525,7 +542,7 @@ export default function AddPenjualanTiket() {
                 freepass: 0,
                 harga_tiket: 100000,
                 id_jadwal: queryParams.get('id'),
-                id_jns_penum: item.jenisPenumpang.label.includes("Mancanegara") ? 2 : item.jenisPenumpang.label.includes("Domestik") ? 1 : 3,
+                id_jns_penum: jenisPenumpangSiwalatri(item.jenisPenumpang.label),
                 id_tiket: 1,
                 id_tujuan: "1",
                 jenis_kelamin: item.jenisKelamin.value == 'Laki-laki' ? 1 : 0,
@@ -559,7 +576,7 @@ export default function AddPenjualanTiket() {
                         let tot = 0;
                         bayar = {
                             no_invoice: data1[0].no_invoice,
-                            metode_bayar: "tunai",
+                            metode_bayar: rombongan[0].jenisPembayaran.value,
                             nominal: total
                         };
                         createPembayaranAction(
