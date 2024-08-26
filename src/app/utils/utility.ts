@@ -124,6 +124,12 @@ export const timeList = [
       return parseInt("2");
     } else if (jenis === 'Lokal') {
       return parseInt("3");
+    } else if (jenis === 'Domestik (PP)') {
+      return parseInt("4");
+    } else if (jenis === 'Mancanegara (PP)') {
+      return parseInt("5");
+    } else if (jenis === 'Lokal (PP)') {
+      return parseInt("6");
     }
   }
   

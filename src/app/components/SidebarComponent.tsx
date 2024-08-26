@@ -249,12 +249,12 @@ export const SidebarComponent = () => {
                         icon={<UserIcon fill={router?.includes('/laporan/penumpang') || mode == 'dark' ? 'white' : undefined} />}
                         href='/laporan/penumpang'
                     />
-                    <SideMenuItem
+                    {/* <SideMenuItem
                         text='Agen'
                         path={router}
                         icon={<UserIcon fill={router?.includes('/laporan/agen') || mode == 'dark' ? 'white' : undefined} />}
                         href='/laporan/agen'
-                    />
+                    /> */}
                     {/* <SideMenuItem
                         text='Manifest'
                         path={router}

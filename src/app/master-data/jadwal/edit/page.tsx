@@ -5,7 +5,7 @@ import { Button } from "@/app/components/Button";
 import { ButtonGroup } from "@/app/components/ButtonGroup";
 import { BaseContainer } from "@/app/components/Container";
 import { SelectBox } from "@/app/components/SelectBox";
-import { convertLabelPriceToNumeberPrice, timeList, toastErrorConfig, toastSuccessConfig } from "@/app/utils/utility";
+import { convertLabelPriceToNumeberPrice, timeList, toastErrorConfig, toastSuccessConfig, jenisPenumpangSpawner } from "@/app/utils/utility";
 import { useRouter, useSearchParams } from "next/navigation";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { TiketPriceInput } from "./../tambah/components/TiketPriceInput";
@@ -31,6 +31,17 @@ import { FilePicker } from "@/app/components/FilePicker";
 import { NoImageIcon } from "@/assets/svg/NoImageIcon";
 
 export default function EditJadwal(){
+    interface HargaTiketItem {
+        id: number;
+        id_jadwal: string;
+        id_jenis_penumpang: number;
+        harga: number;
+        created_at: Date | string; // Use Date if you are working with Date objects, or string if JSON data
+        updated_at: Date | string; // Same as above
+        deleted_at: Date | null; // Nullable Date
+        tipe_penumpang: string;
+        jenis_penumpang: string;
+    }   
     const router = useRouter();
     const queryParams: any = useSearchParams();
     const [tiket, setTiket] = useState([
@@ -180,18 +191,25 @@ export default function EditJadwal(){
                     harga: convertLabelPriceToNumeberPrice(item.harga)
                 })))
             },
-            ()=>{
+            (res)=>{
                 editjadwalSiwalatriAction(
                     queryParams.get('id'),
                     {
                         jadwal: waktuKeberangkatan.value + ":00",
                         status: "Berlayar",
+                        jenis_jadwal: jenisJawal.value,
                         id_nahkoda: selectedNahkoda.value,
                         id_kapal: selectedKapal.value,
                         id_rute: selectedRute.value,
                         ekstra: 0,
                         id_loket: 88,
-                        status_kirim_mitra: 0
+                        status_kirim_mitra: 0,
+                        harga_tiket: res.harga_tiket.map((item: HargaTiketItem) => ({
+                            nama_tiket: item.tipe_penumpang,
+                            id_jns_penum: jenisPenumpangSpawner(item.jenis_penumpang),
+                            harga: item.harga,
+                            id_siwalatri: item.id
+                        })),
                     },
                     ()=>{
                         toast.success('Data Berhasil Disimpan', toastSuccessConfig);
