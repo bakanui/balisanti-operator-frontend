@@ -472,20 +472,19 @@ export default function AddPenjualanTiket() {
     }
 
     function jenisPenumpangSiwalatri(jenis: string) {
-        switch (jenis){
-            case "Domestik":
-                return 1;
-            case "Mancanegara":
-                return 2;
-            case "Lokal":
-                return 3;
-            case "Domestik (PP)":
-                return 4;
-            case "Mancanegara (PP)":
-                return 5;
-            case "Lokal (PP)":
-                return 6;
-        }
+        if (jenis.includes('Domestik')) {
+            return 1;
+          } else if (jenis.includes('Mancanegara')) {
+            return 2;
+          } else if (jenis.includes('Lokal')) {
+            return 3;
+          } else if (jenis.includes('Domestik (PP)')) {
+            return 4;
+          } else if (jenis.includes('Mancanegara (PP)')) {
+            return 5;
+          } else if (jenis.includes('Lokal (PP)')) {
+            return 6;
+          }
     }
 
     const save = () => {

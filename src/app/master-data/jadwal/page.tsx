@@ -146,6 +146,7 @@ export default function Jadwal(){
                             <th className="text-sm font-robotomedium py-2">Keberangkatan</th>
                             <th className="text-sm font-robotomedium py-2">Tujuan</th>
                             <th className="text-sm font-robotomedium py-2">Waktu</th>
+                            <th className="text-sm font-robotomedium py-2">Jenis</th>
                             <th className="text-sm font-robotomedium py-2">Loket</th>
                             <th className="text-sm font-robotomedium py-2">Status</th>
                             <th className="text-sm font-robotomedium py-2">Aksi</th>
@@ -162,6 +163,7 @@ export default function Jadwal(){
                                 <td className="py-2">{item.rute?.nama_dermaga_awal}</td>
                                 <td className="py-2">{item.rute?.nama_dermaga_tujuan}</td>
                                 <td className="py-2">{item.waktu_berangkat}</td>
+                                <td className="py-2">{item.jenis_jadwal}</td>
                                 <td className="py-2">{item.rute?.nama_dermaga_awal}</td>
                                 <td className="py-2">
                                     <Badge 
