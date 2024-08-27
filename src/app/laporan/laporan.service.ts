@@ -61,6 +61,30 @@ export const getPenumpangByJadwalAction = (
     });
 }
 
+export const getPembayaranByJadwalAction = (
+    params: any,
+    onSuccess: (data: any) => void,
+    onFailed: (error:any) => void,
+    onUnAuth?: () => void
+) => {
+    const auth: IAuth = getStorageValue('auth');
+    axios.get<any[]>(API_LAPORAN.LIST_PEMBAYARAN_BY_JADWAL,
+    {
+        headers: {
+            Authorization: `Bearer ${auth.authorisation.token}`,
+        },
+        params
+    })
+    .then((response)=> {
+        process.env.NODE_ENV && console.log('GET getPenumpangByJadwalAction = ', response);
+        onSuccess(response.data);
+    })
+    .catch(function (error) {
+        let err = errorHandler(error, ()=> onUnAuth && onUnAuth());
+        onFailed(err);
+    });
+}
+
 export const getDetailLaporanDermagaAction = (
     params: any,
     onSuccess: (data: any) => void,
