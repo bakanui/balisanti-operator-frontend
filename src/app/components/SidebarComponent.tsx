@@ -244,6 +244,12 @@ export const SidebarComponent = () => {
                         href='/laporan/operator'
                     />
                     <SideMenuItem
+                        text='Pembayaran'
+                        path={router}
+                        icon={<ManifestIcon fill={router?.includes('/laporan/pembayaran') || mode == 'dark' ? 'white' : undefined} />}
+                        href='/laporan/pembayaran'
+                    />
+                    <SideMenuItem
                         text='Penumpang'
                         path={router}
                         icon={<UserIcon fill={router?.includes('/laporan/penumpang') || mode == 'dark' ? 'white' : undefined} />}
