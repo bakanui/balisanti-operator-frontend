@@ -119,3 +119,75 @@ export const PembayaranChart = (props: IPembayaranChartProps) => {
         </div>
     );
 }
+
+export const PembayaranChartLaporan = (props: IPembayaranChartProps) => {
+  const [chartLabels, setChartLabel] = useState<string[]>([]);
+  const [chartData, setChartData] = useState<any>({
+      labels: chartLabels,
+      datasets: []
+  });
+
+  useEffect(()=> {
+      if (props.pembayaran) {
+          let keys = Object.keys(props.pembayaran);
+          let tunai = [], nonTunai = [], qris = [], va = [];
+          for(let i = 0; i < keys.length; i++) {
+              // const tmpTunai = parseFloat(props.pembayaran[keys[i]].tunai),
+              // tmpNonTunai = parseFloat(props.pembayaran[keys[i]].non_tunai);
+              // tunai.push(tmpTunai);
+              // nonTunai.push(tmpNonTunai);
+              if (props.pembayaran.jenis_pembayaran == "tunai") {
+                tunai.push(parseFloat(props.pembayaran[keys[i]].total_harga));
+              } else if (props.pembayaran.jenis_pembayaran == "qris") {
+                qris.push(parseFloat(props.pembayaran[keys[i]].total_harga));
+              } else if (props.pembayaran.jenis_pembayaran == "va") {
+                va.push(parseFloat(props.pembayaran[keys[i]].total_harga));
+              }
+          }
+          setChartLabel(keys);
+          setChartData({
+              labels: ['tunai', 'qris', 'va'],
+              datasets: [
+                {
+                  label: 'Tunai',
+                  data: tunai,
+                  backgroundColor: '#219ebc',
+                  barPercentage: 0.3,
+                  categoryPercentage: 1,
+                },
+                {
+                  label: 'QRIS',
+                  data: qris,
+                  backgroundColor: '#c1121f',
+                  barPercentage: 0.3,
+                  categoryPercentage: 1,
+                },
+                {
+                  label: 'Virtual Account',
+                  data: va,
+                  backgroundColor: '#283618',
+                  barPercentage: 0.3,
+                  categoryPercentage: 1,
+                },
+              ],
+          });
+      }
+  },[props.pembayaran]);
+
+  return(
+      <div className='w-full'>
+          {props.pembayaran ? 
+              <Bar 
+                  options={options} 
+                  data={chartData} 
+                  height={100}
+              />
+          : 
+              <Loading 
+                  title='Mohon menunggu...'
+                  loading
+              />
+          }
+      </div>
+  );
+}
