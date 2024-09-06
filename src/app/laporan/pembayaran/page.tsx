@@ -24,12 +24,14 @@ import { getStorageValue } from '@/app/utils/localstoreage';
 import { useReactToPrint } from 'react-to-print';
 import { Button } from '@/app/components/Button';
 import { HeadTb, TableRow } from '@/app/components/MyTable';
-import { handleDownloadManifest } from "@/hooks/invoice.hook";
+import { handleDownloadManifest, handleDownloadManifestPembayaran } from "@/hooks/invoice.hook";
 import { saveAs } from 'file-saver';
 import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
+import { Bar } from 'react-chartjs-2';
 import fileDownload from 'js-file-download';
 import { FROM_ROUTE_ID, FROM_ROUTE_LABEL, TO_ROUTE_ID, TO_ROUTE_LABEL } from '@/constants/customRoute';
+import { PembayaranChartLaporan } from "@/app/components/PembayaranChart";
 export interface IPagination {
   totalItems: number;
   totalPage: number;
@@ -60,18 +62,70 @@ export interface IPassengers {
   tanggal_rt: null
 }
 
+interface DataTotalItem {
+  jenis_pembayaran: string;
+  total_harga: number;
+}
+
+const options = {
+  responsive: true,
+  options: {
+    
+  },
+  plugins: {
+    legend: {
+      position: 'bottom' as const,
+    },
+    title: {
+      display: false,
+      text: 'title',
+    },
+  },
+};
+
 export default function LaporanPembayaran() {
   const router = useRouter();
+  const labels = ['26 Jan 2023'];
   const [user, setUser] = useState<any>();
   const componentRef: any = useRef();
   const [data, setData] = useState<any[]>([]);
+  const [dataPembayaran, setDataPembayaran] = useState<any[]>([]);
   const [dataAll, setDataAll] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [totalPembayaran, setTotalPembayaran] = useState<any>();
   const [loadingOverlay, setLoadingOverlay] = useState(false);
   const [pagination, setPagination] = useState<IPagination>({
       totalItems: 0,
       totalPage: 0,
       currentPage: 1
+  });
+  const [graphicData, setGraphicData] = useState({
+    data: {
+      labels: [''],
+      datasets: [
+        {
+          label: 'Tunai',
+          data: labels.map(() => 0),
+          backgroundColor: '#219ebc',
+          barPercentage: 0.3,
+          categoryPercentage: 1,
+        },
+        {
+          label: 'QRIS',
+          data: labels.map(() => 0),
+          backgroundColor: '#c1121f',
+          barPercentage: 0.3,
+          categoryPercentage: 1,
+        },
+        {
+          label: 'Virtual Account',
+          data: labels.map(() => 0),
+          backgroundColor: '#283618',
+          barPercentage: 0.3,
+          categoryPercentage: 1,
+        },
+      ],
+    }
   });
   const [keyword, setKeyword] = useState('');
   const [limit, setLimit] = useState({value: 10, label: '10'});
@@ -150,6 +204,7 @@ export default function LaporanPembayaran() {
         },
         (data)=>{
           setData(data.data);
+          setDataPembayaran(data.dataTotal);
           setPagination({
               totalItems: data.cnt,
               totalPage: data.totalPage,
@@ -159,6 +214,46 @@ export default function LaporanPembayaran() {
             cancel: data.cntCancel,
             real: data.jumlah[0].total
           });
+          const dataTotal = data.dataTotal.reduce((acc: { tunai: any; qr: any; va: any; }, curr: { jenis_pembayaran: string; total_harga: any; }) => {
+            if (curr.jenis_pembayaran === "tunai") {
+              acc.tunai = curr.total_harga;
+            } else if(curr.jenis_pembayaran === "qr") {
+              acc.qr = curr.total_harga;
+            } else if(curr.jenis_pembayaran === "va") {
+              acc.va = curr.total_harga;
+            }
+            return acc;
+          }, { tunai: 0, non_tunai: 0 });
+          console.log(data.dataTotal);
+          setGraphicData({
+            data: {
+              labels: ['tunai', 'qris', 'va'],
+              datasets: [
+                {
+                  label: 'Tunai',
+                  data: labels.map(() => dataTotal.tunai || 0),
+                  backgroundColor: '#219ebc',
+                  barPercentage: 0.3,
+                  categoryPercentage: 1,
+                },
+                {
+                  label: 'QRIS',
+                  data: labels.map(() => dataTotal.qris || 0),
+                  backgroundColor: '#c1121f',
+                  barPercentage: 0.3,
+                  categoryPercentage: 1,
+                },
+                {
+                  label: 'Virtual Account',
+                  data: labels.map(() => dataTotal.va || 0),
+                  backgroundColor: '#283618',
+                  barPercentage: 0.3,
+                  categoryPercentage: 1,
+                },
+              ],
+            }
+          });
+          console.log(data.dataTotal);
           let total = parseInt(data.jumlah[0].total) - parseInt(data.cntCancel);
           setJumlahPenumpang(total.toString());
           setLoading(false);
@@ -179,6 +274,7 @@ export default function LaporanPembayaran() {
         },
         (data)=>{
           setData(data.data);
+          setDataPembayaran(data.dataTotal);
           setPagination({
               totalItems: data.cnt,
               totalPage: data.totalPage,
@@ -187,6 +283,44 @@ export default function LaporanPembayaran() {
           setStatistik({
             cancel: data.cntCancel,
             real: data.jumlah[0].total
+          });
+          const dataTotal = data.dataTotal.reduce((acc: { tunai: any; qr: any; va: any; }, curr: { jenis_pembayaran: string; total_harga: any; }) => {
+            if (curr.jenis_pembayaran === "tunai") {
+              acc.tunai = curr.total_harga;
+            } else if(curr.jenis_pembayaran === "qr") {
+              acc.qr = curr.total_harga;
+            } else if(curr.jenis_pembayaran === "va") {
+              acc.va = curr.total_harga;
+            }
+            return acc;
+          }, { tunai: 0, non_tunai: 0 });
+          setGraphicData({
+            data: {
+              labels: ['tunai', 'qris', 'va'],
+              datasets: [
+                {
+                  label: 'Tunai',
+                  data: labels.map(() => dataTotal.tunai || 0),
+                  backgroundColor: '#219ebc',
+                  barPercentage: 0.3,
+                  categoryPercentage: 1,
+                },
+                {
+                  label: 'QRIS',
+                  data: labels.map(() => dataTotal.qris || 0),
+                  backgroundColor: '#c1121f',
+                  barPercentage: 0.3,
+                  categoryPercentage: 1,
+                },
+                {
+                  label: 'Virtual Account',
+                  data: labels.map(() => dataTotal.va || 0),
+                  backgroundColor: '#283618',
+                  barPercentage: 0.3,
+                  categoryPercentage: 1,
+                },
+              ],
+            }
           });
           let total = parseInt(data.jumlah[0].total) - parseInt(data.cntCancel);
           setJumlahPenumpang(total.toString());
@@ -251,7 +385,7 @@ export default function LaporanPembayaran() {
           } else {
             fileName = fileName + parseDateToShortFormat(dateRange.startDate || new Date()) + "-" + parseDateToShortFormat(dateRange.endDate || new Date()) + '.pdf';
           }
-    handleDownloadManifest(
+    handleDownloadManifestPembayaran(
       {
           id_jadwal: selectedJadwal.value,
           tanggal: parseDateToBackendFormat(dateRange.startDate || new Date()),
@@ -444,22 +578,15 @@ export default function LaporanPembayaran() {
         </BaseCard>
         <div className='mb-4'/>
 
-        <BaseCard>
-            <div className='mb-4 sm:grid gap-x-6 grid-cols-3'>
-              <div>
-                <span className='font-robotoregular text-md mr-8'>Jumlah Penumpang</span>
-                <span className='font-robotomedium text-xl'>: {statistik.real || '-'} orang</span>
-              </div>
-              <div>
-                <span className='font-robotoregular text-md mr-8'>Jumlah Cancel</span>
-                <span className='font-robotomedium text-xl'>: {statistik.cancel || '-'} orang</span>
-              </div>
-              <div>
-                <span className='font-robotoregular text-md mr-8'>Total</span>
-                <span className='font-robotomedium text-xl'>: {jumlahPenumpang || '-'} orang</span>
-              </div>
+        {/* <BaseCard>
+            <div className='mb-4'>
+                <span className='font-robotoregular text-md mr-8'>Total Pendapatan</span>
+                <span className='font-robotomedium text-md'>Rp. {convertLabelToPrice(`${Number("0")}`)}</span>
             </div>
-        </BaseCard>
+            <PembayaranChartLaporan
+              pembayaran={dataPembayaran}
+            />
+        </BaseCard> */}
         <div className='mb-4'/>
 
         <BaseCard>
@@ -472,7 +599,7 @@ export default function LaporanPembayaran() {
             <>
               <div className='w-1/4'>
                 <Button 
-                  label='Download Manifest'
+                  label='Download Laporan'
                   onClick={handleDownloadM}
                 />
               </div>
@@ -500,11 +627,12 @@ export default function LaporanPembayaran() {
                        <th className="text-sm font-robotomedium py-2">Nama Penumpang</th>
                        <th className="text-sm font-robotomedium py-2">Alamat</th>
                        <th className="text-sm font-robotomedium py-2">Kode Booking</th>
-                       <th className="text-sm font-robotomedium py-2">Tanggal Keberangkatan</th>
+                       <th className="text-sm font-robotomedium py-2">Tanggal Berangkat</th>
                        <th className="text-sm font-robotomedium py-2">Tujuan</th>
                        <th className="text-sm font-robotomedium py-2">Entry By</th>
-                       <th className="text-sm font-robotomedium py-2">Metode Pembayaran</th>
+                       <th className="text-sm font-robotomedium py-2">Metode</th>
                        <th className="text-sm font-robotomedium py-2">Bayar</th>
+                       <th className="text-sm font-robotomedium py-2">Tanggal Bayar</th>
                    </tr>
                </HeadTb>
                <tbody>
@@ -526,6 +654,7 @@ export default function LaporanPembayaran() {
                                <td className="py-2">{item.created_by || '-'}</td>
                                <td className="py-2">{jenisPembayaranSpawner(item.jenis_pembayaran) || '-'}</td>
                                {item.harga != undefined ? <td className="py-2">Rp. {convertLabelToPrice(item.harga)}</td> : <td className="py-2">Rp. 0</td>}
+                               <td className="py-2">{parseDateIncludeHours(new Date(item.tanggal_bayar || ''), true)}</td>
                            </TableRow>
                        );
                    })}

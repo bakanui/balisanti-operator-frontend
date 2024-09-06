@@ -196,3 +196,47 @@ export const handleDownloadManifest = (
 
     // return [download, loading, error];
 }
+
+export const handleDownloadManifestPembayaran = (
+    params: any,
+    onSuccess: (data: any) => void,
+    onFailed: (error:any) => void,
+    onUnAuth?: () => void
+ ) => {
+    const auth: IAuth = getStorageValue('auth');
+    axios.get<any[]>(API_LAPORAN.DOWNLOAD_MANIFEST_PEMBAYARAN+''+params.id_jadwal,
+    {
+        headers: {
+            Authorization: `Bearer ${auth.authorisation.token}`,
+        },
+        params,
+        responseType: 'blob'
+    })
+    .then((response)=> {
+        // process.env.NODE_ENV && console.log('GET getPenumpangByJadwalAction = ', response);
+        onSuccess(response.data);
+    })
+    .catch(function (error) {
+        let err = errorHandler(error, ()=> onUnAuth && onUnAuth());
+        onFailed(err);
+    });
+    // const [loading, setLoading] = useState(false);
+    // const [error,setError] = useState(null);
+    // const {handleError} = useError();
+    // const [token] = useAuth();
+
+    // const download: any = async()=> {
+    //     setLoading(true)
+    //     const response = await axios.get<any>(API_LAPORAN.DOWNLOAD_MANIFEST+''+params.id_jadwal,
+    //     {
+    //         headers: {
+    //             Authorization: `Bearer ${token}`,
+    //         },
+    //         params,
+    //         responseType: 'blob'
+    //     });
+    //     fileDownload(response.data, 'invoices.pdf');
+    // }
+
+    // return [download, loading, error];
+}
