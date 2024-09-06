@@ -5,7 +5,7 @@ export const BASE_ARMADA = '60dff1192581b';
 export const BASE_AUTH_SIWALATRI = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTkyLjE2OC4wLjE5OTo4ODg4L2FwaS9hdXRoL2xvZ2luIiwiaWF0IjoxNzEwODM2NzgzLCJuYmYiOjE3MTA4MzY3ODMsImp0aSI6IjZqRDhEWEIweDRkd0NXZ1MiLCJzdWIiOiIxIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.aqLHxxeoorC7yProw_8BrBB3kj0miwlsXF-lx-TtsfA";
 
 export const API_AUTH = {
-    LOGIN: `${BASE_URL}/login`    
+    LOGIN: `${BASE_URL}/login`
 };
 
 export const API_MASTER_DATA = {
@@ -55,6 +55,7 @@ export const API_LAPORAN = {
     DETAIL_LAPORAN_OPERATOR: `${BASE_URL}/laporan/operator`,
     REKAP_LAPORAN_OPERATOR: `${BASE_URL}/laporan/operator/recap`,
     DOWNLOAD_MANIFEST: `${BASE_URL}/pembayaran-agen/download-manifest/`,
+    DOWNLOAD_MANIFEST_PEMBAYARAN: `${BASE_URL}/laporan/pembayaran/download-manifest-pembayaran/`,
     LIST_PEMBAYARAN_BY_JADWAL: `${BASE_URL}/laporan/pembayaran`,
 }
 
