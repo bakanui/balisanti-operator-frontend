@@ -1,9 +1,34 @@
 import { IAuth } from '@/app/types/auth';
-import { API_MASTER_DATA, API_PEMBAYARAN } from '@/app/utils/api';
+import { IPenjualanTiket } from '@/app/types/jadwal';
+import { API_MASTER_DATA, API_PEMBAYARAN, API_PENJUALAN_TIKET } from '@/app/utils/api';
 import { getStorageValue } from '@/app/utils/localstoreage';
 import { errorHandler } from '@/app/utils/utility';
 import { IAgen } from '@/app/types/agen';
 import axios from 'axios';
+
+export const getPenjualanAction = (
+    params: any,
+    onSuccess: (data: any) => void,
+    onFailed: (error:any) => void,
+    onUnAuth?: () => void
+) => {
+    const auth: IAuth = getStorageValue('auth');
+    axios.get<IPenjualanTiket[]>(API_PENJUALAN_TIKET.CARI_JADWAL,
+    {
+        headers: {
+            Authorization: `Bearer ${auth.authorisation.token}`,
+        },
+        params
+    })
+    .then((response)=> {
+        process.env.NODE_ENV && console.log('GET PENJUALAN = ', response);
+        onSuccess(response.data);
+    })
+    .catch(function (error) {
+        let err = errorHandler(error, ()=> onUnAuth && onUnAuth());
+        onFailed(err);
+    });
+}
 
 export const scanTiketAction = (
     params: any,
@@ -24,8 +49,7 @@ export const scanTiketAction = (
     })
     .catch(function (error) {
         console.log(error);
-        let err = errorHandler(error);
-        onFailed(err);
+        onFailed(error);
     });
 }
 
