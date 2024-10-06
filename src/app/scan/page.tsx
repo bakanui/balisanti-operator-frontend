@@ -3,137 +3,162 @@ import { BaseCard } from "@/app/components/BaseCard";
 import { CustomBreadcumb } from "@/app/components/Breadcumb";
 import { Button } from "@/app/components/Button";
 import { BaseContainer } from "@/app/components/Container";
-import { Input } from "../components/Input";
-import { QrScanner } from '@yudiel/react-qr-scanner';
-import { useState } from "react";
-import { convertLabelToPrice, parseDateIncludeHours, toastErrorConfig, toastSuccessConfig } from "@/app/utils/utility";
-import { scanTiketAction } from "./scan.service";
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import { Alert } from "../components/Alert";
-import { LoadingOverlay } from "../components/LoadingOverlay";
+import { CustomPagination } from "../components/CustomPagination";
+import { DatePicker } from "../components/DatePicker";
+import { Empty } from "../components/Empty";
+import { Loading } from "../components/Loading";
+import { SelectBox } from "../components/SelectBox";
+import { getDermagaAction } from "../master-data/dermaga/dermaga.service";
+import { IOptions } from "../types/auth";
+import { IDermaga } from "../types/dermaga";
+import { IPenjualanTiket } from "../types/jadwal";
+import { getStorageValue, setStorageValue } from "../utils/localstoreage";
+import { parseDateToBackendFormat, timeList, toastErrorConfig, isBeforeCurrentDate, isBeforeCurrentTime } from "../utils/utility";
+import { TiketCard } from "./components/TiketCard";
+import { getPenjualanAction } from "./scan.service";
 
 export default function Operator(){
-    const [loading, setLoading] = useState(false);
-    const [kode, setKode] = useState('');
-    const [showAlert, setShowAlert] = useState(false);
-    const [messageAlert, setMessageAlert] = useState('');
+    const router = useRouter();
+    const [data, setData] = useState<IPenjualanTiket[]>([]);
+    const [dermaga, setDermaga] = useState<IOptions[]>([
+        {value: '', label: 'Semua'}
+    ]);
+    const [dermagaAwal, setDermagaAwal] = useState<IOptions>({value: '', label: 'Semua'});
+    const [dermagaTujuan, setDermagaTujuan] = useState<IOptions>({value: '', label: 'Semua'});
+    const [waktuKeberangkatan, setWaktuKeberangkatan] = useState<IOptions>({value: '', label: 'Semua'});
+    const [tanggalKeberangkatan, setTanggalKeberangkatan] = useState<Date>(new Date());
+    const [pagination, setPagination] = useState({
+        totalItems: 0,
+        totalPage: 0,
+        currentPage: 1
+    });
+    const [loading, setLoading] = useState(true);
 
-    const onScanned = (result: string) => {
-        if(loading || showAlert) {
-            return;
+    useEffect(()=> {
+        setLoading(true);
+        getDermagaAction(
+            {
+                limit: 100,
+                status: 1
+            },
+            (data)=> {
+                setDermaga(data.data.map((item: IDermaga)=> ({
+                    value: item.id,
+                    label: item.nama_dermaga
+                })));
+                let tmp = getStorageValue('auth');
+                if (tmp) {
+                    if (tmp.user.id_role == 1) {
+                        setLoading(false);
+                        return;
+                    }
+                    if (tmp.user.id_role == 2) {
+                        setTanggalKeberangkatan(new Date());
+                    }
+                    getData();
+                }
+            },
+            ()=> {
+                setLoading(false);
+            },
+            ()=> router.replace('/login')
+        );
+    },[]);
+
+    const getData = (page?: number) => {
+        if (page && typeof page != 'number') {
+            page = 1;
         }
         setLoading(true);
-        scanTiketAction(
+        getPenjualanAction(
             {
-                kode_booking: result
+                limit: 100,
+                dermaga_asal: dermagaAwal.value || undefined,
+                dermaga_tujuan: dermagaTujuan.value || undefined,
+                jam: waktuKeberangkatan.value || undefined,
+                tanggal: tanggalKeberangkatan ? parseDateToBackendFormat(tanggalKeberangkatan) : undefined
             },
-            (data)=> {
-                setMessageAlert(data.message);
-                toast.success(data.message, toastSuccessConfig);
-                setKode('');
+            (data)=>{
+                if (!data.data) {
+                    setData([]);
+                } else {
+                    // let fusion: IPenjualanTiket[] = [];
+                    // if (isBeforeCurrentDate(tanggalKeberangkatan)) {
+                    //     data.data.map((item: any) => {
+                    //         if(!isBeforeCurrentTime(item.waktu_berangkat)){
+                    //             fusion.push(item);
+                    //         }
+                    //     });
+                    //     setData(fusion);
+                    //     setPagination({
+                    //         totalItems: data.cnt | 1,
+                    //         totalPage: data.totalPage | 1,
+                    //         currentPage: page || 1
+                    //     });
+                    // } else {
+                        setData(data.data);
+                        setPagination({
+                            totalItems: data.cnt,
+                            totalPage: data.totalPage,
+                            currentPage: page || 1
+                        });
+                    // }
+                }
                 setLoading(false);
-                setShowAlert(true);
             },
-            (err)=> {
-                toast.error(err);
-            }
+            (err)=>{
+                setLoading(false);
+                toast.error('err', toastErrorConfig);
+            },
+            () => router.replace('/login')
         );
     }
 
-    const onError = (error: Error) => {
-        console.log(error);
-    }
-
-    const boarding = () => {
+    const gotoDetail = (item: IPenjualanTiket) => {
         setLoading(true);
-        scanTiketAction(
-            {
-                kode_booking: kode
-            },
-            (data)=> {
-                setMessageAlert(data.message);
-                toast.success(data.message, toastSuccessConfig);
-                setKode('');
-                setLoading(false);
-            },
-            (err)=> {
-                toast.error(err);
-            }
-        );
+        setStorageValue('tiket', JSON.stringify(item));
+        setStorageValue('tanggalKeberangkatan', tanggalKeberangkatan);
+        setStorageValue('jamKeberangkatan', item.waktu_berangkat);
+        router.push('/scan/check?id='+item.id_jadwal);
     }
-   
+
+    const cariData = () => {
+        getData();
+    }
+
     return(
         <BaseContainer>
-            <CustomBreadcumb title="Scan Tiket" noRoute/>
-            <BaseCard>
-                <div className="p-2 sm:flex sm:flex-row h-fit">
-                    <div className="sm:h-[400px] sm:w-[400px] sm:flex sm:items-center">
-                        <QrScanner
-                            onDecode={onScanned}
-                            onError={onError}
-                            containerStyle={{borderRadius: 12}}
-                        />
-                    </div>
-                    
-                    <div className="sm:mt-2 flex items-center sm:hidden">
-                        <div className="w-full">
-                            <hr className=""/>
-                        </div>
-                        <div className=" w-fit bg-white p-2 font-robotoregular text-sm">atau</div>
-                        <div className="w-full">
-                            <hr className=""/>
-                        </div>
-                    </div>
-
-                    <div className="invisible sm:visible flex flex-col px-4">
-                        <div className="h-full flex justify-center">
-                            <div className="w-[1px] h-full bg-slate-300"/>
-                        </div>
-                        <div className="w-fit bg-white p-2 font-robotoregular text-sm">atau</div>
-                        <div className="h-full flex justify-center">
-                            <div className="w-[1px] h-full bg-slate-300"/>
-                        </div>
-                    </div>
-
-                    <div className="sm:flex sm:flex-col w-full sm:justify-center">
-                        <div className="flex justify-center sm:justify-start font-robotomedium text-md">Kode Tiket</div>
-                        <Input 
-                            label=""
-                            value={kode}
-                            placeholder="Masukkan kode tiket"
-                            onChangeText={(e)=>setKode(e.target.value)}
-                        />
-                    </div>
-                    
+            <CustomBreadcumb title="List Jadwal Hari Ini" noRoute/>
+            {loading ? 
+                <Loading 
+                    title="Memuat Data..."
+                    loading={true}
+                />
+            : 
+            data.length > 0 ?
+                <>
+                <div className="grid gap-x-6 gap-y-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-6">
+                    {data.map((item)=> {
+                        return(
+                            <TiketCard 
+                                key={item.id}
+                                onClick={()=> gotoDetail(item)}
+                                jadwal={item}
+                            />
+                        );
+                    })}
                 </div>
-            </BaseCard>
-            <div className="flex sm:justify-end">
-                <div className="flex mt-6 w-full sm:w-[30%]">
-                    <Button 
-                        outline
-                        label="Batal"
-                    />
-                    <div className="ml-3"/>
-                    <Button 
-                        label="Boarding"
-                        onClick={boarding}
-                    />
-                </div>
-            </div>
-            <Alert
-                title="Scan Tiket"
-                content={messageAlert}
-                confirmText="Oke"
-                cancelText="Tutup"
-                isOpen={showAlert}
-                closeAlert={()=>setShowAlert(false)}
-                confirmAlert={()=>setShowAlert(false)}
-            />
-            <LoadingOverlay
-                loading={loading}
-                title="Mohon Tunggu..."
-            />
-            <ToastContainer />
+                </>
+                :
+                <Empty 
+                    title="Tidak ada data jadwal!"
+                    subtitle="Atau silakan cari jadwal terlebih dahulu!"
+                />
+            }
+            <ToastContainer/>
         </BaseContainer>
     );
 }

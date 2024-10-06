@@ -379,7 +379,7 @@ export default function LaporanPembayaran() {
 
   const handleDownloadM = () => {
     setLoading(true);
-    let fileName = 'ManifestPenumpang_';
+    let fileName = 'ManifestPembayaran_';
           if (isSameDate(dateRange.startDate || new Date(), dateRange.endDate || new Date())) {
             fileName = fileName + parseDateToShortFormat(dateRange.startDate || new Date()) + '.pdf';
           } else {

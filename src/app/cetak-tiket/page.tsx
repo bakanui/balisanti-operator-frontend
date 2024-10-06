@@ -128,7 +128,6 @@ export default function Operator() {
                     setLoading(false);
                     toast.error('Nomor Invoice Tidak Ditemukan!');
                 }
-                console.log(data.data);
                 const tempPenumpang = data.penumpang;
                 const agen = data.agen;
                 setAgen(agen);
