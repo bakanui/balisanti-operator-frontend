@@ -6,7 +6,7 @@ import { BaseContainer } from "@/app/components/Container";
 import { Input } from "../../components/Input";
 import { QrScanner } from '@yudiel/react-qr-scanner';
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { convertLabelToPrice, parseDateIncludeHours, toastErrorConfig, toastSuccessConfig } from "@/app/utils/utility";
 import { scanTiketAction } from "../scan.service";
 import { toast, ToastContainer } from "react-toastify";
@@ -15,9 +15,11 @@ import { IPenumpang } from "../../types/jadwal";
 import { AlertChecker } from "../../components/AlertChecker";
 import { LoadingOverlay } from "../../components/LoadingOverlay";
 import { IPenumpangOption, PenumpangListKeberangkatan } from "../../pembayaran-agen/components/PenumpangListKeberangkatan";
+import { removeStorage, getStorageValue, setStorageValue } from "../../utils/localstoreage";
 
 export default function OperatorCheck(){
     const router = useRouter();
+    const queryParams: any = useSearchParams();
     const [loading, setLoading] = useState(false);
     const [kode, setKode] = useState('');
     const [penumpang, setPenumpang] = useState<IPenumpangOption[]>([]);
@@ -25,14 +27,14 @@ export default function OperatorCheck(){
     const [showAlert, setShowAlert] = useState(false);
     const [showAlert2, setShowAlert2] = useState(false);
     const [messageAlert, setMessageAlert] = useState('');
-    const time = localStorage.getItem('jamKeberangkatan') || '';
+    let time = getStorageValue('tiket');
 
     const onScanned = (result: string) => {
         setLoading(true);
         scanTiketAction(
             {
                 kode_booking: result,
-                waktu_keberangkatan: time
+                waktu_keberangkatan: time.waktu_berangkat
             },
             (data)=> {
                 // setMessageAlert(data.message);
@@ -104,11 +106,12 @@ export default function OperatorCheck(){
     }
    
     const back = () => {
+        removeStorage('jamKeberangkatan');
         router.back();
     }
     return(
         <BaseContainer>
-            <CustomBreadcumb title={"Scan Tiket Keberangkatan " + localStorage.getItem('jamKeberangkatan')} onBack={back}/>
+            <CustomBreadcumb title={"Scan Tiket Keberangkatan " + time.waktu_berangkat} onBack={back}/>
             <BaseCard>
                 <div className="p-2 sm:flex sm:flex-row h-fit">
                     <div className="sm:h-[400px] sm:w-[400px] sm:flex sm:items-center">
