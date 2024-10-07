@@ -78,7 +78,7 @@ export default function OperatorCheck(){
         scanTiketAction(
             {
                 kode_booking: kode,
-                waktu_keberangkatan: time
+                waktu_keberangkatan: time.waktu_berangkat
             },
             (data)=> {
                 // setMessageAlert(data.message);
