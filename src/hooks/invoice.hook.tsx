@@ -197,6 +197,32 @@ export const handleDownloadManifest = (
     // return [download, loading, error];
 }
 
+export const handleDownloadGT = (
+    params: any,
+    onSuccess: (data: any) => void,
+    onFailed: (error:any) => void,
+    onUnAuth?: () => void
+ ) => {
+    const auth: IAuth = getStorageValue('auth');
+    axios.post<any[]>(API_LAPORAN.DOWNLOAD_GT, 
+        {...params},
+        {
+            headers: {
+                Authorization: `Bearer ${auth.authorisation.token}`
+            },
+            responseType: 'blob'
+        }
+    )
+    .then((response)=> {
+        // process.env.NODE_ENV && console.log('GET getPenumpangByJadwalAction = ', response);
+        onSuccess(response.data);
+    })
+    .catch(function (error) {
+        let err = errorHandler(error, ()=> onUnAuth && onUnAuth());
+        onFailed(err);
+    });
+}
+
 export const handleDownloadManifestPembayaran = (
     params: any,
     onSuccess: (data: any) => void,

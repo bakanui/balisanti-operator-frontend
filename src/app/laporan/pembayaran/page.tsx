@@ -24,7 +24,7 @@ import { getStorageValue } from '@/app/utils/localstoreage';
 import { useReactToPrint } from 'react-to-print';
 import { Button } from '@/app/components/Button';
 import { HeadTb, TableRow } from '@/app/components/MyTable';
-import { handleDownloadManifest, handleDownloadManifestPembayaran } from "@/hooks/invoice.hook";
+import { handleDownloadGT, handleDownloadManifestPembayaran } from "@/hooks/invoice.hook";
 import { saveAs } from 'file-saver';
 import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
@@ -89,6 +89,7 @@ export default function LaporanPembayaran() {
   const [user, setUser] = useState<any>();
   const componentRef: any = useRef();
   const [data, setData] = useState<any[]>([]);
+  const [listJadwal, setListJadwal] = useState<any[]>([]);
   const [dataPembayaran, setDataPembayaran] = useState<any[]>([]);
   const [dataAll, setDataAll] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -184,6 +185,30 @@ export default function LaporanPembayaran() {
       case "va":
         return "Virtual Account BPD";
     }
+  }
+
+  const handleDownloadLapGT = () => {
+    setLoading(true);
+    let fileName = 'LaporanGT_';
+          if (isSameDate(dateRange.startDate || new Date(), dateRange.endDate || new Date())) {
+            fileName = fileName + parseDateToShortFormat(dateRange.startDate || new Date()) + '.pdf';
+          } else {
+            fileName = fileName + parseDateToShortFormat(dateRange.startDate || new Date()) + "-" + parseDateToShortFormat(dateRange.endDate || new Date()) + '.pdf';
+          }
+    handleDownloadGT(
+      {
+          id_jadwal: listJadwal,
+          tanggal: parseDateToBackendFormat(dateRange.startDate || new Date()),
+          tanggal_akhir: parseDateToBackendFormat(dateRange.endDate || new Date())
+      },
+      (data)=>{
+          fileDownload(data, fileName);
+          setLoading(false);
+      },
+      ()=>{
+          setLoading(false);
+      }
+  );
   }
 
   const getData = (page?: number) => {
@@ -356,6 +381,8 @@ export default function LaporanPembayaran() {
               label: `(${item.waktu_berangkat} WITA) ${item.nama_rute}`
             }
           });
+          let ids = data.data.map((item: any) => item.id_jadwal);
+          setListJadwal(ids)
           let fromCustomRoute = {value: FROM_ROUTE_ID, label: FROM_ROUTE_LABEL},
           toCustomRoute = {value: TO_ROUTE_ID, label: TO_ROUTE_LABEL};
           setjadwal([{value: '', label: 'Pilih Data'}, ...tmp]);
@@ -601,6 +628,12 @@ export default function LaporanPembayaran() {
                 <Button 
                   label='Download Laporan'
                   onClick={handleDownloadM}
+                />
+              </div>
+              <div className='w-1/4'>
+                <Button 
+                  label='Download Laporan GT'
+                  onClick={handleDownloadLapGT}
                 />
               </div>
             </>

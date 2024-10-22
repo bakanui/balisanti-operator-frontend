@@ -55,6 +55,7 @@ export const API_LAPORAN = {
     DETAIL_LAPORAN_OPERATOR: `${BASE_URL}/laporan/operator`,
     REKAP_LAPORAN_OPERATOR: `${BASE_URL}/laporan/operator/recap`,
     DOWNLOAD_MANIFEST: `${BASE_URL}/pembayaran-agen/download-manifest/`,
+    DOWNLOAD_GT: `${BASE_URL}/manifest/laporan-gt`,
     DOWNLOAD_MANIFEST_PEMBAYARAN: `${BASE_URL}/laporan/pembayaran/download-manifest-pembayaran/`,
     LIST_PEMBAYARAN_BY_JADWAL: `${BASE_URL}/laporan/pembayaran`,
 }
