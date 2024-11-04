@@ -101,21 +101,21 @@ export default function Service(){
     }
 
     const gotoEdit = (id: number) => {
-        router.push('/master-data/service/edit?id='+id);
+        router.push('/master-data/barang/edit?id='+id);
     }
 
     const gotoTambah = () => {
-        router.push('/master-data/service/tambah');
+        router.push('/master-data/barang/tambah');
     }
 
     return(
         <BaseContainer>
-            <CustomBreadcumb title="Harga Service"/>
+            <CustomBreadcumb title="Harga Barang"/>
             <BaseCard>
             
                 <div className="w-[220px] mb-4">
                     <Button 
-                        label="Tambah Harga Service"
+                        label="Tambah Harga Barang"
                         icon={faPlus}
                         onClick={gotoTambah}
                     />
@@ -135,8 +135,8 @@ export default function Service(){
                     <HeadTb>
                         <tr>
                             <th className="text-sm font-robotomedium pl-4 py-2">No</th>
-                            <th className="text-sm font-robotomedium py-2">Area Penjemputan</th>
-                            <th className="text-sm font-robotomedium py-2">Dermaga Tujuan</th>
+                            <th className="text-sm font-robotomedium py-2">Nama Barang</th>
+                            <th className="text-sm font-robotomedium py-2">Nama Barang</th>
                             <th className="text-sm font-robotomedium py-2">Harga</th>
                             <th className="text-sm font-robotomedium py-2">Status</th>
                             <th className="text-sm font-robotomedium py-2">Aksi</th>
@@ -148,8 +148,8 @@ export default function Service(){
                         return(
                             <TableRow key={item.id} strip={index%2 == 1}>
                                 <td className="pl-4 py-2">{startingNumber+index+1}</td>
-                                <td className="py-2">{item.area_jemput}</td>
-                                <td className="py-2">{item.nama_dermaga}</td>
+                                <td className="py-2">{item.nama_barang}</td>
+                                <td className="py-2">{item.jenis_barang}</td>
                                 <td className="py-2">Rp. {convertLabelToPrice(`${item.harga}`)}</td>
                                 <td className="py-2">
                                     <Badge 
@@ -162,7 +162,7 @@ export default function Service(){
                                         <ActionButton 
                                             label="Aksi"
                                             outline={true}
-                                            onDelete={()=>confirmDelete(item.id, item.nama_dermaga)}
+                                            onDelete={()=>confirmDelete(item.id, item.nama_barang)}
                                             onEdit={()=>gotoEdit(item.id)}
                                         />
                                     </div>

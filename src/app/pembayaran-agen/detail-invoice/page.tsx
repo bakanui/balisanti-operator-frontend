@@ -143,8 +143,8 @@ export default function DetailInvoice() {
                 }, 0),
                 service = {
                   id: new Date().getTime(),
-                  keterangan: 'Penjemputan',
-                  jenisPenumpang: { value: '-', label: '-' },
+                  keterangan: 'Barang',
+                  jenisPenumpang: { value: '-', label: data.service.nama_barang + ' - ' + data.service.jenis_barang },
                   qty: totService,
                   tarif: temp.harga_service,
                   // subtotal: tempJenisPerjalanan ? totTiket/2 * temp.harga_service :  totTiket * temp.harga_service,

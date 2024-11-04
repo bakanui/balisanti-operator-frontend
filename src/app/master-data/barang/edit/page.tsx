@@ -9,6 +9,7 @@ import { PriceInput } from "@/app/components/PriceInput";
 import { SelectBox } from "@/app/components/SelectBox";
 import { STATUS } from "@/app/constants/status";
 import { IDermaga } from "@/app/types/dermaga";
+import { IOptions, IUsers } from "@/app/types/auth";
 import { convertLabelPriceToNumeberPrice, convertLabelToPrice, toastErrorConfig, toastSuccessConfig } from "@/app/utils/utility";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -19,7 +20,7 @@ import { editHargaServiceAction, getDetailHargaServiceAction } from "../hargaSer
 export default function EditService(){
     const router = useRouter();
     const queryParams: any = useSearchParams();
-    const [dermagaTujuan, setDermagaTujuan] = useState([]);
+    const [dermagaTujuan, setDermagaTujuan] = useState<IOptions[]>([]);
     const [selectedJenisPenumpang, setSelectedJenisPenumpang] = useState({ value: '', label: 'Pilih Data' });
     const [selectedDermagaTujuan, setSelectedDermagaTujuan] = useState({ value: '', label: 'Pilih Data' });
     const [areaPenjemputan, setAreaPenjemputan] = useState('');
@@ -30,47 +31,76 @@ export default function EditService(){
 
     useEffect(()=> {
         setLoading(true);
-        getDermagaAction(
-            {
-                limit: 100,
-                status: 1
-            },
+        // getDermagaAction(
+        //     {
+        //         limit: 100,
+        //         status: 1
+        //     },
+        //     (data) => {
+        //         setDermagaTujuan(data.data.map((item: IDermaga)=> ({
+        //             value: item.id,
+        //             label: item.nama_dermaga
+        //         })));
+        //         getDetailHargaServiceAction(
+        //             queryParams.get('id'),
+        //             (data) => {
+        //                 setSelectedJenisPenumpang({
+        //                     value: `${data.id_jenis_penumpang}`,
+        //                     label: data.jenis_penumpang
+        //                 });
+        //                 setSelectedDermagaTujuan({
+        //                     value: `${data.id_dermaga_tujuan}`,
+        //                     label: data.nama_dermaga
+        //                 });
+        //                 setHarga(convertLabelToPrice(`${data.harga}`));
+        //                 setAreaPenjemputan(data.area_jemput);
+        //                 setStatus({
+        //                     value: `${data.status_service}`,
+        //                     label: data.status_service == 1 ? 'Aktif' : 'Tidak Aktif'
+        //                 });
+        //                 setLoading(false);
+        //             },
+        //             (err) => {
+        //                 setLoading(false);
+        //                 toast.error(err, toastErrorConfig);
+        //             },
+        //             () => {router.replace('/login')},
+        //         );
+        //     },
+        //     (err) => {
+        //         setLoading(false);
+        //         toast.error(err, toastErrorConfig);
+        //     },
+        //     () => router.replace('/login')
+        // );
+        getDetailHargaServiceAction(
+            queryParams.get('id'),
             (data) => {
-                setDermagaTujuan(data.data.map((item: IDermaga)=> ({
-                    value: item.id,
-                    label: item.nama_dermaga
-                })));
-                getDetailHargaServiceAction(
-                    queryParams.get('id'),
-                    (data) => {
-                        setSelectedJenisPenumpang({
-                            value: `${data.id_jenis_penumpang}`,
-                            label: data.jenis_penumpang
-                        });
-                        setSelectedDermagaTujuan({
-                            value: `${data.id_dermaga_tujuan}`,
-                            label: data.nama_dermaga
-                        });
-                        setHarga(convertLabelToPrice(`${data.harga}`));
-                        setAreaPenjemputan(data.area_jemput);
-                        setStatus({
-                            value: `${data.status_service}`,
-                            label: data.status_service == 1 ? 'Aktif' : 'Tidak Aktif'
-                        });
-                        setLoading(false);
-                    },
-                    (err) => {
-                        setLoading(false);
-                        toast.error(err, toastErrorConfig);
-                    },
-                    () => {router.replace('/login')},
-                );
+                setSelectedDermagaTujuan({
+                    value: data.jenis_barang,
+                    label: data.jenis_barang
+                });
+                setHarga(convertLabelToPrice(`${data.harga}`));
+                setAreaPenjemputan(data.nama_barang);
+                setStatus({
+                    value: `${data.status_service}`,
+                    label: data.status_service == 1 ? 'Aktif' : 'Tidak Aktif'
+                });
+                let data2 = [{
+                    value: "Hewan",
+                    label: "Hewan"
+                },{
+                    value: "Barang",
+                    label: "Barang"
+                }]
+                setDermagaTujuan(data2)
+                setLoading(false);
             },
             (err) => {
                 setLoading(false);
                 toast.error(err, toastErrorConfig);
             },
-            () => router.replace('/login')
+            () => {router.replace('/login')},
         );
     },[]);
     
@@ -84,9 +114,9 @@ export default function EditService(){
         editHargaServiceAction(
             {
                 id: queryParams.get('id'),
-                id_jenis_penumpang: selectedJenisPenumpang.value,
-                area_jemput: areaPenjemputan,
-                id_dermaga_tujuan: selectedDermagaTujuan.value,
+                jenis_barang: selectedJenisPenumpang.value,
+                nama_barang: areaPenjemputan,
+                // id_dermaga_tujuan: selectedDermagaTujuan.value,
                 harga: convertLabelPriceToNumeberPrice(harga),
                 status_service: status.value
             },
@@ -117,13 +147,13 @@ export default function EditService(){
             <BaseCard>
                 <div className="sm:grid gap-x-6 grid-cols-2">
                     <Input 
-                        label="Area Penjemputan"
+                        label="Nama Barang"
                         placeholder="Masukkan nama area penjemputan"
                         onChangeText={(e)=>setAreaPenjemputan(e.target.value)}
                         value={areaPenjemputan}
                     />
                     <SelectBox 
-                        label="Dermaga Tujuan"
+                        label="Jenis Barang"
                         placeholder="Pilih data"
                         option={dermagaTujuan}
                         onChange={setSelectedDermagaTujuan}

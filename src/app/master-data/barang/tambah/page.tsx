@@ -9,6 +9,7 @@ import { PriceInput } from "@/app/components/PriceInput";
 import { SelectBox } from "@/app/components/SelectBox";
 import { STATUS } from "@/app/constants/status";
 import { IDermaga } from "@/app/types/dermaga";
+import { IOptions, IUsers } from "@/app/types/auth";
 import { convertLabelPriceToNumeberPrice, toastErrorConfig, toastSuccessConfig } from "@/app/utils/utility";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -18,7 +19,7 @@ import { createHargaServiceAction } from "../hargaService.service";
 
 export default function AddService(){
     const router = useRouter();
-    const [dermagaTujuan, setDermagaTujuan] = useState([]);
+    const [dermagaTujuan, setDermagaTujuan] = useState<IOptions[]>([]);
     const [selectedDermagaTujuan, setSelectedDermagaTujuan] = useState({ value: '', label: 'Pilih Data' });
     const [areaPenjemputan, setAreaPenjemputan] = useState('');
     const [harga, setHarga] = useState('');
@@ -28,24 +29,33 @@ export default function AddService(){
 
     useEffect(()=> {
         setLoading(true);
-        getDermagaAction(
-            {
-                limit: 100,
-                status: 1
-            },
-            (data) => {
-                setDermagaTujuan(data.data.map((item: IDermaga)=> ({
-                    value: item.id,
-                    label: item.nama_dermaga
-                })));
-                setLoading(false);
-            },
-            (err) => {
-                setLoading(false);
-                toast.error(err, toastErrorConfig);
-            },
-            () => router.replace('/login')
-        );
+        // getDermagaAction(
+        //     {
+        //         limit: 100,
+        //         status: 1
+        //     },
+        //     (data) => {
+        //         setDermagaTujuan(data.data.map((item: IDermaga)=> ({
+        //             value: item.id,
+        //             label: item.nama_dermaga
+        //         })));
+        //         setLoading(false);
+        //     },
+        //     (err) => {
+        //         setLoading(false);
+        //         toast.error(err, toastErrorConfig);
+        //     },
+        //     () => router.replace('/login')
+        // );
+        let data = [{
+            value: "Hewan",
+            label: "Hewan"
+        },{
+            value: "Barang",
+            label: "Barang"
+        }]
+        setDermagaTujuan(data)
+        setLoading(false);
     },[]);
     
     const save = () => {
@@ -57,8 +67,8 @@ export default function AddService(){
         setLoading(true);
         createHargaServiceAction(
             {
-                area_jemput: areaPenjemputan,
-                id_dermaga_tujuan: selectedDermagaTujuan.value,
+                nama_barang: areaPenjemputan,
+                jenis_barang: selectedDermagaTujuan.value,
                 harga: convertLabelPriceToNumeberPrice(harga),
                 status_service: status.value
             },
@@ -83,19 +93,19 @@ export default function AddService(){
     return(
         <BaseContainer>
             <CustomBreadcumb
-             title="Tambah Harga Service"
+             title="Tambah Harga Barang"
              onBack={back}
              />
             <BaseCard>
                 <div className="sm:grid gap-x-6 grid-cols-2">
                     <Input 
-                        label="Area Penjemputan"
-                        placeholder="Masukkan nama area penjemputan"
+                        label="Nama Barang"
+                        placeholder="Masukkan nama barang"
                         onChangeText={(e)=>setAreaPenjemputan(e.target.value)}
                         value={areaPenjemputan}
                     />
                     <SelectBox 
-                        label="Dermaga Tujuan"
+                        label="Jenis Barang"
                         placeholder="Pilih data"
                         option={dermagaTujuan}
                         onChange={setSelectedDermagaTujuan}

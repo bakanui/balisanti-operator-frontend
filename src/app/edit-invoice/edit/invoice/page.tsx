@@ -24,7 +24,7 @@ import { IPenjualanTiket, IPenumpangInfo } from "@/app/types/jadwal";
 import { getStorageValue } from "@/app/utils/localstoreage";
 import { JENIS_KELAMIN } from "@/app/constants/jenisKelamin";
 import { IHargaService } from "@/app/types/hargaService";
-import { getHargaServiceAction } from "@/app/master-data/service/hargaService.service";
+import { getHargaServiceAction } from "@/app/master-data/barang/hargaService.service";
 import { IRute } from "@/app/types/rute";
 import { CustomModal } from "@/app/components/CustomModal";
 import { PaketModal } from "@/app/penjualan-tiket/components/PaketModal";
@@ -218,7 +218,7 @@ export default function EditCoreInvoice() {
                                 (data) => {
                                     setService(data.data.map((item: IHargaService) => ({
                                         value: item.id,
-                                        label: item.area_jemput
+                                        label: item.nama_barang
                                     })));
                                     setServiceInfo(data.data);
                                     setLoading(false);

@@ -176,10 +176,10 @@ export const SidebarComponent = () => {
                         href='/master-data/jadwal'
                     />
                     <SideMenuItem 
-                        text='Harga Service'
+                        text='Harga Barang'
                         path={router}
-                        icon={<HargaIcon fill={router?.includes('/master-data/service') || mode == 'dark' ? 'white' : undefined} />}
-                        href='/master-data/service'
+                        icon={<HargaIcon fill={router?.includes('/master-data/barang') || mode == 'dark' ? 'white' : undefined} />}
+                        href='/master-data/barang'
                     />
                     <SideMenuItem 
                         text='Users'

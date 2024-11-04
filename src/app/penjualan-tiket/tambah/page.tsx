@@ -29,7 +29,7 @@ import { KEWARNEGARAAN } from "@/app/constants/kewarnegaraan";
 import { JENIS_KELAMIN } from "@/app/constants/jenisKelamin";
 import { JENIS_PEMBAYARAN } from "@/app/constants/jenisPembayaran";
 import { IHargaService } from "@/app/types/hargaService";
-import { getHargaServiceAction } from "@/app/master-data/service/hargaService.service";
+import { getHargaServiceAction } from "@/app/master-data/barang/hargaService.service";
 import { getDetailRuteAction } from "@/app/master-data/rute/rute.service";
 import { getDetailPenumpangByPhone } from "@/app/master-data/penumpang/penumpang.service";
 import { IRute } from "@/app/types/rute";
@@ -41,11 +41,13 @@ import { Alert } from "@/app/components/Alert";
 import { PriceInput } from "@/app/components/PriceInput"
 import { createPembayaranAction } from "@/app/pembayaran-agen/pembayaran.service";
 import seat from './../../../assets/seat.png';
+import { InputQty } from "@/app/components/InputQty";
 
 export default function AddPenjualanTiket() {
     const router = useRouter();
     const queryParams: any = useSearchParams();
     const [jenisPenumpang, setJenisPenumpang] = useState<IOptions[]>([]);
+    const [qty, setQty] = useState(1);
     const [agen, setAgen] = useState<IOptions[]>([]);
     const [selectedAgen, setSelectedAgen] = useState({ value: '61', label: 'Gangga Express' });
     const [agenOrigin, setAgenOrigin] = useState<IAgen[]>([]);
@@ -81,6 +83,7 @@ export default function AddPenjualanTiket() {
         isTambahanService: false,
         service: { value: '', label: 'Pilih Data' }
     });
+    const [serviceList, setServiceList] = useState<IOptions[]>([]);
     const [service, setService] = useState<IOptions[]>([]);
     const [serviceInfo, setServiceInfo] = useState<IHargaService[]>([]);
     const [penumpangInfo, setPenumpangInfo] = useState<IPenumpangInfo[]>([]);
@@ -151,7 +154,7 @@ export default function AddPenjualanTiket() {
                             (data) => {
                                 setService(data.data.map((item: IHargaService) => ({
                                     value: item.id,
-                                    label: item.area_jemput
+                                    label: item.nama_barang
                                 })));
                                 setServiceInfo(data.data);
                                 getRuteDetail(currTiket);
@@ -182,6 +185,10 @@ export default function AddPenjualanTiket() {
     }, [rombongan.length]);
 
     useEffect(() => {
+        onValueChanged();
+    }, [qty]);
+
+    useEffect(() => {
         if (tambahanService.isTambahanService && tambahanService.service.value) {
             let tmp = serviceInfo.filter((item) => item.id.toString() == tambahanService.service.value);
             if (tmp.length > 0) {
@@ -193,8 +200,8 @@ export default function AddPenjualanTiket() {
                 let harga = tmp[0].harga,
                     newService = {
                         id: new Date().getTime(),
-                        keterangan: 'Bagasi - 5KG',
-                        jenisPenumpang: { value: 'service', label: '-' },
+                        keterangan: "Barang",
+                        jenisPenumpang: { value: 'service', label: tmp[0].nama_barang + " - " + tmp[0].jenis_barang },
                         qty: jenisPerjalanan == 'pulang_pergi' ? qty / 2 : qty,
                         tarif: harga,
                         subtotal: jenisPerjalanan == 'pulang_pergi' ? qty / 2 * harga : qty * harga,
@@ -394,19 +401,17 @@ export default function AddPenjualanTiket() {
         }
         const service = summaryTabel.filter((item) => item.jenisPenumpang.value == 'service');
         if (service.length > 0) {
-            let qty = summary.reduce((acc, curr) => {
-                return acc + curr.qty
-            }, 0);
+            let qtyy = qty;
             let tmp = serviceInfo.filter((item) => item.id.toString() == tambahanService.service.value);
             let harga = tmp[0].harga;
             if (jenisPerjalanan == 'pulang_pergi') {
-                qty = qty / 2;
+                qtyy = qtyy / 2;
             }
             summary.push({
                 ...service[0],
-                qty: qty,
+                qty: qtyy,
                 tarif: harga,
-                subtotal: qty * harga
+                subtotal: qtyy * harga
             });
         }
         setSummaryTabel(summary);
@@ -1149,7 +1154,7 @@ export default function AddPenjualanTiket() {
                 <div className="sm:grid gap-x-6 grid-cols-2">
                     <div>
                         <CheckBox
-                            text="Tambahan Bagasi"
+                            text="Tambahan Barang"
                             selected={tambahanService.isTambahanService}
                             onClick={() => setTambahanService({
                                 ...tambahanService,
@@ -1160,7 +1165,7 @@ export default function AddPenjualanTiket() {
                             <>
                                 <div className="mt-4" />
                                 <SelectBox
-                                    label="Bagasi"
+                                    label="Barang"
                                     placeholder="Pilih data"
                                     option={service}
                                     onChange={(e) => setTambahanService({
@@ -1168,6 +1173,12 @@ export default function AddPenjualanTiket() {
                                         service: e
                                     })}
                                     value={tambahanService.service}
+                                />
+                                <InputQty
+                                    label="Jumlah Barang"
+                                    placeholder="1"
+                                    value={qty}
+                                    onChangeText={(e) => setQty(e)}
                                 />
                             </>
                         : null}
