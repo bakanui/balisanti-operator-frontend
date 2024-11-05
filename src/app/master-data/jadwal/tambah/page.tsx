@@ -47,6 +47,8 @@ export default function AddJadwal(){
             id: new Date().getTime(),
             penumpang: { value: '', label: 'Pilih Data', jenis: '', tipe: '' },
             harga: '',
+            js: '',
+            jp: ''
         }
     ]);
     const [jenisPenumpang, setJenisPenumpang] = useState<IOptions[]>([]);
@@ -213,7 +215,7 @@ export default function AddJadwal(){
     }
 
     const addTiket = () => {
-        setTiket([...tiket, {id: new Date().getTime() , penumpang: {value: '', label: 'Pilih Data', jenis: '', tipe: ''}, harga: '0' }]);
+        setTiket([...tiket, {id: new Date().getTime() , penumpang: {value: '', label: 'Pilih Data', jenis: '', tipe: ''}, harga: '0', js: '0', jp: '0' }]);
     }
 
     const deleteTiket = (index: number) => {
@@ -233,6 +235,18 @@ export default function AddJadwal(){
     const setHargaTiket = (value: string, index: number) => {
         let tmp = JSON.parse(JSON.stringify(tiket));
         tmp[index].harga = value;
+        setTiket(tmp);
+    }
+
+    const setJsTiket = (value: string, index: number) => {
+        let tmp = JSON.parse(JSON.stringify(tiket));
+        tmp[index].js = value;
+        setTiket(tmp);
+    }
+
+    const setJpTiket = (value: string, index: number) => {
+        let tmp = JSON.parse(JSON.stringify(tiket));
+        tmp[index].jp = value;
         setTiket(tmp);
     }
 
@@ -312,6 +326,10 @@ export default function AddJadwal(){
                             onOptionChange={(e)=> selectOption(e, index)}
                             priceValue={item.harga}
                             priceChange={(val)=>setHargaTiket(val, index)}
+                            jsValue={item.js}
+                            jsChange={(val)=>setJsTiket(val, index)}
+                            jpValue={item.jp}
+                            jpChange={(val)=>setJpTiket(val, index)}
                         />
                     );
                 })}

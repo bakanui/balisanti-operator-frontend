@@ -7,4 +7,5 @@ export const JENIS_PENUMPANG: IOptions[] = [
     {value: 'Lokal (PP)', label: 'Lokal (PP)'},
     {value: 'Domestik (PP)', label: 'Domestik (PP)'},
     {value: 'Mancanegara (PP)', label: 'Mancanegara (PP)'},
+    {value: 'Kendaraan', label: 'Kendaraan'},
 ];

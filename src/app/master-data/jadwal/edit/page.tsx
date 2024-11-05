@@ -48,7 +48,9 @@ export default function EditJadwal(){
         {
             id: new Date().getTime(),
             penumpang: { value: '', label: 'Pilih Data' },
-            harga: ''
+            harga: '',
+            js: '',
+            jp: ''
         }
     ]);
     const [jenisPenumpang, setJenisPenumpang] = useState<IOptions[]>([]);
@@ -163,7 +165,9 @@ export default function EditJadwal(){
                 value: `${item.id_jenis_penumpang}`,
                 label: `${item.tipe_penumpang} - ${item.jenis_penumpang}`
             },
-            harga: `${item.harga}`
+            harga: `${item.harga}`,
+            js: `${item.js}`,
+            jp: `${item.jp}`
         }));
         setJenisJawal({value: `${data.jenis_jadwal}`, label: data.jenis_jadwal});
         setselectedKapal({value: `${data.id_kapal}`, label: data.nama_kapal});
@@ -188,7 +192,9 @@ export default function EditJadwal(){
                 status_jadwal: status.value,
                 harga_tiket: tiket.map((item => ({
                     id_jenis_penumpang: item.penumpang.value,
-                    harga: convertLabelPriceToNumeberPrice(item.harga)
+                    harga: convertLabelPriceToNumeberPrice(item.harga),
+                    js: convertLabelPriceToNumeberPrice(item.js),
+                    jp: convertLabelPriceToNumeberPrice(item.jp)
                 })))
             },
             (res)=>{
@@ -238,7 +244,7 @@ export default function EditJadwal(){
     }
 
     const addTiket = () => {
-        setTiket([...tiket, {id: new Date().getTime() , penumpang: {value: '', label: 'Pilih Data'}, harga: '0' }]);
+        setTiket([...tiket, {id: new Date().getTime() , penumpang: {value: '', label: 'Pilih Data'}, harga: '0', js: '0', jp: '0' }]);
     }
 
     const deleteTiket = (index: number) => {
@@ -258,6 +264,18 @@ export default function EditJadwal(){
     const setHargaTiket = (value: string, index: number) => {
         let tmp = JSON.parse(JSON.stringify(tiket));
         tmp[index].harga = value;
+        setTiket(tmp);
+    }
+
+    const setJsTiket = (value: string, index: number) => {
+        let tmp = JSON.parse(JSON.stringify(tiket));
+        tmp[index].js = value;
+        setTiket(tmp);
+    }
+
+    const setJpTiket = (value: string, index: number) => {
+        let tmp = JSON.parse(JSON.stringify(tiket));
+        tmp[index].jp = value;
         setTiket(tmp);
     }
 
@@ -392,6 +410,10 @@ export default function EditJadwal(){
                             onOptionChange={(e)=> selectOption(e, index)}
                             priceValue={item.harga}
                             priceChange={(val)=>setHargaTiket(val, index)}
+                            jsValue={item.js}
+                            jsChange={(val)=>setJsTiket(val, index)}
+                            jpValue={item.jp}
+                            jpChange={(val)=>setJpTiket(val, index)}
                         />
                     );
                 })}

@@ -1203,6 +1203,7 @@ export default function AddPenjualanTiket() {
                                         ...collect,
                                         total: e
                                     })}
+                                    disabled={false}
                                 />
                             </>
                         : null}

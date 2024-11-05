@@ -116,6 +116,7 @@ export default function AddService(){
                     placeholder="100.000"
                     onChangeText={(text)=>setHarga(text)}
                     value={harga}
+                    disabled={false}
                 />
                 <SelectBox 
                     label="Status"

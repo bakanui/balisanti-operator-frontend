@@ -5,6 +5,7 @@ interface IProps {
     label: string;
     placeholder: string;
     value: string;
+    disabled: boolean;
     onChangeText: (text: string)=> void;
 }
 export const PriceInput = (props: IProps) => {
@@ -36,7 +37,8 @@ export const PriceInput = (props: IProps) => {
             defaultValue={'0'} 
             onInput={handleChange}
             className="text-input text-sm mb-4 border-primary" 
-            placeholder={props.placeholder}/>
+            placeholder={props.placeholder}
+            disabled={props.disabled}/>
         </div>
     );
 }
