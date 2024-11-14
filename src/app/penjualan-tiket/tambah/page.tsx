@@ -42,6 +42,7 @@ import { PriceInput } from "@/app/components/PriceInput"
 import { createPembayaranAction } from "@/app/pembayaran-agen/pembayaran.service";
 import seat from './../../../assets/seat.png';
 import { InputQty } from "@/app/components/InputQty";
+import { M_PLUS_1 } from "@next/font/google";
 
 export default function AddPenjualanTiket() {
     const router = useRouter();
@@ -76,6 +77,15 @@ export default function AddPenjualanTiket() {
             alamat: '',
             kewarnegaraan: { value: 'ID', label: 'Indonesia' },
             jenisPembayaran: { value: 'tunai', label: 'Tunai' }
+        }
+    ]);
+    const [services, setServices] = useState([
+        {
+            id_harga_service: 0,
+            qty: 1,
+            harga: 0,
+            nama_barang: '',
+            jenis_barang: ''
         }
     ]);
     const [telepon, setTelepon] = useState("");
@@ -154,7 +164,9 @@ export default function AddPenjualanTiket() {
                             (data) => {
                                 setService(data.data.map((item: IHargaService) => ({
                                     value: item.id,
-                                    label: item.nama_barang
+                                    label: item.nama_barang,
+                                    harga: item.harga,
+                                    jenis: item.jenis_barang
                                 })));
                                 setServiceInfo(data.data);
                                 getRuteDetail(currTiket);
@@ -186,52 +198,7 @@ export default function AddPenjualanTiket() {
 
     useEffect(() => {
         onValueChanged();
-    }, [qty]);
-
-    useEffect(() => {
-        if (tambahanService.isTambahanService && tambahanService.service.value) {
-            let tmp = serviceInfo.filter((item) => item.id.toString() == tambahanService.service.value);
-            if (tmp.length > 0) {
-                let preSummary = summaryTabel;
-                preSummary = preSummary.filter((item) => item.jenisPenumpang.value != 'service');
-                let qty = preSummary.reduce((acc, prev) => {
-                    return acc + prev.qty
-                }, 0);
-                let harga = tmp[0].harga,
-                    newService = {
-                        id: new Date().getTime(),
-                        keterangan: "Barang",
-                        jenisPenumpang: { value: 'service', label: tmp[0].nama_barang + " - " + tmp[0].jenis_barang },
-                        qty: jenisPerjalanan == 'pulang_pergi' ? qty / 2 : qty,
-                        tarif: harga,
-                        subtotal: jenisPerjalanan == 'pulang_pergi' ? qty / 2 * harga : qty * harga,
-                        diskon: '-'
-                    };
-                let sum = [...preSummary, newService];
-                let tot = sum.reduce((acc, prev) => {
-                    return acc + prev.subtotal
-                }, 0)
-                setSummaryTabel(sum);
-                setTotal(tot);
-            }
-        }
-    }, [tambahanService.service.value]);
-
-    useEffect(() => {
-        if (!tambahanService.isTambahanService) {
-            let preSummary = summaryTabel;
-            preSummary = preSummary.filter((item) => item.jenisPenumpang.value != 'service');
-            setSummaryTabel(preSummary);
-            let total = preSummary.reduce((prev, next) => {
-                return prev + next.subtotal;
-            }, 0);
-            setTotal(total);
-            setTambahanService({
-                ...tambahanService,
-                service: { value: '', label: 'Pilih Data' }
-            });
-        }
-    }, [tambahanService.isTambahanService]);
+    }, [services.length]);
 
     useEffect(() => {
         onValueChanged();
@@ -240,27 +207,6 @@ export default function AddPenjualanTiket() {
     useEffect(() => {
         onValueChanged();
     }, [discon]);
-
-    // useEffect(() => {
-    //     if (agenHolder?.id) {
-    //         const temp = summaryTabel.map((item) => {
-    //             if (item.keterangan == 'Penjemputan') {
-    //                 return {
-    //                     ...item,
-    //                     diskon: '-'
-    //                 }
-    //             }
-    //             return {
-    //                 ...item,
-    //                 diskon: agenHolder.jenis_diskon == 'persen' ? agenHolder.nominal_diskon + '%' : 'Rp. ' + convertLabelToPrice(`${agenHolder.nominal_diskon}`)
-    //             };
-    //         });
-    //         checkLimit();
-    //         setSummaryTabel(temp);
-    //         onValueChanged();
-
-    //     }
-    // }, [agenHolder?.id]);
 
     useEffect(() => {
         checkLimit();
@@ -277,6 +223,57 @@ export default function AddPenjualanTiket() {
     const back = () => {
         router.back();
     }
+
+    const barangSpawner = () => {
+        if(tambahanService.isTambahanService){
+            return (
+                <>
+                    {services.map((item, index) => (
+                        <div className="mb-4" key={index}>
+                            <NumberSeparator
+                                value={index + 1}
+                                onClick={() => hapusService(index)}
+                                enable={services.length > 1}
+                            />
+                            <SelectBox
+                                label="Barang"
+                                placeholder="Pilih data"
+                                option={service}
+                                onValueHasChanged={onValueChanged}
+                                onChange={(e) => setServices(services.map((itm, idx) => {
+                                    if (index === idx) {
+                                        return {
+                                            ...item,
+                                            harga: e.harga,
+                                            id_harga_service: e.value,
+                                            jenis_barang: e.jenis,
+                                            nama_barang: e.label
+                                        };
+                                    }
+                                    return itm;
+                                }))}
+                                value={{ value: String(item.id_harga_service), label: item.nama_barang }}
+                            />
+                            <InputQty
+                                label="Jumlah Barang"
+                                placeholder="1"
+                                value={item.qty}
+                                onChangeText={(e) => setServices(services.map((itm, idx) => {
+                                    if (index === idx) {
+                                        return {
+                                            ...item,
+                                            qty: e
+                                        };
+                                    }
+                                    return itm;
+                                }))}
+                            />
+                        </div>
+                    ))}
+                </>
+            );
+        }
+    };    
 
     const getRuteDetail = (slugTiket: IPenjualanTiket) => {
         // to reverse start and destination when user choose Pulang Pergi
@@ -327,6 +324,28 @@ export default function AddPenjualanTiket() {
         }
     }
 
+    const tambahService = () => {
+        if (!tiket) {
+            return;
+        }
+        const tmp = JSON.parse(JSON.stringify(services));
+        setServices([...tmp, {
+            id_harga_service: 0,
+            qty: 1,
+            harga: 0,
+            nama_barang: '',
+            jenis_barang: ''
+        }]);
+    }
+
+    const hapusService = (index: number) => {
+        if (index > -1) {
+            let tmp = [...services];
+            tmp.splice(index, 1);
+            setServices(tmp);
+        }
+    }
+
     const onJenisPenumpangChanged = (e: any, index: number) => {
         setRombongan(rombongan.map((itm, idx) => {
             if (index == idx) {
@@ -352,14 +371,6 @@ export default function AddPenjualanTiket() {
                 let diskon = 0, subtotal = 0;
                 if (jenisPerjalanan == 'pulang_pergi') {
                     subtotal = (tmp.length * 2) * penumpangInfo[i].harga_tiket; //kali 2 karena PP (pulang pergi)
-                    // if (agenHolder && agenHolder.jenis_diskon == 'persen') {
-                    //     diskon = (agenHolder.nominal_diskon / 100) * subtotal;
-                    //     subtotal = subtotal - diskon;
-                    // }
-                    // if (agenHolder && agenHolder.jenis_diskon == 'nominal') {
-                    //     diskon = agenHolder.nominal_diskon * (tmp.length * 2); //kali 2karena PP (pulang pergi)
-                    //     subtotal = subtotal - diskon;
-                    // }
                     if (discon !== '') {
                         diskon = parseFloat(discon) * 2;
                     }
@@ -375,14 +386,6 @@ export default function AddPenjualanTiket() {
                     });
                 } else {
                     subtotal = tmp.length * penumpangInfo[i].harga_tiket;
-                    // if (agenHolder && agenHolder.jenis_diskon == 'persen') {
-                    //     diskon = (agenHolder.nominal_diskon / 100) * subtotal;
-                    //     subtotal = subtotal - diskon;
-                    // }
-                    // if (agenHolder && agenHolder.jenis_diskon == 'nominal') {
-                    //     diskon = agenHolder.nominal_diskon * tmp.length;
-                    //     subtotal = subtotal - diskon;
-                    // }
                     if (discon !== '') {
                         diskon = parseFloat(discon);
                     }
@@ -399,20 +402,18 @@ export default function AddPenjualanTiket() {
                 }
             }
         }
-        const service = summaryTabel.filter((item) => item.jenisPenumpang.value == 'service');
-        if (service.length > 0) {
-            let qtyy = qty;
-            let tmp = serviceInfo.filter((item) => item.id.toString() == tambahanService.service.value);
-            let harga = tmp[0].harga;
-            if (jenisPerjalanan == 'pulang_pergi') {
-                qtyy = qtyy / 2;
-            }
-            summary.push({
-                ...service[0],
-                qty: qtyy,
-                tarif: harga,
-                subtotal: qtyy * harga
-            });
+        if(tambahanService.isTambahanService){
+            services.map((s) => {
+                summary.push({
+                    id: new Date().getTime(),
+                    keterangan: 'Barang',
+                    jenisPenumpang: {value: s.id_harga_service, label: s.jenis_barang + ' - ' + s.nama_barang},
+                    qty: s.qty,
+                    tarif: s.harga,
+                    subtotal: s.harga * s.qty,
+                    // diskon: 'Rp. ' + convertLabelToPrice(s.toString())
+                });
+            })
         }
         setSummaryTabel(summary);
         let total = summary.reduce((prev, next) => {
@@ -447,7 +448,6 @@ export default function AddPenjualanTiket() {
         getDetailPenumpangByPhone(
             no_telp,
             (data)=>{
-                console.log(data);
                 setRombongan(rombongan.map((itm, idx) => {
                     if (index == idx) {
                         var kelamin = '';
@@ -557,17 +557,26 @@ export default function AddPenjualanTiket() {
                 tanggal: parseDateToBackendFormat(tanggalKeberangkatan),
             }
         });
-        
+        let tmpService: { id_harga_service: number; qty: number; }[] = []
+        if (tambahanService.isTambahanService) {
+            services.map((s) => {
+                tmpService.push({
+                    id_harga_service: s.id_harga_service,
+                    qty: s.qty
+                })
+            })
+        }
         createPenjualanAction(
             {
                 tanggal: parseDateToBackendFormat(tanggalKeberangkatan),
                 id_agen: selectedAgen.value,
                 diskon_agen: discon,
-                id_service: tambahanService.service.value,
+                // id_service: tambahanService.service.value,
                 penumpangs: penumpangs,
                 tanggal_pulang: jenisPerjalanan == 'pulang_pergi' ? parseDateToBackendFormat(ppInfo.tanggal_balik) : undefined,
                 id_jadwal_pulang: jenisPerjalanan == 'pulang_pergi' ? ppInfo.id_tiket : undefined,
-                collect: collect.isCollect ? convertLabelPriceToNumeberPrice(collect.total) : undefined
+                collect: collect.isCollect ? convertLabelPriceToNumeberPrice(collect.total) : undefined,
+                services: tmpService
             },
             (data1) => {
                 createPenjualanSiwalatriAction(
@@ -1161,27 +1170,6 @@ export default function AddPenjualanTiket() {
                                 isTambahanService: !tambahanService.isTambahanService
                             })}
                         />
-                        {tambahanService.isTambahanService ?
-                            <>
-                                <div className="mt-4" />
-                                <SelectBox
-                                    label="Barang"
-                                    placeholder="Pilih data"
-                                    option={service}
-                                    onChange={(e) => setTambahanService({
-                                        ...tambahanService,
-                                        service: e
-                                    })}
-                                    value={tambahanService.service}
-                                />
-                                <InputQty
-                                    label="Jumlah Barang"
-                                    placeholder="1"
-                                    value={qty}
-                                    onChangeText={(e) => setQty(e)}
-                                />
-                            </>
-                        : null}
                     </div>
                     <div>
                         <CheckBox
@@ -1211,6 +1199,23 @@ export default function AddPenjualanTiket() {
                 </div>
                 
             </BaseCard>
+            
+            {tambahanService.isTambahanService ? <><div className="mt-4"></div>
+            
+            <BaseCard>
+                <div className="sm:grid gap-x-6 grid-cols-2">
+                    {barangSpawner()}
+                </div>
+                <div>
+                    <div className="w-[200px] ml-2">
+                        <Button
+                            label="Tambah Barang"
+                            icon={faPlus}
+                            onClick={tambahService}
+                        />
+                    </div>
+                </div>
+            </BaseCard></> : null}
 
             <div className="mt-4"></div>
             <BaseCard>

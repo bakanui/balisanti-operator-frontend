@@ -133,25 +133,19 @@ export default function DetailInvoice() {
               });
               console.log(tiket);
               // penjemputan
-              if (tiket.length > 0) {
-                const temp = tiket[0],
-                totTiket = tiket.reduce((acc: any, next: any)=> {
-                  return acc + next.qty
-                }, 0),
-                totService = tiket.reduce((acc: any, next: any)=> {
-                  return acc + parseInt(next.jumlah_service)
-                }, 0),
-                service = {
-                  id: new Date().getTime(),
-                  keterangan: 'Barang',
-                  jenisPenumpang: { value: '-', label: data.service.nama_barang + ' - ' + data.service.jenis_barang },
-                  qty: totService,
-                  tarif: temp.harga_service,
-                  // subtotal: tempJenisPerjalanan ? totTiket/2 * temp.harga_service :  totTiket * temp.harga_service,
-                  subtotal: totService * temp.harga_service,
-                  diskon: '-'
-                };
-                tiket.push(service);
+              if (data.service.length > 0) {
+                data.service.map((s: { nama_barang: string; jenis_barang: string; qty: number; harga: number; }) => {
+                  tiket.push({
+                    id: new Date().getTime(),
+                    keterangan: 'Barang',
+                    jenisPenumpang: { value: '-', label: s.nama_barang + ' - ' + s.jenis_barang },
+                    qty: s.qty,
+                    tarif: s.harga,
+                    // subtotal: tempJenisPerjalanan ? totTiket/2 * temp.harga_service :  totTiket * temp.harga_service,
+                    subtotal: s.qty * s.harga,
+                    diskon: '-'
+                  });
+                })
               }
               if (tempJenisPerjalanan) {
                 setjenisPerjalanan('pulang_pergi');
