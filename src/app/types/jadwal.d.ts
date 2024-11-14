@@ -28,7 +28,7 @@ export interface IHargaTiket {
     id: number;
     id_jadwal: number;
     id_jenis_penumpang: number;
-    harga: number;
+    tiket: number;
     js: number;
     jp: number;
     tipe_penumpang: string;

@@ -46,7 +46,7 @@ export default function AddJadwal(){
         {
             id: new Date().getTime(),
             penumpang: { value: '', label: 'Pilih Data', jenis: '', tipe: '' },
-            harga: '',
+            tiket: '',
             js: '',
             jp: ''
         }
@@ -163,7 +163,9 @@ export default function AddJadwal(){
                 status_jadwal: status.value,
                 harga_tiket: tiket.map(item => ({
                     id_jenis_penumpang: item.penumpang.value,
-                    harga: convertLabelPriceToNumeberPrice(item.harga)
+                    tiket: convertLabelPriceToNumeberPrice(item.tiket),
+                    js: convertLabelPriceToNumeberPrice(item.js),
+                    jp: convertLabelPriceToNumeberPrice(item.jp)
                 }))
             },
             (res) => {
@@ -215,7 +217,7 @@ export default function AddJadwal(){
     }
 
     const addTiket = () => {
-        setTiket([...tiket, {id: new Date().getTime() , penumpang: {value: '', label: 'Pilih Data', jenis: '', tipe: ''}, harga: '0', js: '0', jp: '0' }]);
+        setTiket([...tiket, {id: new Date().getTime() , penumpang: {value: '', label: 'Pilih Data', jenis: '', tipe: ''}, tiket: '0', js: '0', jp: '0' }]);
     }
 
     const deleteTiket = (index: number) => {
@@ -234,7 +236,7 @@ export default function AddJadwal(){
 
     const setHargaTiket = (value: string, index: number) => {
         let tmp = JSON.parse(JSON.stringify(tiket));
-        tmp[index].harga = value;
+        tmp[index].tiket = value;
         setTiket(tmp);
     }
 
@@ -324,7 +326,7 @@ export default function AddJadwal(){
                             value={item.penumpang}
                             options={jenisPenumpang}
                             onOptionChange={(e)=> selectOption(e, index)}
-                            priceValue={item.harga}
+                            priceValue={item.tiket}
                             priceChange={(val)=>setHargaTiket(val, index)}
                             jsValue={item.js}
                             jsChange={(val)=>setJsTiket(val, index)}

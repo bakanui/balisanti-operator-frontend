@@ -48,7 +48,7 @@ export default function EditJadwal(){
         {
             id: new Date().getTime(),
             penumpang: { value: '', label: 'Pilih Data' },
-            harga: '',
+            tiket: '',
             js: '',
             jp: ''
         }
@@ -165,7 +165,7 @@ export default function EditJadwal(){
                 value: `${item.id_jenis_penumpang}`,
                 label: `${item.tipe_penumpang} - ${item.jenis_penumpang}`
             },
-            harga: `${item.harga}`,
+            tiket: `${item.tiket}`,
             js: `${item.js}`,
             jp: `${item.jp}`
         }));
@@ -192,7 +192,7 @@ export default function EditJadwal(){
                 status_jadwal: status.value,
                 harga_tiket: tiket.map((item => ({
                     id_jenis_penumpang: item.penumpang.value,
-                    harga: convertLabelPriceToNumeberPrice(item.harga),
+                    tiket: convertLabelPriceToNumeberPrice(item.tiket),
                     js: convertLabelPriceToNumeberPrice(item.js),
                     jp: convertLabelPriceToNumeberPrice(item.jp)
                 })))
@@ -244,7 +244,7 @@ export default function EditJadwal(){
     }
 
     const addTiket = () => {
-        setTiket([...tiket, {id: new Date().getTime() , penumpang: {value: '', label: 'Pilih Data'}, harga: '0', js: '0', jp: '0' }]);
+        setTiket([...tiket, {id: new Date().getTime() , penumpang: {value: '', label: 'Pilih Data'}, tiket: '0', js: '0', jp: '0' }]);
     }
 
     const deleteTiket = (index: number) => {
@@ -263,7 +263,7 @@ export default function EditJadwal(){
 
     const setHargaTiket = (value: string, index: number) => {
         let tmp = JSON.parse(JSON.stringify(tiket));
-        tmp[index].harga = value;
+        tmp[index].tiket = value;
         setTiket(tmp);
     }
 
@@ -408,7 +408,7 @@ export default function EditJadwal(){
                             value={item.penumpang}
                             options={jenisPenumpang}
                             onOptionChange={(e)=> selectOption(e, index)}
-                            priceValue={item.harga}
+                            priceValue={item.tiket}
                             priceChange={(val)=>setHargaTiket(val, index)}
                             jsValue={item.js}
                             jsChange={(val)=>setJsTiket(val, index)}
