@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 9999",
     "build": "next build",
-    "start": "next start -p 3456",
+    "start": "next start -p 9999",
     "lint": "next lint",
     "export": "next export",
     "deploy": "git pull origin && npm install && next build && pm2 restart 0 && exit"

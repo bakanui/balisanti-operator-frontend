@@ -95,6 +95,7 @@ export default function Pembayaran() {
             <PriceInput 
               label="Total yang Dibayarkan"
               placeholder="200.000"
+              disabled={false}
               value={nominalBayar}
               onChangeText={(text)=>setNominalBayar(text)}
             />

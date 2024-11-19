@@ -127,6 +127,7 @@ export default function EditAgen(){
                 <PriceInput 
                     label="Batas Maksimal Limit Hutang"
                     placeholder="Rp. 10.000.000"
+                    disabled={false}
                     onChangeText={(e)=>setMaksHutang(e)}
                     value={maksHutang}
                 />
@@ -148,6 +149,7 @@ export default function EditAgen(){
                     <PriceInput 
                         label="Masukkan Nominal"
                         placeholder="Rp. 2.000.000"
+                        disabled={false}
                         onChangeText={(e)=>setNominal(e)}
                         value={nominal}
                     />

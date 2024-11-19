@@ -8,8 +8,6 @@ interface IProps {
     jenisPerjalanan?: 'sekali_jalan' | 'pulang_pergi';
 }
 export const PricingTable = (props: IProps) => {
-    console.log('SERVICES = ', props.summaryTabel);
-    
     return(
         <>
         <span className="font-robotomedium text-base">{props.title || 'Total Pembayaran'}</span>

@@ -85,7 +85,8 @@ export default function AddPenjualanTiket() {
             qty: 1,
             harga: 0,
             nama_barang: '',
-            jenis_barang: ''
+            jenis_barang: '',
+            barang: { value: "0", label: "Barang" }
         }
     ]);
     const [telepon, setTelepon] = useState("");
@@ -122,6 +123,7 @@ export default function AddPenjualanTiket() {
     const [discon, setDiscon] = useState("");
 
     useEffect(() => {
+        console.log('empty rendered');
         let tmp = getStorageValue('auth');
         if (tmp) {
             setUser(tmp.user);
@@ -193,22 +195,12 @@ export default function AddPenjualanTiket() {
     }, []);
 
     useEffect(() => {
+        console.log('onvaluechanged rendered');
         onValueChanged();
-    }, [rombongan.length]);
+    }, [rombongan.length, services.length, discon]);
 
     useEffect(() => {
-        onValueChanged();
-    }, [services.length]);
-
-    useEffect(() => {
-        onValueChanged();
-    }, [ppInfo.id_tiket, jenisPerjalanan]);
-
-    useEffect(() => {
-        onValueChanged();
-    }, [discon]);
-
-    useEffect(() => {
+        console.log('checklimit rendered');
         checkLimit();
     }, [total]);
 
@@ -223,57 +215,6 @@ export default function AddPenjualanTiket() {
     const back = () => {
         router.back();
     }
-
-    const barangSpawner = () => {
-        if(tambahanService.isTambahanService){
-            return (
-                <>
-                    {services.map((item, index) => (
-                        <div className="mb-4" key={index}>
-                            <NumberSeparator
-                                value={index + 1}
-                                onClick={() => hapusService(index)}
-                                enable={services.length > 1}
-                            />
-                            <SelectBox
-                                label="Barang"
-                                placeholder="Pilih data"
-                                option={service}
-                                onValueHasChanged={onValueChanged}
-                                onChange={(e) => setServices(services.map((itm, idx) => {
-                                    if (index === idx) {
-                                        return {
-                                            ...item,
-                                            harga: e.harga,
-                                            id_harga_service: e.value,
-                                            jenis_barang: e.jenis,
-                                            nama_barang: e.label
-                                        };
-                                    }
-                                    return itm;
-                                }))}
-                                value={{ value: String(item.id_harga_service), label: item.nama_barang }}
-                            />
-                            <InputQty
-                                label="Jumlah Barang"
-                                placeholder="1"
-                                value={item.qty}
-                                onChangeText={(e) => setServices(services.map((itm, idx) => {
-                                    if (index === idx) {
-                                        return {
-                                            ...item,
-                                            qty: e
-                                        };
-                                    }
-                                    return itm;
-                                }))}
-                            />
-                        </div>
-                    ))}
-                </>
-            );
-        }
-    };    
 
     const getRuteDetail = (slugTiket: IPenjualanTiket) => {
         // to reverse start and destination when user choose Pulang Pergi
@@ -358,8 +299,25 @@ export default function AddPenjualanTiket() {
         }));
     }
 
+    const onBarangChanged = (e: any, index: number) => {
+        setServices(services.map((itm, idx) => {
+            if (index === idx) {
+                return {
+                    ...services[index],
+                    harga: e.harga,
+                    id_harga_service: e.value,
+                    jenis_barang: e.jenis,
+                    nama_barang: e.label,
+                    barang: {value: String(e.value), label: e.label}
+                };
+            }
+            return itm;
+        }));
+    }
+
     const onValueChanged = () => {
         const jenisIdOnly = penumpangInfo.map((item) => item.id_jenis_penumpang);
+        const barangOnly = services.map((item) => item.id_harga_service);
         let summary = [];
         for (let i = 0; i < jenisIdOnly.length; i++) {
             let id = jenisIdOnly[i].toString();
@@ -402,18 +360,27 @@ export default function AddPenjualanTiket() {
                 }
             }
         }
-        if(tambahanService.isTambahanService){
-            services.map((s) => {
-                summary.push({
-                    id: new Date().getTime(),
-                    keterangan: 'Barang',
-                    jenisPenumpang: {value: s.id_harga_service, label: s.jenis_barang + ' - ' + s.nama_barang},
-                    qty: s.qty,
-                    tarif: s.harga,
-                    subtotal: s.harga * s.qty,
-                    // diskon: 'Rp. ' + convertLabelToPrice(s.toString())
-                });
-            })
+        for (let i = 0; i < services.length; i++) {
+            // console.log(barangOnly)
+            // let id = Number(barangOnly[i]);
+            let tmp = services
+            // if (tmp.length <= 0) {
+            //     // do nothing
+            // }
+            // else {
+            //     console.log(tmp)
+            //     console.log(i)
+            //     if(tmp[i] !== undefined) {
+                    summary.push({
+                        id: new Date().getTime(),
+                        keterangan: 'Barang',
+                        jenisPenumpang: {value: String(tmp[i].id_harga_service), label: tmp[i].jenis_barang + ' - ' + tmp[i].nama_barang},
+                        qty: tmp[i].qty,
+                        tarif: tmp[i].harga,
+                        subtotal: tmp[i].harga * tmp[i].qty
+                    });
+                // }
+            // }
         }
         setSummaryTabel(summary);
         let total = summary.reduce((prev, next) => {
@@ -598,8 +565,8 @@ export default function AddPenjualanTiket() {
                                 if (data.length > 0) {
                                     toast.success('Data Berhasil Disimpan', toastSuccessConfig);
                                     setTimeout(() => {
-                                        // router.replace('/penjualan-tiket');
-                                        router.replace('/pembayaran-agen/detail-invoice?id='+data1[0].no_invoice);
+                                        router.replace('/penjualan-tiket');
+                                        router.push('/pembayaran-agen/detail-invoice?id='+data1[0].no_invoice);
                                     }, 500);
                                 }
                             },
@@ -610,18 +577,10 @@ export default function AddPenjualanTiket() {
                         );
                     },
                     (err) => {
-        
                         setLoading(false);
                         toast.error(err, toastErrorConfig);
                     },
                 );
-                // setLoading(false);
-                // if (data.length > 0) {
-                //     toast.success('Data Berhasil Disimpan', toastSuccessConfig);
-                //     setTimeout(() => {
-                //         router.replace('/penjualan-tiket');
-                //     }, 500);
-                // }
             },
             (err) => {
                 setLoading(false);
@@ -807,7 +766,6 @@ export default function AddPenjualanTiket() {
                     value={discon}
                     onChangeText={(e) => {
                         setDiscon(e.target.value);
-                        console.log(e.target.value);
                     }}
                 />
                 {/* <PriceInput 
@@ -1204,7 +1162,39 @@ export default function AddPenjualanTiket() {
             
             <BaseCard>
                 <div className="sm:grid gap-x-6 grid-cols-2">
-                    {barangSpawner()}
+                    {services.map((item, index) => {
+                        return (
+                            <div className="mb-4" key={index}>
+                                <NumberSeparator
+                                    value={index + 1}
+                                    onClick={() => hapusService(index)}
+                                    enable={services.length > 1}
+                                />
+                                <SelectBox
+                                    label="Barang"
+                                    placeholder="Pilih data"
+                                    option={service}
+                                    onValueHasChanged={onValueChanged}
+                                    onChange={(e) => onBarangChanged(e, index)}
+                                    value={item.barang}
+                                />
+                                <InputQty
+                                    label="Jumlah Barang"
+                                    placeholder="1"
+                                    value={item.qty}
+                                    onChangeText={(e) => setServices(services.map((itm, idx) => {
+                                        if (index === idx) {
+                                            return {
+                                                ...item,
+                                                qty: e
+                                            };
+                                        }
+                                        return itm;
+                                    }))}
+                                />
+                            </div>
+                        )
+                    })}
                 </div>
                 <div>
                     <div className="w-[200px] ml-2">
