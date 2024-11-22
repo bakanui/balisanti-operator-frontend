@@ -24,7 +24,7 @@ import { getStorageValue } from '@/app/utils/localstoreage';
 import { useReactToPrint } from 'react-to-print';
 import { Button } from '@/app/components/Button';
 import { HeadTb, TableRow } from '@/app/components/MyTable';
-import { handleDownloadGT, handleDownloadManifestPembayaran } from "@/hooks/invoice.hook";
+import { handleDownloadGT, handleDownloadJasa, handleDownloadManifestPembayaran } from "@/hooks/invoice.hook";
 import { saveAs } from 'file-saver';
 import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
@@ -200,6 +200,32 @@ export default function LaporanPembayaran() {
           id_jadwal: listJadwal,
           tanggal: parseDateToBackendFormat(dateRange.startDate || new Date()),
           tanggal_akhir: parseDateToBackendFormat(dateRange.endDate || new Date())
+      },
+      (data)=>{
+          fileDownload(data, fileName);
+          setLoading(false);
+      },
+      ()=>{
+          setLoading(false);
+      }
+  );
+  }
+
+  const handleDownloadLapJasa = () => {
+    setLoading(true);
+    let fileName = 'LaporanJasa_';
+          if (isSameDate(dateRange.startDate || new Date(), dateRange.endDate || new Date())) {
+            fileName = fileName + parseDateToShortFormat(dateRange.startDate || new Date()) + '.pdf';
+          } else {
+            fileName = fileName + parseDateToShortFormat(dateRange.startDate || new Date()) + "-" + parseDateToShortFormat(dateRange.endDate || new Date()) + '.pdf';
+          }
+    const match = selectedJadwal.label.match(/\((\d{2}:\d{2})/);
+    const waktu = match ? match[1] : '';
+    handleDownloadJasa(
+      {
+          tanggal: parseDateToBackendFormat(dateRange.startDate || new Date()),
+          tanggal_akhir: parseDateToBackendFormat(dateRange.endDate || new Date()),
+          waktu: waktu
       },
       (data)=>{
           fileDownload(data, fileName);
@@ -430,41 +456,6 @@ export default function LaporanPembayaran() {
   );
   }
 
-  const handleDownload = useReactToPrint({
-    onPrintError: (error) => console.log(error),
-    content: () => componentRef.current,
-    removeAfterPrint: true,
-    print: async (printIframe) => {
-      const document = printIframe.contentDocument;
-      if (document) {
-        const html = document.getElementById("penumpang-print");
-        // remove all first th checklist and td checklist if not admin
-        if(user && user.id_role != 1){
-          if (html) {
-            const thChecklist = html.querySelector('th:first-child');
-            const tdChecklist = html.querySelectorAll('td:first-child');
-            if (thChecklist) {
-              thChecklist.remove();
-            }
-            tdChecklist.forEach((item) => {
-              item.remove();
-            });
-          }
-        }
-        var opt = {
-          margin:       0.5,
-          filename:     'Penumpang.pdf',
-          image:        { type: 'jpeg', quality: 1 },
-          html2canvas:  { scale: 2 },
-          jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
-        };
-        const Html2Pdf = (await import('html2pdf.js')).default;
-        const exporter = new Html2Pdf(html,opt);
-        exporter.getPdf(true);
-      }
-    },
-  });
-
   const selectAllListPenumpang = () => {
     setLoading(true);
     getPenumpangByJadwalAction(
@@ -634,6 +625,12 @@ export default function LaporanPembayaran() {
                 <Button 
                   label='Download Laporan GT'
                   onClick={handleDownloadLapGT}
+                />
+              </div>
+              <div className='w-1/4'>
+                <Button 
+                  label='Download Laporan Jasa'
+                  onClick={handleDownloadLapJasa}
                 />
               </div>
             </>
