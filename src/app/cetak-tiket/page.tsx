@@ -5,7 +5,7 @@ import { CustomBreadcumb } from "@/app/components/Breadcumb";
 import { Button } from "@/app/components/Button";
 import { BaseContainer } from "@/app/components/Container";
 import { useCallback, useEffect, useRef, useState } from "react";
-import ComponentToPrint from "./components/tiketTemplate";
+import ComponentToPrint, { IServiceOption } from "./components/tiketTemplate";
 import { IPenumpang } from "../types/jadwal";
 import { getInvoiceDetailAction } from "../pembayaran-agen/pembayaran.service";
 import { toast, ToastContainer } from "react-toastify";
@@ -21,14 +21,18 @@ import axios from "axios";
 import { API_PEMBAYARAN } from "../utils/api";
 import AsyncSelect from 'react-select/async';
 import { cetakTiket } from "@/app/penjualan-tiket/penjualanTiket.service";
+import { IHargaService } from "../types/hargaService";
+import { BarangListKeberangkatan } from "../pembayaran-agen/components/BarangListKeberangkatan";
 
 export default function Operator() {
     const router = useRouter();
     const componentRef: any = useRef();
     const [agen, setAgen] = useState<any>(null);
     const [penumpang, setPenumpang] = useState<IPenumpangOption[]>([]);
+    const [barang, setBarang] = useState<IServiceOption[]>([]);
     const [loading, setLoading] = useState(false);
     const [checkAll, setCheckAll] = useState(true);
+    const [checkAllBarang, setCheckAllBarang] = useState(true);
     const [selectedInvoice, setSelectedInvoice] = useState({value: '', label: 'Pilih Data'});
     const [pembayaran, setPembayaran] = useState({
         sisa_tagihan: 0,
@@ -89,28 +93,57 @@ export default function Operator() {
     }, [componentRef])
 
     const tiketDispenser = () => {
+        setLoading(true);
         penumpang?.map((item, index)=> {
-          setLoading(true);
-          cetakTiket(
-              {
-                agen: agen?.nama_agen ? agen.nama_agen : "-",
-                kode_booking: item.kode_booking,
-                date: item.tanggal,
-                rute_from: "Pelabuhan " + item.dermaga_awal,
-                rute_to: "Pelabuhan " + item.dermaga_tujuan,
-                nama: item.nama_penumpang,
-                qrcode: item.qrcode
-              },
-              (data) => {
-                setLoading(false);
-                router.replace('/cetak-tiket');
-              },
-              (err) => {
-                  setLoading(false);
-                  toast.error(err, toastErrorConfig);
-              },
-          );
+          if(item.selected){
+            cetakTiket(
+                {
+                  jenis: 'penumpang',
+                  agen: agen?.nama_agen ? agen.nama_agen : "-",
+                  kode_booking: item.kode_booking,
+                  date: item.tanggal,
+                  rute_from: item.dermaga_awal,
+                  rute_to: item.dermaga_tujuan,
+                  nama: item.nama_penumpang,
+                  qrcode: item.qrcode
+                },
+                (data) => {
+                  toast.success("Berhasil cetak tiket penumpang", toastErrorConfig);
+                },
+                (err) => {
+                    setLoading(false);
+                    toast.error(err, toastErrorConfig);
+                },
+            );
+          }
         });
+        barang?.map((item, index)=> {
+            if(item.selected){
+                cetakTiket(
+                    {
+                      jenis: 'barang',
+                      kode_booking: item.kode_barang,
+                      date: item.tanggal,
+                      rute_from: item.dermaga_awal,
+                      rute_to: item.dermaga_tujuan,
+                      nama: item.nama_penumpang,
+                      qrcode: item.qrcode,
+                      jenis_barang: item.jenis_barang,
+                      qty: item.qty,
+                      barang: item.nama_barang
+                    },
+                    (data) => {
+                      toast.success("Berhasil cetak tiket barang", toastErrorConfig);
+                    },
+                    (err) => {
+                        setLoading(false);
+                        toast.error(err, toastErrorConfig);
+                    },
+                );
+            }
+        });
+        setLoading(false);
+        router.replace('/cetak-tiket');
       };
 
     const getData = () => {
@@ -129,9 +162,14 @@ export default function Operator() {
                     toast.error('Nomor Invoice Tidak Ditemukan!');
                 }
                 const tempPenumpang = data.penumpang;
+                const tempBarang = data.service;
                 const agen = data.agen;
                 setAgen(agen);
                 setPenumpang(tempPenumpang.map((item: IPenumpang) => ({
+                    ...item,
+                    selected: true
+                })));
+                setBarang(tempBarang.map((item: IHargaService) => ({
                     ...item,
                     selected: true
                 })));
@@ -175,7 +213,31 @@ export default function Operator() {
                 selected: !checkAll
             };
         })
-        setPenumpang(tmp);      
+        setPenumpang(tmp);  
+    }
+
+    const selectBarang = (index: number) => {
+        const tmp = barang.map((item, idx) => {
+            if (index == idx) {
+                return {
+                    ...item,
+                    selected: !item.selected
+                }
+            }
+            return item;
+        })
+        setBarang(tmp);
+    }
+
+    const onCheckAllBarang = () => {
+        setCheckAllBarang(!checkAllBarang);
+        const tmp2 = barang.map((item) => {
+            return {
+                ...item,
+                selected: !checkAllBarang
+            };
+        })
+        setBarang(tmp2);      
     }
 
     const searchInvoice = async(inputValue: string) => {
@@ -246,6 +308,13 @@ export default function Operator() {
                             checkAll={checkAll}
                             setCheckAll={onCheckAll}
                         />
+                        <BarangListKeberangkatan
+                            penumpang={barang}
+                            title="Barang"
+                            selectPenumpang={selectBarang}
+                            checkAll={checkAllBarang}
+                            setCheckAll={onCheckAllBarang}
+                        />
                         <div className="mt-6 mb-5">
                             <Button
                                 label="Cetak Tiket"
@@ -261,7 +330,7 @@ export default function Operator() {
                             triggerOpenedClassName="bg-primary text-[white] p-2 rounded-[8px]"
                             >
                                 <div className="w-[420px] border-2 mt-4">
-                                    <ComponentToPrint ref={componentRef} collect={collect} penumpang={penumpang} agen={agen}/>
+                                    <ComponentToPrint ref={componentRef} collect={collect} service={barang} penumpang={penumpang} agen={agen}/>
                                 </div>
                             </Collapsible>
                         </div>

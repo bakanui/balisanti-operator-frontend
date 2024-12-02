@@ -21,6 +21,8 @@ import { Empty } from "@/app/components/Empty";
 import { PenumpangList } from "../components/PenumpangList";
 import { cetakTiket } from "@/app/penjualan-tiket/penjualanTiket.service";
 import Link from 'next/link';
+import { IServiceOption } from "@/app/cetak-tiket/components/tiketTemplate";
+import { IHargaService } from "@/app/types/hargaService";
 
 export default function DetailInvoice() {
   const router = useRouter();
@@ -38,6 +40,7 @@ export default function DetailInvoice() {
   });
   const [collect, setCollect] = useState(0);
   const [penumpang, setPenumpang] = useState<IPenumpang[]>([]);
+  const [barang, setBarang] = useState<IServiceOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [link, setLink] = useState('');
   const [jenisTiket, setJenisTiket] = useState('');
@@ -73,6 +76,7 @@ export default function DetailInvoice() {
       setLoading(true);
       cetakTiket(
           {
+            jenis: 'penumpang',
             agen: agen?.nama_agen ? agen.nama_agen : "-",
             kode_booking: item.kode_booking,
             date: item.tanggal,
@@ -82,8 +86,7 @@ export default function DetailInvoice() {
             qrcode: item.qrcode
           },
           (data) => {
-            setLoading(false);
-            router.replace('/penjualan-tiket');
+            toast.success("Berhasil cetak tiket penumpang", toastErrorConfig);
           },
           (err) => {
               setLoading(false);
@@ -91,6 +94,31 @@ export default function DetailInvoice() {
           },
       );
     });
+    barang?.map((item, index)=> {
+        cetakTiket(
+            {
+              jenis: 'barang',
+              kode_booking: item.kode_barang,
+              date: item.tanggal,
+              rute_from: "Pelabuhan " + item.dermaga_awal,
+              rute_to: "Pelabuhan " + item.dermaga_tujuan,
+              nama: item.nama_penumpang,
+              qrcode: item.qrcode,
+              jenis_barang: item.jenis_barang,
+              qty: item.qty,
+              barang: item.nama_barang
+            },
+            (data) => {
+              toast.success("Berhasil cetak tiket barang", toastErrorConfig);
+              setLoading(false);
+              router.replace('/cetak-tiket');
+            },
+            (err) => {
+                setLoading(false);
+                toast.error(err, toastErrorConfig);
+            },
+        );
+      });
   };
 
   const getData = (page?: number) => {
@@ -131,6 +159,11 @@ export default function DetailInvoice() {
                   diskon: 'Rp. '+  convertLabelToPrice(item.diskon_agen !== null ? item.diskon_agen : "0")
                 }
               });
+              const tempBarang = data.service;
+              setBarang(tempBarang.map((item: IHargaService) => ({
+                ...item,
+                selected: true
+              })));
               console.log(tiket);
               // penjemputan
               if (data.service.length > 0) {
