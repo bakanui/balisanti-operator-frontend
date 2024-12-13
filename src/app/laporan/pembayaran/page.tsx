@@ -617,19 +617,19 @@ export default function LaporanPembayaran() {
             <>
               <div className='w-1/4'>
                 <Button 
-                  label='Download Laporan'
+                  label='Download Laporan Manifest'
                   onClick={handleDownloadM}
                 />
               </div>
               <div className='w-1/4'>
                 <Button 
-                  label='Download Laporan GT'
+                  label='Download Laporan Jasa Sandar'
                   onClick={handleDownloadLapGT}
                 />
               </div>
               <div className='w-1/4'>
                 <Button 
-                  label='Download Laporan Jasa'
+                  label='Download Laporan Bongkar Muat'
                   onClick={handleDownloadLapJasa}
                 />
               </div>

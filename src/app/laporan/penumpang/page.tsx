@@ -13,6 +13,7 @@ import { convertLabelToPrice, getFirstAndLastDate, parseDateIncludeHours, parseD
 import { TableFilter } from '@/app/components/TableFilter';
 import { debounce } from 'lodash';
 import { RangeDatePicker } from '@/app/components/RangeDatePicker';
+import { JENIS_PENUMPANG_FILTER } from "@/app/constants/jenisPenumpang";
 import { Range } from 'react-date-range';
 import { getPenjualanAction } from '@/app/penjualan-tiket/penjualanTiket.service';
 import { toast, ToastContainer } from 'react-toastify';
@@ -85,6 +86,7 @@ export default function LaporanPenumpang() {
   ]);
   const [selectedJadwal, setSelectedJadwal] = useState({value: '', label: 'Pilih Data'});
   const [jumlahPenumpang, setJumlahPenumpang] = useState('0');
+  const [jenis, setJenis] = useState({ value: '', label: 'Pilih Data' });
   const debouncedSearch = useRef(
     debounce(async (e) => {
         setKeyword(e.target.value);
@@ -109,7 +111,7 @@ export default function LaporanPenumpang() {
 
   useEffect(()=>{
     getData();
-  },[keyword, limit.value, selectedJadwal.value]);
+  },[keyword, limit.value, jenis.value, selectedJadwal.value]);
 
   useEffect(() => {
       return () => {
@@ -126,6 +128,7 @@ export default function LaporanPenumpang() {
       page = page + 1;
     }
     setLoading(true);
+    console.log(jenis)
     if(selectedJadwal.value == FROM_ROUTE_ID || selectedJadwal.value == TO_ROUTE_ID) {
       getPenumpangByRuteAction(
         {
@@ -133,6 +136,7 @@ export default function LaporanPenumpang() {
             limit: limit.value,
             nama_penumpang: keyword,
             pagenumber: page || 1,
+            jenis_penumpang: jenis.value,
             tanggal: parseDateToBackendFormat(dateRange.startDate || new Date()),
             tanggal_akhir: parseDateToBackendFormat(dateRange.endDate || new Date()),
         },
@@ -163,6 +167,7 @@ export default function LaporanPenumpang() {
             id_jadwal: selectedJadwal.value,
             limit: limit.value,
             nama_penumpang: keyword,
+            jenis_penumpang: jenis.value,
             pagenumber: page || 1,
             tanggal: parseDateToBackendFormat(dateRange.startDate || new Date()),
             tanggal_akhir: parseDateToBackendFormat(dateRange.endDate || new Date()),
@@ -245,6 +250,7 @@ export default function LaporanPenumpang() {
           tanggal: parseDateToBackendFormat(dateRange.startDate || new Date()),
           tanggal_akhir: parseDateToBackendFormat(dateRange.endDate || new Date()),
           status_checker: 2,
+          jenis_penumpang: jenis.value,
           manifest: true
       },
       (data)=>{
@@ -429,6 +435,20 @@ export default function LaporanPenumpang() {
                     onChange={selectJadwal}
                 />
             </div>
+            <div className="sm:grid gap-x-6 grid-cols-2" style={{marginTop: 18}}>
+                <SecondarySelectBox 
+                    label="Jenis Penumpang"
+                    placeholder="Semua jenis penumpang"
+                    option={JENIS_PENUMPANG_FILTER}
+                    value={jenis.value}
+                    onChange={(e)=>{
+                      setJenis({
+                        value: e.target.value,
+                        label: e.target.label
+                      })
+                    }}
+                />
+            </div>
         </BaseCard>
         <div className='mb-4'/>
 
@@ -505,10 +525,10 @@ export default function LaporanPenumpang() {
                      : null }
                        <th className="text-sm font-robotomedium pl-4 py-2">No</th>
                        <th className="text-sm font-robotomedium py-2">Nama Penumpang</th>
+                       <th className="text-sm font-robotomedium py-2">Jenis Penumpang</th>
                        <th className="text-sm font-robotomedium py-2">Alamat</th>
                        <th className="text-sm font-robotomedium py-2">Kode Booking</th>
                        <th className="text-sm font-robotomedium py-2">Tanggal Keberangkatan</th>
-                       <th className="text-sm font-robotomedium py-2">Tanggal Return</th>
                        <th className="text-sm font-robotomedium py-2">Tujuan</th>
                        <th className="text-sm font-robotomedium py-2">Agen</th>
                        <th className="text-sm font-robotomedium py-2">Service</th>
@@ -529,10 +549,10 @@ export default function LaporanPenumpang() {
                                : null }
                                <td className="pl-4 py-2">{startingNumber+index+1}</td>
                                <td className="py-2">{item.nama_penumpang}</td>
+                               <td className="py-2">{item.jenis}</td>
                                <td className="py-2">{item.alamat}</td>
                                <td className="py-2">{item.kode_booking}</td>
                                <td className="py-2">{parseDateIncludeHours(new Date(item.tanggal || ''), true)}</td>
-                               <td className="py-2">{item.tanggal_rt ? parseDateIncludeHours(new Date(item.tanggal_rt || ''), true) : '-'}</td>
                                <td className="py-2">{item.tujuan || '-'}</td>
                                <td className="py-2">{item.nama_agen || '-'}</td>
                                <td className="py-2">{item.service || '-'}</td>
