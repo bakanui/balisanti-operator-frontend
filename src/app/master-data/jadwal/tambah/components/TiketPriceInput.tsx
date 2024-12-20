@@ -13,15 +13,20 @@ interface IProps {
     onOptionChange: (data: any)=> void;
     priceValue: string;
     priceChange: (text: string)=> void;
-    jsValue: string;
-    jsChange: (text: string)=> void;
-    jpValue: string;
-    jpChange: (text: string)=> void;
+    jrValue: string;
+    jrChange: (text: string)=> void;
+    jpkValue: string;
+    jpkChange: (text: string)=> void;
+    jpbValue: string;
+    jpbChange: (text: string)=> void;
+    passValue: string;
+    passChange: (text: string)=> void;
+    dermagaValue: string;
+    dermagaChange: (text: string)=> void;
 }
 export const TiketPriceInput = (props: IProps) => {
-    console.log(props.jpValue)
     return(
-        <div className="sm:grid gap-x-6 grid-cols-2">
+        <div className="sm:grid">
             <SelectBox
                 label="Jenis Penumpang"
                 placeholder="Pilih data"
@@ -34,7 +39,7 @@ export const TiketPriceInput = (props: IProps) => {
                     label="Harga Tiket"
                     placeholder="0"
                     onChangeText={(e) => console.log(e)}
-                    value={String(Number(props.priceValue?.replace('.', '')) + Number(props.jpValue?.replace('.', '')) + Number(props.jsValue?.replace('.', '')))}
+                    value={String(Number(props.priceValue?.replace('.', '')) + Number(props.jrValue?.replace('.', '')) + Number(props.jpkValue?.replace('.', '')) + Number(props.jpbValue?.replace('.', '')) + Number(props.passValue?.replace('.', '')) + Number(props.dermagaValue?.replace('.', '')))}
                     disabled={true}
                 />
                 <div className="flex items-center justify-center" style={{marginLeft: 10}}>
@@ -46,17 +51,38 @@ export const TiketPriceInput = (props: IProps) => {
                         disabled={false}
                     />
                     <PriceInput
-                        label="JS"
+                        label="JR"
                         placeholder="0"
-                        onChangeText={props.jsChange}
-                        value={props.jsValue === "0" || props.jsValue == null || props.jsValue == undefined  ? "" : props.jsValue}
+                        onChangeText={props.jrChange}
+                        value={props.jrValue === "0" || props.jrValue == null || props.jrValue == undefined  ? "" : props.jrValue}
                         disabled={false}
                     />
                     <PriceInput
-                        label="JP"
+                        label="ATJP-K"
                         placeholder="0"
-                        onChangeText={props.jpChange}
-                        value={props.jpValue === "0" || props.jpValue == null || props.jpValue == undefined  ? "" : props.jpValue}
+                        onChangeText={props.jpkChange}
+                        value={props.jpkValue === "0" || props.jpkValue == null || props.jpkValue == undefined  ? "" : props.jpkValue}
+                        disabled={false}
+                    />
+                    <PriceInput
+                        label="ATJP-B"
+                        placeholder="0"
+                        onChangeText={props.jpbChange}
+                        value={props.jpbValue === "0" || props.jpbValue == null || props.jpbValue == undefined  ? "" : props.jpbValue}
+                        disabled={false}
+                    />
+                    <PriceInput
+                        label="Pass Masuk"
+                        placeholder="0"
+                        onChangeText={props.passChange}
+                        value={props.passValue === "0" || props.passValue == null || props.passValue == undefined  ? "" : props.passValue}
+                        disabled={false}
+                    />
+                    <PriceInput
+                        label="Dermaga"
+                        placeholder="0"
+                        onChangeText={props.dermagaChange}
+                        value={props.dermagaValue === "0" || props.dermagaValue == null || props.dermagaValue == undefined  ? "" : props.dermagaValue}
                         disabled={false}
                     />
                 </div>

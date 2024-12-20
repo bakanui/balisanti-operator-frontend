@@ -29,8 +29,11 @@ export interface IHargaTiket {
     id_jadwal: number;
     id_jenis_penumpang: number;
     tiket: number;
-    js: number;
-    jp: number;
+    jr: number;
+    jpk: number;
+    jpb: number;
+    pass: number;
+    dermaga: number;
     tipe_penumpang: string;
     jenis_penumpang: string;
 }
