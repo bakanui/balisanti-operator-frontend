@@ -456,6 +456,20 @@ export default function AddPenjualanTiket() {
             return 5;
           } else if (jenis.includes('Lokal (PP)')) {
             return 6;
+          } else if (jenis.includes('Golongan I')) {
+            return 7;
+          } else if (jenis.includes('Golongan II')) {
+            return 8;
+          } else if (jenis.includes('Golongan III')) {
+            return 9;
+          } else if (jenis.includes('Golongan IV')) {
+            return 10;
+          } else if (jenis.includes('Golongan V')) {
+            return 11;
+          } else if (jenis.includes('Golongan VI')) {
+            return 12;
+          } else if (jenis.includes('Golongan VII')) {
+            return 13;
           }
     }
 

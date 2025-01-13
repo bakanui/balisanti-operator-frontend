@@ -47,8 +47,11 @@ export default function AddJadwal(){
             id: new Date().getTime(),
             penumpang: { value: '', label: 'Pilih Data', jenis: '', tipe: '' },
             tiket: '',
-            js: '',
-            jp: ''
+            jr: '',
+            jpk: '',
+            jpb: '',
+            pass: '',
+            dermaga: ''
         }
     ]);
     const [jenisPenumpang, setJenisPenumpang] = useState<IOptions[]>([]);
@@ -164,8 +167,11 @@ export default function AddJadwal(){
                 harga_tiket: tiket.map(item => ({
                     id_jenis_penumpang: item.penumpang.value,
                     tiket: convertLabelPriceToNumeberPrice(item.tiket),
-                    js: convertLabelPriceToNumeberPrice(item.js),
-                    jp: convertLabelPriceToNumeberPrice(item.jp)
+                    jr: convertLabelPriceToNumeberPrice(item.jr),
+                    jpk: convertLabelPriceToNumeberPrice(item.jpk),
+                    jpb: convertLabelPriceToNumeberPrice(item.jpb),
+                    pass: convertLabelPriceToNumeberPrice(item.pass),
+                    dermaga: convertLabelPriceToNumeberPrice(item.dermaga)
                 }))
             },
             (res) => {
@@ -217,7 +223,7 @@ export default function AddJadwal(){
     }
 
     const addTiket = () => {
-        setTiket([...tiket, {id: new Date().getTime() , penumpang: {value: '', label: 'Pilih Data', jenis: '', tipe: ''}, tiket: '0', js: '0', jp: '0' }]);
+        setTiket([...tiket, {id: new Date().getTime() , penumpang: {value: '', label: 'Pilih Data', jenis: '', tipe: ''}, tiket: '0', jr: '0', jpk: '0', jpb: '0', pass: '0', dermaga: '0' }]);
     }
 
     const deleteTiket = (index: number) => {
@@ -240,15 +246,33 @@ export default function AddJadwal(){
         setTiket(tmp);
     }
 
-    const setJsTiket = (value: string, index: number) => {
+    const setJrTiket = (value: string, index: number) => {
         let tmp = JSON.parse(JSON.stringify(tiket));
-        tmp[index].js = value;
+        tmp[index].jr = value;
         setTiket(tmp);
     }
 
-    const setJpTiket = (value: string, index: number) => {
+    const setJpkTiket = (value: string, index: number) => {
         let tmp = JSON.parse(JSON.stringify(tiket));
-        tmp[index].jp = value;
+        tmp[index].jpk = value;
+        setTiket(tmp);
+    }
+
+    const setJpbTiket = (value: string, index: number) => {
+        let tmp = JSON.parse(JSON.stringify(tiket));
+        tmp[index].jpb = value;
+        setTiket(tmp);
+    }
+
+    const setPassTiket = (value: string, index: number) => {
+        let tmp = JSON.parse(JSON.stringify(tiket));
+        tmp[index].pass = value;
+        setTiket(tmp);
+    }
+
+    const setDermagaTiket = (value: string, index: number) => {
+        let tmp = JSON.parse(JSON.stringify(tiket));
+        tmp[index].dermaga = value;
         setTiket(tmp);
     }
 
@@ -328,10 +352,16 @@ export default function AddJadwal(){
                             onOptionChange={(e)=> selectOption(e, index)}
                             priceValue={item.tiket}
                             priceChange={(val)=>setHargaTiket(val, index)}
-                            jsValue={item.js}
-                            jsChange={(val)=>setJsTiket(val, index)}
-                            jpValue={item.jp}
-                            jpChange={(val)=>setJpTiket(val, index)}
+                            jrValue={item.jr}
+                            jrChange={(val)=>setJrTiket(val, index)}
+                            jpkValue={item.jpk}
+                            jpkChange={(val)=>setJpkTiket(val, index)}
+                            jpbValue={item.jpb}
+                            jpbChange={(val)=>setJpbTiket(val, index)}
+                            passValue={item.pass}
+                            passChange={(val)=>setPassTiket(val, index)}
+                            dermagaValue={item.dermaga}
+                            dermagaChange={(val)=>setDermagaTiket(val, index)}
                         />
                     );
                 })}

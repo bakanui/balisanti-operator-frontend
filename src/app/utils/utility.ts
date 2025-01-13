@@ -130,6 +130,20 @@ export const timeList = [
       return parseInt("5");
     } else if (jenis === 'Lokal (PP)') {
       return parseInt("6");
+    } else if (jenis === 'Golongan I') {
+      return parseInt("7");
+    } else if (jenis === 'Golongan II') {
+      return parseInt("8");
+    } else if (jenis === 'Golongan III') {
+      return parseInt("9");
+    } else if (jenis === 'Golongan IV') {
+      return parseInt("10");
+    } else if (jenis === 'Golongan V') {
+      return parseInt("11");
+    } else if (jenis === 'Golongan VI') {
+      return parseInt("12");
+    } else if (jenis === 'Golongan VII') {
+      return parseInt("13");
     }
   }
   
