@@ -24,7 +24,7 @@ import { getStorageValue } from '@/app/utils/localstoreage';
 import { useReactToPrint } from 'react-to-print';
 import { Button } from '@/app/components/Button';
 import { HeadTb, TableRow } from '@/app/components/MyTable';
-import { handleDownloadGT, handleDownloadJasa, handleDownloadManifestPembayaran } from "@/hooks/invoice.hook";
+import { handleDownloadBA, handleDownloadGT, handleDownloadJasa, handleDownloadManifestPembayaran } from "@/hooks/invoice.hook";
 import { saveAs } from 'file-saver';
 import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
@@ -226,6 +226,32 @@ export default function LaporanPembayaran() {
           tanggal: parseDateToBackendFormat(dateRange.startDate || new Date()),
           tanggal_akhir: parseDateToBackendFormat(dateRange.endDate || new Date()),
           waktu: waktu
+      },
+      (data)=>{
+          fileDownload(data, fileName);
+          setLoading(false);
+      },
+      ()=>{
+          setLoading(false);
+      }
+  );
+  }
+
+  const handleDownloadLapBA = () => {
+    setLoading(true);
+    let fileName = 'LaporanBeritaAcara_';
+          if (isSameDate(dateRange.startDate || new Date(), dateRange.endDate || new Date())) {
+            fileName = fileName + parseDateToShortFormat(dateRange.startDate || new Date()) + '.pdf';
+          } else {
+            fileName = fileName + parseDateToShortFormat(dateRange.startDate || new Date()) + "-" + parseDateToShortFormat(dateRange.endDate || new Date()) + '.pdf';
+          }
+    const match = selectedJadwal.label.match(/\((\d{2}:\d{2})/);
+    const waktu = match ? match[1] : '';
+    handleDownloadBA(
+      {
+        id_jadwal: selectedJadwal.value,
+        tanggal: parseDateToBackendFormat(dateRange.startDate || new Date()),
+        tanggal_akhir: parseDateToBackendFormat(dateRange.endDate || new Date())
       },
       (data)=>{
           fileDownload(data, fileName);
@@ -631,6 +657,12 @@ export default function LaporanPembayaran() {
                 <Button 
                   label='Download Laporan Bongkar Muat'
                   onClick={handleDownloadLapJasa}
+                />
+              </div>
+              <div className='w-1/4'>
+                <Button 
+                  label='Download Laporan Berita Acara'
+                  onClick={handleDownloadLapBA}
                 />
               </div>
             </>

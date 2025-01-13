@@ -57,6 +57,7 @@ export const API_LAPORAN = {
     DOWNLOAD_MANIFEST: `${BASE_URL}/pembayaran-agen/download-manifest/`,
     DOWNLOAD_GT: `${BASE_URL}/manifest/laporan-gt`,
     DOWNLOAD_JASA: `${BASE_URL}/manifest/laporan-jasa`,
+    DOWNLOAD_BA: `${BASE_URL}/laporan/vat/berita-acara`,
     DOWNLOAD_MANIFEST_PEMBAYARAN: `${BASE_URL}/laporan/pembayaran/download-manifest-pembayaran/`,
     LIST_PEMBAYARAN_BY_JADWAL: `${BASE_URL}/laporan/pembayaran`,
 }
