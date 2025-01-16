@@ -203,19 +203,26 @@ export const SidebarComponent = () => {
                     <span className='font-robotoregular text-sm'>Penjualan Tiket</span>
                 </MenuItem>
                 <MenuItem 
+                    active={router?.includes('/layanan-sandar')} 
+                    component={<Link href={'/layanan-sandar'} />} 
+                    icon={<ShipStoreIcon fill={router?.includes('/layanan-sandar') || mode == 'dark' ? 'white' : undefined} />}
+                >
+                    <span className='font-robotoregular text-sm'>Layanan Sandar</span>
+                </MenuItem>
+                <MenuItem 
                     active={router?.includes('/edit-invoice')} 
                     component={<Link href={'/edit-invoice'} />} 
                     icon={<SopIcon fill={router?.includes('/edit-invoice') || mode == 'dark' ? 'white' : undefined} />}
                 >
                     <span className='font-robotoregular text-sm'>Edit Invoice</span>
                 </MenuItem>
-                <MenuItem 
+                {/* <MenuItem 
                     active={router?.includes('/pembayaran-agen')} 
                     component={<Link href={'/pembayaran-agen'} />} 
                     icon={<UserIcon fill={router?.includes('/pembayaran-agen') || mode == 'dark' ? 'white' : undefined} />}
                 >
                     <span className='font-robotoregular text-sm'>Pembayaran Agen</span>
-                </MenuItem>
+                </MenuItem> */}
 
                 <MenuItem 
                     component={<Link href={'/cetak-tiket'} />}
