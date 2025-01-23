@@ -71,6 +71,11 @@ export const API_MANIFEST = {
     EDIT_MANIFEST_BULK : `${BASE_URL}/manifest/bulk`,
 }
 
+export const API_LAYANAN_SANDAR = {
+    CREATE_SANDAR : `${BASE_URL}/laporan/vat/tambah`,
+    DOWNLOAD_BA: `${BASE_URL}/laporan/vat/berita-acara-sandar`,
+}
+
 export const API_DASHBOARD = {
     DASHBOARD : `${BASE_URL}/dashboard`,
 }
