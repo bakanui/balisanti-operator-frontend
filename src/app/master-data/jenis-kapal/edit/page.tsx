@@ -27,6 +27,7 @@ export default function EditJenisKapal(){
             queryParams.get('id'),
             (data)=>{
                 setjenisKapal(data.nama_jenis_kapal);
+                document.title = "Edit " + data.nama_jenis_kapal + " | SIPELARANG";
                 setLoading(false);
             },
             ()=>{

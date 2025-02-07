@@ -37,6 +37,10 @@ export default function EditKapal(){
         getJenisKapal();
     },[]);
 
+    useEffect(() => {
+        document.title = "Edit Kapal | SIPELARANG";
+    }, [])
+
     const getDetail = () => {
         setLoading(true);
         getDetailKapalAction(

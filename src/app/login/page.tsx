@@ -1,5 +1,6 @@
 'use client';
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 import { InputPassword } from "../components/InputPassword";
@@ -16,6 +17,10 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [tmp, setTmp] = useState<any>([]);
+
+    useEffect(() => {
+        document.title = "Login | SIPELARANG";
+    }, [])
     
     const login = () => {
         if (!username || !password) {
@@ -208,6 +213,9 @@ const Login = () => {
 
     return(
         <div className="flex bg-white h-screen">
+            {/* <Helmet>
+                <title>Login | SIPELARANG</title>
+            </Helmet> */}
             <div className="flex flex-col w-full bg-white dark:bg-slate-800 px-[5%] pt-8">
                 <div>
                     <div className='w-full h-[60px] bg-[url(./../assets/logo-primary.png)] bg-contain bg-no-repeat bg-left'></div>

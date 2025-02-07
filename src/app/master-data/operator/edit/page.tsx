@@ -48,6 +48,7 @@ export default function EditUser(){
                     (data)=> {
                         setLoading(false);
                         setNama(data.name);
+                        document.title = "Edit " + data.name +" | SIPELARANG";
                         setEmail(data.email);
                         setSelectedRoles({
                             value: `${data.id_role}`,

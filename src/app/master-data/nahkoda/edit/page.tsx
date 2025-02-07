@@ -43,6 +43,7 @@ export default function EditNahkoda(){
                     queryParams.get('id'),
                     (data)=>{
                         setNamaNahkoda(data.nama_nahkoda);
+                        document.title = "Edit " + data.nama_nahkoda + " | SIPELARANG";
                         setEmail(data.email);
                         setNoTelepon(data.no_telp);
                         setSelectedKecakapan({

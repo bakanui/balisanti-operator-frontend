@@ -47,6 +47,10 @@ export default function AddNahkoda(){
         );
     }, []);
 
+    useEffect(()=>{
+        document.title = "Tambah Nahkoda | SIPELARANG";
+    },[]);
+
     const save = () => {
         if (!namaNahkoda || !email || !noTelepon || !status || !selectedKecakapan) {
             toast.error('Pastikan Anda sudah mengisi semua data!', toastErrorConfig);

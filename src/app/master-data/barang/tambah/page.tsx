@@ -27,6 +27,10 @@ export default function AddService(){
     const [loading, setLoading] = useState(false);
     const [loadingMessage, setLoadingMessage] = useState('Memuat Data...');
 
+    useEffect(() => {
+        document.title = "Tambah Harga Barang | SIPELARANG";
+    }, [])
+
     useEffect(()=> {
         setLoading(true);
         // getDermagaAction(

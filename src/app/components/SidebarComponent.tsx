@@ -139,24 +139,24 @@ export const SidebarComponent = () => {
                         icon={<RuteIcon fill={router?.includes('/master-data/rute') || mode == 'dark' ? 'white' : undefined} />}
                         href='/master-data/rute'
                     />
-                    <SideMenuItem 
+                    {/* <SideMenuItem 
                         text='SOP'
                         path={router}
                         icon={<SopIcon fill={router?.includes('/master-data/sop') || mode == 'dark' ? 'white' : undefined} />}
                         href='/master-data/sop'
-                    />
+                    /> */}
                     {/* <SideMenuItem 
                         text='Pelanggan'
                         path={router}
                         icon={<CustomerIcon fill={router?.includes('/master-data/pelanggan') || mode == 'dark' ? 'white' : undefined} />}
                         href='/master-data/pelanggan'
                     /> */}
-                    <SideMenuItem 
+                    {/* <SideMenuItem 
                         text='Data Agen'
                         path={router}
                         icon={<AgenIcon fill={router?.includes('/master-data/agen') || mode == 'dark' ? 'white' : undefined} />}
                         href='/master-data/agen'
-                    />
+                    /> */}
                     <SideMenuItem 
                         text='Data Nahkoda'
                         path={router}
@@ -244,12 +244,12 @@ export const SidebarComponent = () => {
                         },
                     }}
                 >
-                    <SideMenuItem
+                    {/* <SideMenuItem
                         text='Operator'
                         path={router}
                         icon={<UserIcon fill={router?.includes('/laporan/operator') || mode == 'dark' ? 'white' : undefined} />}
                         href='/laporan/operator'
-                    />
+                    /> */}
                     <SideMenuItem
                         text='Pembayaran'
                         path={router}

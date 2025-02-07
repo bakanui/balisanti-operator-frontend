@@ -133,6 +133,7 @@ export default function AddPenjualanTiket() {
             tglBerangkat = getStorageValue('tanggalKeberangkatan');
         if (currTiket) {
             setTiket(currTiket);
+            document.title = "Penjualan Tiket " + currTiket.waktu_berangkat + " | SIPELARANG";
             if (tglBerangkat) {
                 setTanggalKeberangkatan(new Date(tglBerangkat));
             } else {
@@ -671,7 +672,7 @@ export default function AddPenjualanTiket() {
                 title="Penjualan Tiket"
                 onBack={back}
             />
-            {user && user.id_role == 1 ? 
+            {/* {user && user.id_role == 1 ? 
                 <BaseCard>
                     <SelectBox
                         label="Agen"
@@ -682,7 +683,7 @@ export default function AddPenjualanTiket() {
                     />
                     <div className="font-robotomedium text-primary text-sm">Sisa Limit : Rp. {(agenHolder && agenHolder.sisa_limit) && agenHolder.sisa_limit < 0 ? '(Minus)' : ''} {convertLabelToPrice(`${agenHolder && agenHolder.sisa_limit ? agenHolder.sisa_limit : '0'}`)}</div>
                 </BaseCard>
-            : null}
+            : null} */}
             <div className="my-4 relative flex justify-between">
                 <div className="w-full h-auto mr-4 bg-white dark:bg-slate-700 p-2 sm:p-8 rounded-xl">
                     <div className="sm:grid gap-x-6 grid-cols-2">

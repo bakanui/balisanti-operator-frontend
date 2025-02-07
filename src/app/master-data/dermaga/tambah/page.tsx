@@ -9,7 +9,7 @@ import { SelectBox } from "@/app/components/SelectBox";
 import { STATUS } from "@/app/constants/status";
 import { toastErrorConfig, toastSuccessConfig } from "@/app/utils/utility";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { createDermagaAction } from "../dermaga.service";
 
@@ -23,6 +23,10 @@ export default function AddDermaga(){
     const back = () => {
         router.back();
     }
+
+    useEffect(()=>{
+        document.title = "Tambah Dermaga | SIPELARANG";
+    },[]);
 
     const save = () => {
         if (!nama || !lokasi || !status) {

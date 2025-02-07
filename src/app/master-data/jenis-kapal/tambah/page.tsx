@@ -6,7 +6,7 @@ import { BaseContainer } from "@/app/components/Container";
 import { Input } from "@/app/components/Input";
 import { LoadingOverlay } from "@/app/components/LoadingOverlay";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import { toastErrorConfig, toastSuccessConfig } from "@/app/utils/utility";
 import { createJenisKapalAction } from "../jenis-kapal.service";
@@ -19,6 +19,10 @@ export default function AddJenisKapal(){
     const back = () => {
         router.back();
     }
+
+    useEffect(()=>{
+        document.title = "Tambah Jenis Kapal | SIPELARANG";
+    },[]);
 
     const save = () => {
         setLoading(true);

@@ -45,6 +45,10 @@ export default function Nahkoda(){
     ).current;
 
     useEffect(()=>{
+        document.title = "Data Nahkoda | SIPELARANG";
+    },[]);
+
+    useEffect(()=>{
         getData();
     },[keyword, limit.value]);
 

@@ -94,6 +94,10 @@ export default function AddPenjualanTiket() {
     }
     const uid = uniqid();
 
+    useEffect(() => {
+        document.title = "Layanan Sandar | SIPELARANG";
+    }, [])
+
     useEffect(()=> {
         setLoading(true);
         getKapalAction(

@@ -42,6 +42,10 @@ export default function JenisKapal(){
     },[]);
 
     useEffect(()=>{
+        document.title = "Data Dermaga | SIPELARANG";
+    },[]);
+
+    useEffect(()=>{
         getData();
     },[keyword, limit]);
 

@@ -48,6 +48,10 @@ export default function Dermaga(){
         getData();
     },[keyword, limit.value]);
 
+    useEffect(()=>{
+        document.title = "Data Dermaga | SIPELARANG";
+    },[]);
+
     useEffect(() => {
         return () => {
           debouncedSearch.cancel();

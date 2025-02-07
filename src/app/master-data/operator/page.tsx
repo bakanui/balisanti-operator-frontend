@@ -115,6 +115,10 @@ export default function Operator(){
         router.push('/master-data/operator/tambah');
     }
 
+    useEffect(()=>{
+        document.title = "Users | SIPELARANG";
+    },[]);
+
     return(
         <BaseContainer>
             <CustomBreadcumb title="Users"/>

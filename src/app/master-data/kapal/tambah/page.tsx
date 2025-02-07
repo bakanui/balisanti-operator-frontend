@@ -38,6 +38,10 @@ export default function AddKapal(){
         getJenisKapal();
     },[]);
 
+    useEffect(() => {
+        document.title = "Tambah Kapal | SIPELARANG";
+    }, [])
+
     const back = () => {
         router.back();
     }

@@ -58,6 +58,10 @@ export default function AddOperator(){
         router.back();
     }
 
+    useEffect(()=>{
+        document.title = "Tambah User | SIPELARANG";
+    },[]);
+
     const generateCurrentPassword = () => {
         const tmpPwd = generatePassword();
         setPassword(tmpPwd);

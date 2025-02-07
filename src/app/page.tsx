@@ -1,4 +1,5 @@
 "use client"
+import { Helmet } from "react-helmet-async";
 import { Inter } from '@next/font/google'
 import { BaseCard } from "@/app/components/BaseCard";
 import { CustomBreadcumb } from "@/app/components/Breadcumb";
@@ -27,6 +28,7 @@ export default function Home() {
 
     useEffect(()=>{
         getReport();
+        document.title = "Dashboard | SIPELARANG";
     },[]);
 
     const getReport = () => {
@@ -39,6 +41,9 @@ export default function Home() {
     
   return(
     <BaseContainer>
+        {/* <Helmet>
+            <title>Dashboard | SIPELARANG</title>
+        </Helmet> */}
         <CustomBreadcumb noRoute title="Dashboard"/>
         <BaseCard>
             <RangeDatePicker

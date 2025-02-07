@@ -60,6 +60,10 @@ export default function EditInvoice() {
         }
     }, [detail]);
 
+    useEffect(() => {
+        document.title = "Edit Invoice | SIPELARANG";
+    }, [])
+
     const getDataInvoice = async () => {
         if(!selectedInvoice.value) {
             toast.error('Pilih data invoice terlebih dahulu!');

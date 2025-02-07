@@ -49,6 +49,10 @@ export default function Jadwal(){
         getData(1);
     },[keyword, limit.value]);
 
+    useEffect(()=>{
+        document.title = "Jadwal & Tiket | SIPELARANG";
+    },[]);
+
     useEffect(() => {
         return () => {
           debouncedSearch.cancel();

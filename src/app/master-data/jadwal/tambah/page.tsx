@@ -149,6 +149,10 @@ export default function AddJadwal(){
         );
     }, []);
 
+    useEffect(()=>{
+        document.title = "Tambah Jadwal Tiket | SIPELARANG";
+    },[]);
+
     const save = () => {
         setLoadingMessage('Menyimpan Data...');
         setLoading(true);

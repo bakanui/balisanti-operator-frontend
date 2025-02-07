@@ -32,6 +32,7 @@ export default function EditDermaga(){
             queryParams.get('id'),
             (data)=>{
                 setNama(data.nama_dermaga);
+                document.title = "Edit " + data.nama_dermaga + " | SIPELARANG";
                 setLokasi(data.lokasi_dermaga);
                 setStatus({
                     value: `${data.status_dermaga}`,

@@ -29,10 +29,10 @@ export const SelectBox = (props: IProps) => {
                 onChange={props.onChange}
                 isDisabled={props.disable}
                 classNames={{
-                    control: () => 'text-input text-sm font-robotoregular mb-4 cursor-pointer bg-select',
-                    option: () => 'text-white bg-select',
-                    input: ()=> 'text-white',
-                    singleValue: () => 'text-white',
+                    control: () => 'dark:bg-gray-800 text-input text-sm font-robotoregular mb-4 cursor-pointer',
+                    option: (provided) => `${provided} dark:bg-select dark:text-white`,
+                    input: ()=> 'dark:text-white',
+                    singleValue: () => 'dark:text-white',
                 }}
             />
         </div>

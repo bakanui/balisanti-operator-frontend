@@ -47,6 +47,10 @@ export default function Service(){
     },[keyword, limit.value]);
 
     useEffect(() => {
+        document.title = "Harga Barang | SIPELARANG";
+    }, [])
+
+    useEffect(() => {
         return () => {
           debouncedSearch.cancel();
         };

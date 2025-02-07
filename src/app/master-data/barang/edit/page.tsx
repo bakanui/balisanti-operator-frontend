@@ -29,6 +29,10 @@ export default function EditService(){
     const [loading, setLoading] = useState(false);
     const [loadingMessage, setLoadingMessage] = useState('Memuat Data...');
 
+    useEffect(() => {
+        document.title = "Edit Harga Barang | SIPELARANG";
+    }, [])
+
     useEffect(()=> {
         setLoading(true);
         // getDermagaAction(

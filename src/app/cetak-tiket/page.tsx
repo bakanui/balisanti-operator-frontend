@@ -46,6 +46,10 @@ export default function Operator() {
         router.back();
     }
 
+    useEffect(() => {
+        document.title = "Cetak Tiket | SIPELARANG";
+    }, [])
+
     // set penumpang as global variable, can access through window
     useEffect(() => {
         if (typeof window !== 'undefined') {

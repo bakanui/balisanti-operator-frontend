@@ -37,6 +37,10 @@ export default function PenjualanTiket(){
     });
     const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        document.title = "Penjualan Tiket | SIPELARANG";
+    }, [])
+
     useEffect(()=> {
         setLoading(true);
         getDermagaAction(

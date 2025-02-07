@@ -128,6 +128,7 @@ export default function EditJadwal(){
                                                     queryParams.get('id'),
                                                     (data) => {
                                                         setData(data);
+                                                        document.title = "Edit " + data.waktu_berangkat +" | SIPELARANG";
                                                         if(data.image){
                                                             setFile(data.image);
                                                         }

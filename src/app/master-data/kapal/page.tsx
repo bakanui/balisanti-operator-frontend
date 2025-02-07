@@ -55,6 +55,10 @@ export default function Kapal(){
         getJenisKapal();
     },[]);
 
+    useEffect(() => {
+        document.title = "Kapal | SIPELARANG";
+    }, [])
+
     useEffect(()=>{
         getKapal();
     },[keyword, limit.value]);
