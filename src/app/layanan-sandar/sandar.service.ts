@@ -29,6 +29,30 @@ export const createSandarAction = (
     });
 }
 
+export const editSandarAction = (
+    params: any,
+    onSuccess: (data: any) => void,
+    onFailed: (error:any) => void,
+    onUnAuth?: () => void
+) => {
+    const auth: IAuth = getStorageValue('auth');
+    axios.post<IAuth>(API_LAYANAN_SANDAR.EDIT_SANDAR, 
+        {...params},
+        {
+            headers: {
+                Authorization: `Bearer ${auth.authorisation.token}`
+            }
+        }
+    )
+    .then((response)=> {
+        onSuccess(response.data);
+    })
+    .catch(function (error) {
+        let err = errorHandler(error, ()=> onUnAuth && onUnAuth());
+        onFailed(err);
+    });
+}
+
 export const handleDownloadBASandar = (
     params: any,
     onSuccess: (data: any) => void,
@@ -43,6 +67,31 @@ export const handleDownloadBASandar = (
                 Authorization: `Bearer ${auth.authorisation.token}`
             },
             responseType: 'blob'
+        }
+    )
+    .then((response)=> {
+        // process.env.NODE_ENV && console.log('GET getPenumpangByJadwalAction = ', response);
+        onSuccess(response.data);
+    })
+    .catch(function (error) {
+        let err = errorHandler(error, ()=> onUnAuth && onUnAuth());
+        onFailed(err);
+    });
+}
+
+export const getHargaTiketSandarAction = (
+    params: any,
+    onSuccess: (data: any) => void,
+    onFailed: (error:any) => void,
+    onUnAuth?: () => void
+ ) => {
+    const auth: IAuth = getStorageValue('auth');
+    axios.post<any[]>(API_LAYANAN_SANDAR.GET_TIKET, 
+        {...params},
+        {
+            headers: {
+                Authorization: `Bearer ${auth.authorisation.token}`
+            },
         }
     )
     .then((response)=> {

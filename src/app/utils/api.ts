@@ -73,7 +73,9 @@ export const API_MANIFEST = {
 
 export const API_LAYANAN_SANDAR = {
     CREATE_SANDAR : `${BASE_URL}/laporan/vat/tambah`,
+    EDIT_SANDAR : `${BASE_URL}/laporan/vat/edit`,
     DOWNLOAD_BA: `${BASE_URL}/laporan/vat/berita-acara-sandar`,
+    GET_TIKET: `${BASE_URL}/laporan/vat/get-tiket`,
 }
 
 export const API_DASHBOARD = {

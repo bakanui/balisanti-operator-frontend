@@ -19,6 +19,7 @@ export default function EditInvoice() {
     const router = useRouter();
     const [selectedInvoice, setSelectedInvoice] = useState({value: '', label: 'Pilih Data'});
     const [detail, getDetail, loadingDetail] = useInvoiceDetail({});
+    const [menu, setMenu] = useState("");
 
     const searchInvoice = async(inputValue: string) => {
         const auth: IAuth = getStorageValue('auth');
@@ -46,17 +47,33 @@ export default function EditInvoice() {
           }, 1000);
     });
 
-    useEffect(()=> {
-        if (detail && detail.length == 0) {
-            toast.error('Nomor Invoice Tidak Ditemukan!');
-            return;
-        }
-        if(detail && detail.pembayaran.sudah_bayar == 1){
-            toast.error('Invoice sudah dibayar. Tidak dapat diedit!');
-            return;
-        }
-        if (detail && detail.pembayaran.no_invoice) {
-            router.push('/edit-invoice/edit?invoice='+detail.pembayaran.no_invoice);
+    useEffect(() => {
+        console.log('useEffect triggered with detail:', detail);
+
+        if (detail) {
+            let berangkat = detail.detail_jadwal.tanggal_berangkat + ' ' + detail.detail_jadwal.waktu_berangkat;
+            let berangkatDate = new Date(berangkat);
+            let leewayDate = new Date(berangkatDate.getTime() + 2 * 60 * 60 * 1000); // Add 2 hours    
+            console.log(berangkat)
+            console.log(berangkatDate)
+            console.log(leewayDate)
+            if (detail.length == 0) {
+                toast.error('Nomor Invoice Tidak Ditemukan!');
+                return;
+            }
+            // if (detail.pembayaran.status_lunas == "Belum Lunas") {
+            //     console.log('Invoice already paid');
+            //     toast.error('Invoice sudah dibayar. Tidak dapat diedit!');
+            //     return;
+            // }
+            if (leewayDate < new Date()) {
+                toast.error('Kapal sudah berangkat. Tidak dapat diedit!');
+            }else if (menu == "cancel") {
+                router.push('/edit-invoice/edit?invoice=' + detail.pembayaran.no_invoice);
+            }else if (menu == "edit") {
+                let tmp = selectedInvoice.value.split('/')[0];
+                router.push('/edit-invoice/edit/invoice?invoice='+tmp);
+            }
         }
     }, [detail]);
 
@@ -101,9 +118,9 @@ export default function EditInvoice() {
                     }}
                 />
                 <div className="flex">
-                    <Button label="Edit Invoice" outline onClick={editCoreInvoice}/>
+                    <Button label="Edit Invoice" outline onClick={()=> {setMenu("edit"); getDataInvoice()}}/>
                     <span className="ml-2"/>
-                    <Button label="Cancel Penumpang" onClick={getDataInvoice}/>
+                    <Button label="Cancel Penumpang" onClick={()=> {setMenu("cancel"); getDataInvoice()}}/>
                 </div>
             </BaseCard>
             <LoadingOverlay 

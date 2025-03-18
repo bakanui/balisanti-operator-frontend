@@ -24,10 +24,11 @@ import { getJenisPenumpangAction } from "@/app/master-data/penumpang/penumpang.s
 import { getJenisKapalAction } from "@/app/master-data/jenis-kapal/jenis-kapal.service";
 import { SandarPriceInput } from "./components/SandarPriceInput";
 import { createKapalSiwalatriAction } from "@/app/master-data/kapal/kapal.service";
-import { createjadwalAction, createjadwalSiwalatriAction } from "../master-data/jadwal/jadwal.service";
+import { createjadwalAction, createjadwalSiwalatriAction, editjadwalAction, editjadwalSiwalatriAction, setJadwalImageAction } from "../master-data/jadwal/jadwal.service";
 import uniqid from 'uniqid';
-import { createSandarAction, handleDownloadBASandar } from "./sandar.service";
+import { createSandarAction, editSandarAction, getHargaTiketSandarAction, handleDownloadBASandar } from "./sandar.service";
 import fileDownload from "js-file-download";
+import { IHargaTiket } from "@/app/types/jadwal";
 
 export default function AddPenjualanTiket() {
     const router = useRouter();
@@ -48,6 +49,7 @@ export default function AddPenjualanTiket() {
     const [GRT, setGRT] = useState('');
     const [DWT, setDWT] = useState('');
     const [jenisKapal, setJenisKapal] = useState([]);
+    const [jadwal, setJadwal] = useState('');
     const [kapasitasAwak, setKapasitasAwak] = useState('');
     const [kapasitasPenumpang, setKapasitasPenumpang] = useState('');
     const [selectedJenisKapal, setSelectedJenisKapal] = useState({value: '', label: 'Pilih Data'});
@@ -68,10 +70,12 @@ export default function AddPenjualanTiket() {
     ]);
     const [loadingMessage, setLoadingMessage] = useState('Memuat Data...');
     const [download, setDownload] = useState(false);
+    const [exist, setExist] = useState(false);
     const [idDownload, setIdDownload] = useState('');
     interface HargaTiketItem {
         id: number;
         id_jadwal: string;
+        id_kapal: string;
         id_jenis_penumpang: number;
         harga: number;
         penumpang: string
@@ -202,6 +206,43 @@ export default function AddPenjualanTiket() {
                 setKapasitasAwak(Number(selectedKapalData.kapasitas_awak));
                 setKapasitasPenumpang(Number(selectedKapalData.kapasitas_penumpang));
                 setSelectedJenisKapal([{value: selectedKapalData.id_jenis_kapal, label: selectedKapalData.nama_jenis_kapal}]);
+                getHargaTiketSandarAction(
+                    {
+                        id_kapal: selectedOption.value
+                    },
+                    (data) => {
+                        console.log(data.id_jadwal)
+                        let tmpTiket = data.data.map((item: IHargaTiket) => ({
+                            id: new Date().getTime(),
+                            penumpang: {
+                                value: `${item.id_jenis_penumpang}`,
+                                label: `${item.tipe_penumpang} - ${item.jenis_penumpang}`,
+                                jenis: `${item.jenis_penumpang}`,
+                                tipe: `${item.tipe_penumpang}`,
+                            },
+                            tiket: `${item.tiket}`,
+                            jr: `${item.jr}`,
+                            jpb: `${item.jpb}`,
+                            jpk: `${item.jpk}`,
+                            pass: `${item.pass}`,
+                            dermaga: `${item.dermaga}`,
+                            jumlahPenumpang: item.jumlah,
+                            jumlah: item.jumlah
+                        }));
+                        setTiket(tmpTiket);
+                        if(tmpTiket.length !== 0) {
+                            console.log("kapal existing")
+                            setExist(true);
+                            setJadwal(data.id_jadwal);
+                        }
+                        setLoading(false); 
+                    },
+                    (err) => {
+                        setLoading(false);
+                        toast.error(err, toastErrorConfig);
+                    },
+                    ()=> router.replace('./login')
+                );
             }
         } else {
             setSelectedKapal(selectedOption);
@@ -218,6 +259,7 @@ export default function AddPenjualanTiket() {
             setArmada("6c722eyfmtlh0");
             setKapasitasPenumpang("");
             setSelectedJenisKapal([{value: '', label: 'Pilih Data'}]);
+            setTiket([]);
         }
         
     }
@@ -226,87 +268,173 @@ export default function AddPenjualanTiket() {
         setLoadingMessage('Menyimpan Data...')
         setLoading(true);
         if (selectedKapal.value !== 'new') {
-            createjadwalAction(
-                {
-                    id: uid,
-                    jenis_jadwal: "Layanan Sandar",
-                    id_kapal: selectedKapal.value,
-                    id_nahkoda: selectedNahkoda.value,
-                    id_rute: 7,
-                    id_armada: armada,
-                    waktu_berangkat: new Date().toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit' }),
-                    id_loket: 88,
-                    status_jadwal: 1,
-                    harga_tiket: tiket.map(item => ({
-                        id_jenis_penumpang: Number(item.penumpang.value),
-                        tiket: convertLabelPriceToNumeberPrice(item.tiket),
-                        jr: convertLabelPriceToNumeberPrice(item.jr),
-                        jpk: convertLabelPriceToNumeberPrice(item.jpk),
-                        jpb: convertLabelPriceToNumeberPrice(item.jpb),
-                        pass: convertLabelPriceToNumeberPrice(item.pass),
-                        dermaga: convertLabelPriceToNumeberPrice(item.dermaga),
-                        penumpang: Number(item.jumlahPenumpang)
-                    }))
-                },
-                (res) => {
-                    createjadwalSiwalatriAction(
-                        {
-                            id: uid,
-                            jenis_jadwal: "Layanan Sandar",
-                            id_kapal: selectedKapal.value,
-                            id_nahkoda: selectedNahkoda.value,
-                            id_rute: 1,
-                            id_armada: armada,
-                            jadwal: new Date().toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit' }),
-                            id_loket: 88,
-                            status: "Berlayar",
-                            ekstra: 0,
-                            harga_tiket: res.harga_tiket.map((item: HargaTiketItem) => ({
-                                nama_tiket: item.tipe_penumpang,
-                                id_jns_penum: jenisPenumpangSpawner(item.jenis_penumpang),
-                                harga: item.harga,
-                                id_siwalatri: item.id
-                            })),
-                            tanggal_berangkat: parseDateIncludeHours(new Date(), false),
-                            tanggal_sampai: parseDateIncludeHours(new Date(), false)
-                        },
-                        () => {
-                            // toast.success('Data Berhasil Disimpan', toastSuccessConfig);
-                            // setLoading(false);
-                            // router.replace('/laporan/pembayaran');
-                            createSandarAction(
-                                {
-                                    data: res.harga_tiket.map((item: HargaTiketItem) => ({
-                                        id_jadwal: uid,
-                                        id_jadwaljenispenumpang: item.id,
-                                        jumlah: item.penumpang,
-                                    })),
-                                },
-                                () => {
-                                    toast.success('Data Berhasil Disimpan', toastSuccessConfig);
-                                    setLoading(false);
-                                    setDownload(true);
-                                    setIdDownload(uid);
-                                    // router.push('/layanan-sandar/detail-invoice?id='+uid);
-                                },
-                                (err) => {
-                                    setLoading(false);
-                                    toast.error(err, toastErrorConfig);
-                                },
-                            );
-                        },
-                        (err) => {
-                            setLoading(false);
-                            toast.error(err, toastErrorConfig);
-                        },
-                    );
-                },
-                (err) => {
-                    setLoading(false);
-                    toast.error(err, toastErrorConfig);
-                },
-                () => router.replace('/login')
-            );
+            if(exist) {
+                console.log(jadwal)
+                editjadwalAction(
+                    {
+                        id: jadwal,
+                        jenis_jadwal: "Layanan Sandar",
+                        id_kapal: selectedKapal.value,
+                        id_nahkoda: selectedNahkoda.value,
+                        id_rute: 7,
+                        id_armada: armada,
+                        waktu_berangkat: new Date().toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit' }),
+                        id_loket: 88,
+                        status_jadwal: 1,
+                        harga_tiket: tiket.map(item => ({
+                            id_jenis_penumpang: Number(item.penumpang.value),
+                            tiket: convertLabelPriceToNumeberPrice(item.tiket),
+                            jr: convertLabelPriceToNumeberPrice(item.jr),
+                            jpk: convertLabelPriceToNumeberPrice(item.jpk),
+                            jpb: convertLabelPriceToNumeberPrice(item.jpb),
+                            pass: convertLabelPriceToNumeberPrice(item.pass),
+                            dermaga: convertLabelPriceToNumeberPrice(item.dermaga),
+                            penumpang: Number(item.jumlahPenumpang)
+                        }))
+                    },
+                    (res)=>{
+                        editjadwalSiwalatriAction(
+                            jadwal,
+                            {
+                                id: jadwal,
+                                jenis_jadwal: "Layanan Sandar",
+                                id_kapal: selectedKapal.value,
+                                id_nahkoda: selectedNahkoda.value,
+                                id_rute: 1,
+                                id_armada: armada,
+                                jadwal: new Date().toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit' }),
+                                id_loket: 88,
+                                status: "Berlayar",
+                                ekstra: 0,
+                                harga_tiket: res.harga_tiket.map((item: HargaTiketItem) => ({
+                                    nama_tiket: item.tipe_penumpang,
+                                    id_jns_penum: jenisPenumpangSpawner(item.jenis_penumpang),
+                                    harga: item.harga,
+                                    id_siwalatri: item.id
+                                })),
+                                tanggal_berangkat: parseDateIncludeHours(new Date(), false),
+                                tanggal_sampai: parseDateIncludeHours(new Date(), false)
+                            },
+                            ()=>{
+                                editSandarAction(
+                                    {
+                                        data: res.harga_tiket.map((item: HargaTiketItem) => ({
+                                            id_jadwal: jadwal,
+                                            id_jadwaljenispenumpang: item.id,
+                                            id_kapal: selectedKapal.value,
+                                            jumlah: item.penumpang,
+                                        })),
+                                    },
+                                    () => {
+                                        toast.success('Data Berhasil Disimpan', toastSuccessConfig);
+                                        setLoading(false);
+                                        setDownload(true);
+                                        setIdDownload(jadwal);
+                                        // router.push('/layanan-sandar/detail-invoice?id='+uid);
+                                    },
+                                    (err) => {
+                                        setLoading(false);
+                                        toast.error(err, toastErrorConfig);
+                                    },
+                                );
+                            },
+                            (err)=>{
+                                setLoading(false);
+                                toast.error(err, toastErrorConfig);
+                            },
+                            () => router.replace('/login')
+                        );
+                    },
+                    (err)=>{
+                        setLoading(false);
+                        toast.error(err, toastErrorConfig);
+                    },
+                    () => router.replace('/login')
+                );
+            }else{
+                createjadwalAction(
+                    {
+                        id: uid,
+                        jenis_jadwal: "Layanan Sandar",
+                        id_kapal: selectedKapal.value,
+                        id_nahkoda: selectedNahkoda.value,
+                        id_rute: 7,
+                        id_armada: armada,
+                        waktu_berangkat: new Date().toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit' }),
+                        id_loket: 88,
+                        status_jadwal: 1,
+                        harga_tiket: tiket.map(item => ({
+                            id_jenis_penumpang: Number(item.penumpang.value),
+                            tiket: convertLabelPriceToNumeberPrice(item.tiket),
+                            jr: convertLabelPriceToNumeberPrice(item.jr),
+                            jpk: convertLabelPriceToNumeberPrice(item.jpk),
+                            jpb: convertLabelPriceToNumeberPrice(item.jpb),
+                            pass: convertLabelPriceToNumeberPrice(item.pass),
+                            dermaga: convertLabelPriceToNumeberPrice(item.dermaga),
+                            penumpang: Number(item.jumlahPenumpang)
+                        }))
+                    },
+                    (res) => {
+                        createjadwalSiwalatriAction(
+                            {
+                                id: uid,
+                                jenis_jadwal: "Layanan Sandar",
+                                id_kapal: selectedKapal.value,
+                                id_nahkoda: selectedNahkoda.value,
+                                id_rute: 1,
+                                id_armada: armada,
+                                jadwal: new Date().toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit' }),
+                                id_loket: 88,
+                                status: "Berlayar",
+                                ekstra: 0,
+                                harga_tiket: res.harga_tiket.map((item: HargaTiketItem) => ({
+                                    nama_tiket: item.tipe_penumpang,
+                                    id_jns_penum: jenisPenumpangSpawner(item.jenis_penumpang),
+                                    harga: item.harga,
+                                    id_siwalatri: item.id
+                                })),
+                                tanggal_berangkat: parseDateIncludeHours(new Date(), false),
+                                tanggal_sampai: parseDateIncludeHours(new Date(), false)
+                            },
+                            () => {
+                                // toast.success('Data Berhasil Disimpan', toastSuccessConfig);
+                                // setLoading(false);
+                                // router.replace('/laporan/pembayaran');
+                                createSandarAction(
+                                    {
+                                        data: res.harga_tiket.map((item: HargaTiketItem) => ({
+                                            id_jadwal: uid,
+                                            id_jadwaljenispenumpang: item.id,
+                                            id_kapal: selectedKapal.value,
+                                            jumlah: item.jumlahPenumpang,
+                                        })),
+                                    },
+                                    () => {
+                                        toast.success('Data Berhasil Disimpan', toastSuccessConfig);
+                                        setLoading(false);
+                                        setDownload(true);
+                                        setIdDownload(uid);
+                                        // router.push('/layanan-sandar/detail-invoice?id='+uid);
+                                    },
+                                    (err) => {
+                                        setLoading(false);
+                                        toast.error(err, toastErrorConfig);
+                                    },
+                                );
+                            },
+                            (err) => {
+                                setLoading(false);
+                                toast.error(err, toastErrorConfig);
+                            },
+                        );
+                    },
+                    (err) => {
+                        setLoading(false);
+                        toast.error(err, toastErrorConfig);
+                    },
+                    () => router.replace('/login')
+                );
+            }
         } else {
             const params = {
                 nama_kapal: namaKapal,
@@ -400,6 +528,7 @@ export default function AddPenjualanTiket() {
                                                         id_jadwal: uid,
                                                         id_jadwaljenispenumpang: item.jenis_penumpang,
                                                         jumlah: item.penumpang,
+                                                        id_kapal: data.id,
                                                     })),
                                                 },
                                                 () => {
@@ -452,6 +581,27 @@ export default function AddPenjualanTiket() {
             tmp.splice(index, 1);
             setTiket(tmp);
         }
+    }
+
+    const setData = (data: IHargaTiket[]) => {
+        let tmpTiket = data.map((item) => ({
+            id: new Date().getTime(),
+            penumpang: {
+                value: `${item.id_jenis_penumpang}`,
+                label: `${item.tipe_penumpang} - ${item.jenis_penumpang}`,
+                jenis: `${item.jenis_penumpang}`,
+                tipe: `${item.tipe_penumpang}`,
+            },
+            tiket: `${item.tiket}`,
+            jr: `${item.jr}`,
+            jpb: `${item.jpb}`,
+            jpk: `${item.jpk}`,
+            pass: `${item.pass}`,
+            dermaga: `${item.dermaga}`,
+            jumlahPenumpang: '',
+            jumlah: item.jumlah
+        }));
+        setTiket(tmpTiket);
     }
 
     const selectOption = (data: any, index: number) => {
@@ -519,7 +669,7 @@ export default function AddPenjualanTiket() {
               setLoading(false);
           }
       );
-      }
+    }
     
 
     return(

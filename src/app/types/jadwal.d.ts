@@ -36,6 +36,7 @@ export interface IHargaTiket {
     dermaga: number;
     tipe_penumpang: string;
     jenis_penumpang: string;
+    jumlah: number;
 }
 
 export interface IPenjualanTiket {
