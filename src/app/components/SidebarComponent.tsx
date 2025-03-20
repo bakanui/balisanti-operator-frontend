@@ -245,10 +245,22 @@ export const SidebarComponent = () => {
                     }}
                 >
                     <SideMenuItem
-                        text='Berkas'
+                        text='Berita Acara'
                         path={router}
-                        icon={<SopIcon fill={router?.includes('/laporan/berkas') || mode == 'dark' ? 'white' : undefined} />}
-                        href='/laporan/berkas'
+                        icon={<SopIcon fill={router?.includes('/laporan/berita-acara') || mode == 'dark' ? 'white' : undefined} />}
+                        href='/laporan/berita-acara'
+                    />
+                    <SideMenuItem
+                        text='Bongkar Muat'
+                        path={router}
+                        icon={<SopIcon fill={router?.includes('/laporan/bongkar-muat') || mode == 'dark' ? 'white' : undefined} />}
+                        href='/laporan/bongkar-muat'
+                    />
+                    <SideMenuItem
+                        text='Jasa Sandar'
+                        path={router}
+                        icon={<SopIcon fill={router?.includes('/laporan/jasa-sandar') || mode == 'dark' ? 'white' : undefined} />}
+                        href='/laporan/jasa-sandar'
                     />
                     <SideMenuItem
                         text='Pembayaran'

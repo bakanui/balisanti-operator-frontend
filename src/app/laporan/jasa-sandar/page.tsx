@@ -83,7 +83,7 @@ const options = {
   },
 };
 
-export default function LaporanPembayaran() {
+export default function LaporanJasaSandar() {
   const router = useRouter();
   const labels = ['26 Jan 2023'];
   const [user, setUser] = useState<any>();
@@ -601,7 +601,7 @@ export default function LaporanPembayaran() {
 
   return(
     <BaseContainer>
-        <CustomBreadcumb noRoute title="Laporan Pembayaran"/>
+        <CustomBreadcumb noRoute title="Laporan Jasa Sandar"/>
         <BaseCard>
             <div className="sm:grid gap-x-6 grid-cols-2">
                 <RangeDatePicker
@@ -638,22 +638,22 @@ export default function LaporanPembayaran() {
               onChange={debouncedSearch}
               limitChange={(e)=>setLimit({value: e.target.value, label: e.target.value})}
           />
-          {/* <div className='flex gap-3 mt-5'>
+          <div className='flex gap-3 mt-5'>
           {data.length > 0 ? 
             <>
-              <div className='w-1/4'>
+              {/* <div className='w-1/4'>
                 <Button 
                   label='Download Laporan Manifest'
                   onClick={handleDownloadM}
                 />
-              </div>
+              </div> */}
               <div className='w-1/4'>
                 <Button 
                   label='Download Laporan Jasa Sandar'
                   onClick={handleDownloadLapGT}
                 />
               </div>
-              <div className='w-1/4'>
+              {/* <div className='w-1/4'>
                 <Button 
                   label='Download Laporan Bongkar Muat'
                   onClick={handleDownloadLapJasa}
@@ -664,11 +664,11 @@ export default function LaporanPembayaran() {
                   label='Download Laporan Berita Acara'
                   onClick={handleDownloadLapBA}
                 />
-              </div>
+              </div> */}
             </>
             : null
           }
-          </div> */}
+          </div>
           {loading ? 
               <Loading
                   loading={loading}
