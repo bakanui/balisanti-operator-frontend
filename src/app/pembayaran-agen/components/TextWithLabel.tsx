@@ -11,7 +11,7 @@ export const TextWithLabel = (props: IProps) => {
         return(
             <div className="flex flex-col">
                 <div className="text-xs font-robotoregular">{props.title}</div>
-                <div className={`${props.size && props.size == 'sm' ? 'text-[18px]' : 'text-[32px]'} font-robotomedium text-[#008AA1]`}>{props.value}</div>
+                <div className={`${props.size && props.size == 'sm' ? 'text-[18px]' : 'text-[32px]'} font-robotomedium text-[#FF4D4D]`}>{props.value}</div>
             </div>
         );
     }

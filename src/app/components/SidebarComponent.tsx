@@ -74,7 +74,7 @@ export const SidebarComponent = () => {
             menuItemStyles={{
             button: ({ level, active, disabled }) => {
                 return {
-                    backgroundColor: active ? '#008AA1' : undefined,
+                    backgroundColor: active ? '#FF4D4D' : undefined,
                     width: '80%',
                     marginBottom: '2px',
                     color: active || mode == 'dark' ? '#fff' : 'black',
@@ -82,7 +82,7 @@ export const SidebarComponent = () => {
                     marginLeft: '10%',
                     borderRadius: '10px',
                     '&:hover': {
-                        backgroundColor: active || mode == 'dark' ? '#016070' : '#e2e8f0',
+                        backgroundColor: active || mode == 'dark' ? '#A10000' : '#e2e8f0',
                       },
                 };
             },

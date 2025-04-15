@@ -69,7 +69,7 @@ const data = {
     {
       label: 'Pembayaran Tunai',
       data: labels.map(() => 35000000),
-      backgroundColor: '#008AA1',
+      backgroundColor: '#FF4D4D',
       barPercentage: 0.3,
       categoryPercentage: 1,
     },
@@ -118,7 +118,7 @@ export default function LaporanOperator() {
         {
           label: 'Pembayaran Tunai',
           data: labels.map(() => 0),
-          backgroundColor: '#008AA1',
+          backgroundColor: '#FF4D4D',
           barPercentage: 0.3,
           categoryPercentage: 1,
         },
@@ -235,7 +235,7 @@ export default function LaporanOperator() {
               {
                 label: 'Pembayaran Tunai',
                 data: labels.map(() => data.data.tunai || 0),
-                backgroundColor: '#008AA1',
+                backgroundColor: '#FF4D4D',
                 barPercentage: 0.3,
                 categoryPercentage: 1,
               },

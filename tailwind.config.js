@@ -10,11 +10,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#008AA1',
-        secondary: '#03D6CA',
-        background: '#F2F6FF',
-        white: '#ffffff',
-        'primary-dark': '#016070'
+        primary: '#FF4D4D', // Bright red
+        secondary: '#FF6666', // Light red
+        background: '#FFF5F5', // Very light red
+        white: '#ffffff', // Unchanged
+        'primary-dark': '#A10000' // Dark red
       },
       fontFamily: {
         robotoregular: ['RobotoRegular'],

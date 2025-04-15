@@ -45,7 +45,7 @@ ChartJS.register(
       {
         label: 'Pembayaran Tunai',
         data: labels.map(() => 35000000),
-        backgroundColor: '#008AA1',
+        backgroundColor: '#FF4D4D',
         barPercentage: 0.3,
         categoryPercentage: 1,
       },
@@ -86,7 +86,7 @@ export const PembayaranChart = (props: IPembayaranChartProps) => {
                     {
                       label: 'Pembayaran Tunai',
                       data: tunai,
-                      backgroundColor: '#008AA1',
+                      backgroundColor: '#FF4D4D',
                       barPercentage: 0.3,
                       categoryPercentage: 1,
                     },

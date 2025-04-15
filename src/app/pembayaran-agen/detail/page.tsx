@@ -141,13 +141,13 @@ const getData = (page?: number) => {
             <TextWithLabel
                 title="Nama Agen"
                 value={agen ? agen?.nama_agen : '-'}
-                color={"#008AA1"}
+                color={"#FF4D4D"}
                 />
             <div className="sm:grid gap-x-6 grid-cols-3 mt-6">
               <TextWithLabel
                 title="Total Tagihan"
                 value={`Rp ${convertLabelToPrice(`${recap.total_tagihan}`)}`}
-                color={"#008AA1"}
+                color={"#FF4D4D"}
                 type='primary'
               />
               <TextWithLabel 

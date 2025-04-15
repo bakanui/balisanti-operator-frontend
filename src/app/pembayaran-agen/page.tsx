@@ -130,7 +130,7 @@ export default function LaporanAgen() {
                 <TextWithLabel 
                     title="Total Tagihan"
                     value={`Rp. ${convertLabelToPrice(rekapTagihan.total_tagihan)}`}
-                    color={"#008AA1"}
+                    color={"#FF4D4D"}
                     type='primary'
                 />
                 <TextWithLabel 

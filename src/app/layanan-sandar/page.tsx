@@ -526,7 +526,7 @@ export default function AddPenjualanTiket() {
                                                 {
                                                     data: res.harga_tiket.map((item: HargaTiketItem) => ({
                                                         id_jadwal: uid,
-                                                        id_jadwaljenispenumpang: item.jenis_penumpang,
+                                                        id_jadwaljenispenumpang: item.id,
                                                         jumlah: item.penumpang,
                                                         id_kapal: data.id,
                                                     })),

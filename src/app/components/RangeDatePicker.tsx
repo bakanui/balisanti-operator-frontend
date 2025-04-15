@@ -43,7 +43,7 @@ export const RangeDatePicker = (props: IProps) => {
                     <DateRangePicker
                         ranges={[props.date]}
                         onChange={onChange}
-                        rangeColors={['#008AA1']}
+                        rangeColors={['#FF4D4D']}
                     />
                     <div className='flex justify-end p-2 border-t-[1px]'>
                         <div className='w-[120px] mr-2'>

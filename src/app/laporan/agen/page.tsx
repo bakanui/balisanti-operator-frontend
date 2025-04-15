@@ -22,7 +22,7 @@ export default function LaporanAgen() {
               <TextWithLabel 
                 title="Total Tagihan"
                 value="Rp. 78.000.000"
-                color="#008AA1"
+                color="#FF4D4D"
               />
               <TextWithLabel 
                 title="Sudah Dibayarkan"
