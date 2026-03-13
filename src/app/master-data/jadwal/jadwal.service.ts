@@ -171,6 +171,23 @@ export const editjadwalSiwalatriAction = (
     });
 }
 
+export const deletejadwalSiwalatriAction = (
+    id: string,
+    onSuccess: (data: any) => void,
+    onFailed: (error:any) => void,
+    onUnAuth?: () => void
+) => {
+    axios.delete(API_SIWALATRI.JADWAL_KEBERANGKATAN + '/delete/' + id)
+    .then((response)=> {
+        process.env.NODE_ENV && console.log('delete JADWAL Siwalatri', response);
+        onSuccess(response.data);
+    })
+    .catch(function (error) {
+        let err = errorHandler(error, ()=> onUnAuth && onUnAuth());
+        onFailed(err);
+    });
+}
+
 export const setJadwalImageAction = (
     params: any,
     onSuccess: (data: any) => void,

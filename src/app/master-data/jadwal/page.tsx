@@ -18,7 +18,7 @@ import { debounce } from "lodash";
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import { deletejadwalAction, getjadwalAction } from "./jadwal.service";
+import { deletejadwalAction, deletejadwalSiwalatriAction, getjadwalAction } from "./jadwal.service";
 
 export default function Jadwal(){
     const router = useRouter();
@@ -94,9 +94,19 @@ export default function Jadwal(){
         deletejadwalAction(
             tmpDeleteData.id,
             ()=>{
-                setLoadingDelete(false);
-                toast.success('Berhasil menghapus data', toastSuccessConfig);
-                getData(pagination.currentPage);
+                deletejadwalSiwalatriAction(
+                    tmpDeleteData.id,
+                    ()=>{
+                        setLoadingDelete(false);
+                        toast.success('Berhasil menghapus data', toastSuccessConfig);
+                        getData(pagination.currentPage);
+                    },
+                    (err)=>{
+                        setLoadingDelete(false);
+                        toast.error(err, toastErrorConfig);
+                    },
+                    ()=> { router.replace('/login') }
+                );
             },
             (err)=>{
                 setLoadingDelete(false);
