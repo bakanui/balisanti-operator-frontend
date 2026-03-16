@@ -1,5 +1,4 @@
 'use client'
-import { Alert } from "@/app/components/Alert";
 import { Badge } from "@/app/components/Badge";
 import { BaseCard } from "@/app/components/BaseCard";
 import { CustomBreadcumb } from "@/app/components/Breadcumb";
@@ -8,17 +7,14 @@ import { BaseContainer } from "@/app/components/Container";
 import { CustomPagination } from "@/app/components/CustomPagination";
 import { Empty } from "@/app/components/Empty";
 import { Loading } from "@/app/components/Loading";
-import { LoadingOverlay } from "@/app/components/LoadingOverlay";
 import { CustomTable, HeadTb, TableRow } from "@/app/components/MyTable";
 import { TableFilter } from "@/app/components/TableFilter";
 import { IJadwal } from "@/app/types/jadwal";
-import { toastErrorConfig, toastSuccessConfig } from "@/app/utils/utility";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { debounce } from "lodash";
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
-import { deletejadwalAction, deletejadwalSiwalatriAction, getjadwalAction } from "./jadwal.service";
+import { getjadwalAction } from "./jadwal.service";
 
 export default function Jadwal(){
     const router = useRouter();
@@ -29,15 +25,8 @@ export default function Jadwal(){
         currentPage: 1
     });
     const [loading, setLoading] = useState(true);
-    const [tmpDeleteData, setTmpDeleteData] = useState({
-        id: '0',
-        name: ''
-    });
-    const [showAlert, setShowAlert] = useState(false);
-    const [loadingDelete, setLoadingDelete] = useState(false);
     const [keyword, setKeyword] = useState('');
     const [limit, setLimit] = useState({value: 10, label: '10'});
-    const [loadingMessage, setLoadingMessage] = useState('Memuat Data...');
 
     const debouncedSearch = useRef(
         debounce(async (e) => {
@@ -77,40 +66,6 @@ export default function Jadwal(){
             },
             ()=>{
                 setLoading(false);
-            },
-            ()=> { router.replace('/login') }
-        );
-    }
-
-    const confirmDelete = (id: string, name: string) => {
-        setTmpDeleteData({id, name});
-        setShowAlert(true);
-    }
-
-    const deleteData = () => {
-        setShowAlert(false);
-        setLoadingMessage('Menghapus Data...');
-        setLoadingDelete(true);
-        deletejadwalAction(
-            tmpDeleteData.id,
-            ()=>{
-                deletejadwalSiwalatriAction(
-                    tmpDeleteData.id,
-                    ()=>{
-                        setLoadingDelete(false);
-                        toast.success('Berhasil menghapus data', toastSuccessConfig);
-                        getData(pagination.currentPage);
-                    },
-                    (err)=>{
-                        setLoadingDelete(false);
-                        toast.error(err, toastErrorConfig);
-                    },
-                    ()=> { router.replace('/login') }
-                );
-            },
-            (err)=>{
-                setLoadingDelete(false);
-                toast.error(err, toastErrorConfig);
             },
             ()=> { router.replace('/login') }
         );
@@ -186,7 +141,7 @@ export default function Jadwal(){
                                         <ActionButton 
                                             label="Aksi"
                                             outline={true}
-                                            onDelete={()=>confirmDelete(item.id_jadwal, `${item.rute?.nama_dermaga_awal} - ${item.rute?.nama_dermaga_tujuan}, Waktu keberangkatan ${item.waktu_berangkat}`)}
+                                            hideDelete={true}
                                             onEdit={()=>gotoEdit(item.id_jadwal)}
                                         />
                                     </div>
@@ -212,20 +167,6 @@ export default function Jadwal(){
                 </>
                 }
             </BaseCard>
-            <Alert
-                title="Hapus Jadwal"
-                content={`Apakah Anda yakin ingin menghapus Jadwal: ${tmpDeleteData.name} ?`}
-                confirmText="Ya"
-                cancelText="Tidak"
-                isOpen={showAlert}
-                closeAlert={()=>setShowAlert(false)}
-                confirmAlert={deleteData}
-            />
-            <LoadingOverlay
-                loading={loadingDelete}
-                title={loadingMessage}
-            />
-            <ToastContainer/>
         </BaseContainer>
     );
 }
