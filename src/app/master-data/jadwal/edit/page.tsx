@@ -197,6 +197,7 @@ export default function EditJadwal(){
                     {
                         jadwal: waktuKeberangkatan.value + ":00",
                         status: "Berlayar",
+                        status_jadwal: status.value,
                         jenis_jadwal: jenisJawal.value,
                         id_nahkoda: selectedNahkoda.value,
                         id_kapal: selectedKapal.value,

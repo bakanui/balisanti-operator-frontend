@@ -27,6 +27,7 @@ interface IActionButtonProps {
     icon?: any;
     onEdit?: () => void;
     onDelete?: () => void;
+    hideDelete?: boolean;
 }
 export const ActionButton = (props: IActionButtonProps) => {
     return(
@@ -34,7 +35,9 @@ export const ActionButton = (props: IActionButtonProps) => {
             <div>
                 <ul>
                     <li onClick={props.onEdit} className="cursor-pointer text-sm font-robotoregular p-2 cursor-pointer hover:bg-primary rounded-lg hover:text-white dark:text-black">Edit</li>
-                    <li onClick={props.onDelete} className="cursor-pointer text-sm font-robotoregular p-2 cursor-pointer hover:bg-primary rounded-lg hover:text-white dark:text-black">Hapus</li>
+                    {!props.hideDelete && (
+                        <li onClick={props.onDelete} className="cursor-pointer text-sm font-robotoregular p-2 cursor-pointer hover:bg-primary rounded-lg hover:text-white dark:text-black">Hapus</li>
+                    )}
                 </ul>
             </div>
         </Popup>
