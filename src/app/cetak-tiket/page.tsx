@@ -36,7 +36,7 @@ export default function Operator() {
         total_tagihan: 0,
         status_lunas: ''
     });
-    const [collect, setCollect] = useState('');
+    const [harga_tiket, setHarga_tiket] = useState('');
 
     const back = () => {
         router.back();
@@ -45,17 +45,17 @@ export default function Operator() {
     // set penumpang as global variable, can access through window
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            // add key nama_agen and collect to penumpang
+            // add key nama_agen and harga_tiket to penumpang
             const tmp = penumpang.map((item) => {
                 return {
                     ...item,
                     nama_agen: agen?.nama_agen,
-                    collect: collect
+                    harga_tiket: harga_tiket
                 }
             });
             (window as any).printTicket = JSON.stringify(tmp);
         }
-    }, [penumpang])
+    }, [penumpang, agen, harga_tiket])
 
     // set nama agen as global variable, can access through window
     useEffect(() => {
@@ -141,10 +141,10 @@ export default function Operator() {
                     total_tagihan: data.pembayaran.total_tagihan,
                     status_lunas:  data.pembayaran.status_lunas
                 });
-                if(data.collect){
-                    setCollect(data.collect.jumlah);
+                if(data.harga_tiket){
+                    setHarga_tiket(data.harga_tiket.jumlah);
                 } else {
-                    setCollect('');
+                    setHarga_tiket('');
                 }
                 setLoading(false);
             },
@@ -261,7 +261,7 @@ export default function Operator() {
                             triggerOpenedClassName="bg-primary text-[white] p-2 rounded-[8px]"
                             >
                                 <div className="w-[420px] border-2 mt-4">
-                                    <ComponentToPrint ref={componentRef} collect={collect} penumpang={penumpang} agen={agen}/>
+                                    <ComponentToPrint ref={componentRef} harga_tiket={harga_tiket} penumpang={penumpang} agen={agen}/>
                                 </div>
                             </Collapsible>
                         </div>
