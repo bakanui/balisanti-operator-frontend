@@ -6,7 +6,7 @@ import logos from './../../../assets/tiket-header.png';
 interface IProps {
     penumpang: IPenumpangOption[];
     agen?: any;
-    collect?: string;
+    harga_tiket?: string;
 }
 
 const ComponentToPrint = React.forwardRef((props: IProps, ref: any) => {
@@ -63,12 +63,10 @@ const ComponentToPrint = React.forwardRef((props: IProps, ref: any) => {
                                             <td>Date</td>
                                             <td className="font-bold pl-2">: {item.waktu_berangkat}</td>
                                         </tr>
-                                        {props.collect && (
-                                            <tr>
-                                                <td>Collect</td>
-                                                <td className="font-bold pl-2">: Rp. {convertLabelToPrice(`${props.collect}`)}</td>
-                                            </tr>
-                                        )}
+                                        <tr>
+                                            <td>Price</td>
+                                                    <td className="font-bold pl-2">: Rp. {convertLabelToPrice(`${item.harga_tiket ?? props.harga_tiket ?? ''}`)}</td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>

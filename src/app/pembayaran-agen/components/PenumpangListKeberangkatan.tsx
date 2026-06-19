@@ -3,7 +3,7 @@ import { CustomTable, HeadTb, TableRow } from "@/app/components/MyTable";
 import { IPenumpang } from "@/app/types/jadwal";
 
 export type IPenumpangOption = Partial<IPenumpang>
-   & { selected: boolean }
+    & { selected: boolean; harga_tiket?: number | string }
 interface IProps {
     title: string;
     penumpang: IPenumpangOption[];
