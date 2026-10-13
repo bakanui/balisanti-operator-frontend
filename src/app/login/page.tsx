@@ -10,6 +10,7 @@ import { loginAction } from "./service";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation';
+import logoSipelarang from '@/assets/logo-sipelarang.png';
 
 const Login = () => {
     const router = useRouter();
@@ -218,7 +219,11 @@ const Login = () => {
             </Helmet> */}
             <div className="flex flex-col w-full bg-white dark:bg-slate-800 px-[5%] pt-8">
                 <div>
-                    <div className='w-full h-[60px] bg-[url(./../assets/logo-primary.png)] bg-contain bg-no-repeat bg-left'></div>
+                    <img
+                        src={logoSipelarang.src}
+                        alt="SIPELARANG - Sistem Informasi Pelabuhan dan Layanan Angkutan Penyeberangan"
+                        className="w-[260px] max-w-full h-auto object-contain object-left"
+                    />
                 </div>
                 <div className="h-full flex flex-col">
                     <div className="font-robotomedium text-3xl mt-20 mb-10">Log in to Your account</div>

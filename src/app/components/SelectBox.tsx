@@ -14,6 +14,7 @@ interface IProps {
     }[];
     disable?: boolean;
     onValueHasChanged?: () => void;
+    required?: boolean;
 }
 export const SelectBox = (props: IProps) => {
     useEffect(()=> {
@@ -21,13 +22,16 @@ export const SelectBox = (props: IProps) => {
     },[props.value]);
     return(
         <div className="sm:flex sm:flex-col w-full">
-            {props.label && <div className="font-robotomedium mb-2 text-sm">{props.label}</div>}
+            {props.label && <div className="font-robotomedium mb-2 text-sm">{props.label}
+                {props.required && <span className="text-red-500 ml-1">*</span>}
+            </div>}
             <Select 
                 options={props.option} 
                 placeholder={props.placeholder}
                 value={props.value}
                 onChange={props.onChange}
                 isDisabled={props.disable}
+                aria-required={props.required}
                 classNames={{
                     control: () => 'dark:bg-gray-800 text-input text-sm font-robotoregular mb-4 cursor-pointer',
                     option: (provided) => `${provided} dark:bg-select dark:text-white`,

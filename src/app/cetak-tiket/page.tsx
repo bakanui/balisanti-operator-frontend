@@ -11,7 +11,7 @@ import { getInvoiceDetailAction } from "../pembayaran-agen/pembayaran.service";
 import { toast, ToastContainer } from "react-toastify";
 import { LoadingOverlay } from "../components/LoadingOverlay";
 import { IPenumpangOption, PenumpangListKeberangkatan } from "../pembayaran-agen/components/PenumpangListKeberangkatan";
-import { convertLabelToPrice, parseDateIncludeHours, toastErrorConfig, toastSuccessConfig } from "@/app/utils/utility";
+import { convertLabelToPrice, parseDateIncludeHours, toastErrorConfig } from "@/app/utils/utility";
 import { toPng } from 'html-to-image';
 import Collapsible from 'react-collapsible';
 import { Badge } from "../components/Badge";
@@ -20,9 +20,13 @@ import { getStorageValue } from "../utils/localstoreage";
 import axios from "axios";
 import { API_PEMBAYARAN } from "../utils/api";
 import AsyncSelect from 'react-select/async';
-import { cetakTiket } from "@/app/penjualan-tiket/penjualanTiket.service";
 import { IHargaService } from "../types/hargaService";
 import { BarangListKeberangkatan } from "../pembayaran-agen/components/BarangListKeberangkatan";
+
+interface IInvoiceOption {
+    value: string;
+    label: string;
+}
 
 export default function Operator() {
     const router = useRouter();
@@ -33,7 +37,8 @@ export default function Operator() {
     const [loading, setLoading] = useState(false);
     const [checkAll, setCheckAll] = useState(true);
     const [checkAllBarang, setCheckAllBarang] = useState(true);
-    const [selectedInvoice, setSelectedInvoice] = useState({value: '', label: 'Pilih Data'});
+    const [selectedInvoice, setSelectedInvoice] = useState<IInvoiceOption | null>(null);
+    const [invoiceOptions, setInvoiceOptions] = useState<IInvoiceOption[]>([]);
     const [pembayaran, setPembayaran] = useState({
         sisa_tagihan: 0,
         sudah_bayar: 0,
@@ -97,73 +102,69 @@ export default function Operator() {
     }, [componentRef])
 
     const tiketDispenser = () => {
-        setLoading(true);
-        penumpang?.map((item, index)=> {
-          if(item.selected){
-            cetakTiket(
-                {
-                  jenis: 'penumpang',
-                  agen: agen?.nama_agen ? agen.nama_agen : "-",
-                  kode_booking: item.kode_booking,
-                  date: item.tanggal,
-                  rute_from: item.dermaga_awal,
-                  rute_to: item.dermaga_tujuan,
-                  nama: item.nama_penumpang,
-                  qrcode: item.qrcode
-                },
-                (data) => {
-                  toast.success("Berhasil cetak tiket penumpang", toastErrorConfig);
-                },
-                (err) => {
-                    setLoading(false);
-                    toast.error(err, toastErrorConfig);
-                },
-            );
-          }
-        });
-        barang?.map((item, index)=> {
-            if(item.selected){
-                cetakTiket(
-                    {
-                      jenis: 'barang',
-                      kode_booking: item.kode_barang,
-                      date: item.tanggal,
-                      rute_from: item.dermaga_awal,
-                      rute_to: item.dermaga_tujuan,
-                      nama: item.nama_penumpang,
-                      qrcode: item.qrcode,
-                      jenis_barang: item.jenis_barang,
-                      qty: item.qty,
-                      barang: item.nama_barang
-                    },
-                    (data) => {
-                      toast.success("Berhasil cetak tiket barang", toastErrorConfig);
-                    },
-                    (err) => {
-                        setLoading(false);
-                        toast.error(err, toastErrorConfig);
-                    },
-                );
-            }
-        });
-        setLoading(false);
-        router.replace('/cetak-tiket');
-      };
+        if (!componentRef.current) {
+            toast.error('Preview tiket belum tersedia.', toastErrorConfig);
+            return;
+        }
+
+        const tiketTerpilih = Array.from(
+            componentRef.current.querySelectorAll(':scope > div')
+        ) as HTMLElement[];
+        if (tiketTerpilih.length === 0) {
+            toast.error('Pilih minimal satu tiket yang ingin dicetak.', toastErrorConfig);
+            return;
+        }
+
+        const printWindow = window.open('', '_blank', 'width=450,height=800');
+        if (!printWindow) {
+            toast.error('Browser memblokir jendela cetak. Izinkan pop-up lalu coba lagi.', toastErrorConfig);
+            return;
+        }
+
+        const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+            .map((element) => element.outerHTML)
+            .join('');
+        const tickets = Array.from(tiketTerpilih)
+            .map((ticket) => `<section class="ticket-print">${ticket.outerHTML}</section>`)
+            .join('');
+
+        printWindow.document.write(`
+            <!doctype html>
+            <html>
+                <head>
+                    <title>Cetak Tiket</title>
+                    ${styles}
+                    <style>
+                        body { margin: 0; background: #fff; }
+                        .ticket-print { width: 400px; margin: 0 auto; page-break-after: always; break-after: page; }
+                        .ticket-print:last-child { page-break-after: auto; break-after: auto; }
+                    </style>
+                </head>
+                <body>${tickets}</body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.onload = () => {
+            printWindow.focus();
+            printWindow.print();
+        };
+    };
 
     const getData = () => {
-        if (!selectedInvoice.value) {
-            toast.error('Pastikan Anda telah memasukkan Nomor Invoice!');
+        if (!selectedInvoice?.value) {
+            toast.error('Pilih nomor invoice terlebih dahulu.', toastErrorConfig);
             return;
         }
         setLoading(true);
-        const tmp = selectedInvoice.value.split('/');
-        const tmpInvoice = tmp[0];
         getInvoiceDetailAction(
-            tmpInvoice,
+            selectedInvoice.value,
             (data) => {
-                if (data.data.length == 0) {
+                if (!data.penumpang || data.penumpang.length === 0) {
+                    setPenumpang([]);
+                    setBarang([]);
                     setLoading(false);
-                    toast.error('Nomor Invoice Tidak Ditemukan!');
+                    toast.error('Invoice tidak ditemukan atau seluruh tiketnya telah dibatalkan.', toastErrorConfig);
+                    return;
                 }
                 const tempPenumpang = data.penumpang;
                 const tempBarang = data.service;
@@ -177,6 +178,8 @@ export default function Operator() {
                     ...item,
                     selected: true
                 })));
+                setCheckAll(true);
+                setCheckAllBarang(true);
                 setPembayaran({
                     sisa_tagihan: data.pembayaran.sisa_tagihan,
                     sudah_bayar: data.pembayaran.sudah_bayar,
@@ -190,8 +193,12 @@ export default function Operator() {
                 }
                 setLoading(false);
             },
-            () => {
+            (error) => {
                 setLoading(false);
+                toast.error(error || 'Gagal mengambil detail invoice.', toastErrorConfig);
+            },
+            () => {
+                router.replace('/login');
             }
         );
     }
@@ -244,10 +251,14 @@ export default function Operator() {
         setBarang(tmp2);      
     }
 
-    const searchInvoice = async(inputValue: string) => {
+    const searchInvoice = useCallback(async(inputValue: string): Promise<IInvoiceOption[]> => {
         const auth: IAuth = getStorageValue('auth');
-        const res = await axios.get<any>(API_PEMBAYARAN.LIST_INVOICE_SUGGESTION,
-            {
+        if (!auth?.authorisation?.token) {
+            return [];
+        }
+
+        try {
+            const res = await axios.get<any>(API_PEMBAYARAN.LIST_INVOICE_SUGGESTION, {
                 headers: {
                     Authorization: `Bearer ${auth.authorisation.token}`,
                 },
@@ -256,19 +267,36 @@ export default function Operator() {
                     limit: 30
                 }
             });
-        const {data} = await res;
-        return data.data.map((item: string)=> ({
-            value: item,
-            label: item
-        }));
-      };
+            const {data} = res;
+            return data.data.map((item: string) => {
+                const separatorIndex = item.indexOf('/');
+                const invoice = separatorIndex >= 0 ? item.slice(0, separatorIndex) : item;
+                const namaPemesan = separatorIndex >= 0 ? item.slice(separatorIndex + 1) : '';
 
-    const promiseOptions = (inputValue: string) =>
-        new Promise<any[]>((resolve) => {
-          setTimeout(() => {
-            resolve(searchInvoice(inputValue));
-          }, 1000);
-    });
+                return {
+                    value: invoice,
+                    label: namaPemesan ? `${invoice} — ${namaPemesan}` : invoice
+                };
+            });
+        } catch (error) {
+            toast.error('Gagal mengambil daftar invoice.', toastErrorConfig);
+            return [];
+        }
+    }, []);
+
+    useEffect(() => {
+        searchInvoice('').then(setInvoiceOptions);
+    }, [searchInvoice]);
+
+    const handleInvoiceChange = (option: IInvoiceOption | null) => {
+        setSelectedInvoice(option);
+        setPenumpang([]);
+        setBarang([]);
+        setAgen(null);
+        setCollect('');
+        setCheckAll(true);
+        setCheckAllBarang(true);
+    };
 
 
     return (
@@ -277,11 +305,15 @@ export default function Operator() {
             <BaseCard>
                 <div className="font-robotomedium mb-2 text-sm">Kode Pemesanan / Nama Pemesan</div>
                 <AsyncSelect
-                    cacheOptions 
-                    loadOptions={promiseOptions} 
-                    defaultOptions 
-                    onChange={setSelectedInvoice}
-                    placeholder="Ketik kode pemesanan atau nama pemesan di sini"
+                    cacheOptions
+                    defaultOptions={invoiceOptions}
+                    loadOptions={searchInvoice}
+                    value={selectedInvoice}
+                    onChange={handleInvoiceChange}
+                    isClearable
+                    loadingMessage={() => 'Memuat invoice...'}
+                    noOptionsMessage={() => 'Invoice tidak ditemukan'}
+                    placeholder="Pilih invoice atau ketik nama pemesan"
                     classNames={{
                         control: () => 'text-input text-sm font-robotoregular mb-4 cursor-pointer dark:bg-[#3b3b3b] text-white',
                         option: () => 'dark:text-blacks',

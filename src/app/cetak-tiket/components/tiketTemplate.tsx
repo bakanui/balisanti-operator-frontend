@@ -1,7 +1,7 @@
 import { IPenumpangOption } from "@/app/pembayaran-agen/components/PenumpangListKeberangkatan";
 import { convertLabelToPrice, parseDateIncludeHours } from "@/app/utils/utility";
 import React from "react";
-import logos from './../../../assets/tiket-header.png';
+import logoSipelarang from './../../../assets/logo-sipelarang.png';
 import { IHargaService } from "@/app/types/hargaService";
 
 export type IServiceOption = Partial<IHargaService>
@@ -17,6 +17,17 @@ interface IProps {
     waktu_berangkat?: string;
 }
 
+const TicketHeader = () => (
+    <div className="flex items-center justify-between border-b-2 border-[#651120] pb-2">
+        <img
+            src={logoSipelarang.src}
+            alt="SIPELARANG"
+            className="w-[230px] h-auto object-contain object-left"
+        />
+        <span className="text-xl font-bold tracking-wide text-[#651120]">TIKET</span>
+    </div>
+);
+
 const ComponentToPrint = React.forwardRef((props: IProps, ref: any) => {
     return (
         <div ref={ref}>
@@ -26,7 +37,7 @@ const ComponentToPrint = React.forwardRef((props: IProps, ref: any) => {
                         <div key={item.kode_booking} className="w-[400px]">
                             <br/>
                             <br/>
-                            <img src={logos.src}/>
+                            <TicketHeader />
                             <div className="flex justify-center items-center flex-col p-2">
                                 <img className="w-[200px] h-[200px] mt-2" src={item.qrcode}/>
                                 <div className="font-bold mt-4 text-lg">
@@ -93,7 +104,7 @@ const ComponentToPrint = React.forwardRef((props: IProps, ref: any) => {
                         <div key={item.kode_barang} className="w-[400px]">
                             <br/>
                             <br/>
-                            <img src={logos.src}/>
+                            <TicketHeader />
                             <div className="flex justify-center items-center flex-col p-2">
                                 <img className="w-[200px] h-[200px] mt-2" src={item.qrcode}/>
                                 <div className="font-bold mt-4 text-lg">

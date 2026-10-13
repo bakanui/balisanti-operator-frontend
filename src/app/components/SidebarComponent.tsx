@@ -25,6 +25,8 @@ import { useMediaQuery } from 'react-responsive'
 import { useEffect, useState } from 'react';
 import { getStorageValue } from '../utils/localstoreage';
 import { IUsers } from '../types/auth';
+import logoSipelarang from '@/assets/logo-sipelarang.png';
+import logoSipelarangIcon from '@/assets/logo-sipelarang-icon.png';
 
 export const SidebarComponent = () => {
     const { collapsed } = useProSidebar();
@@ -63,9 +65,17 @@ export const SidebarComponent = () => {
         <Menu>
             <div className='flex items-center py-4'>
                 {collapsed ? 
-                    <div className='w-full h-[40px] bg-[url(./../assets/logo-only.png)] bg-contain bg-no-repeat bg-center'></div>
+                    <img
+                        src={logoSipelarangIcon.src}
+                        alt="SIPELARANG"
+                        className="h-[46px] w-[46px] mx-auto object-contain"
+                    />
                 :
-                    <div className='w-full h-[40px] bg-[url(./../assets/logo-primary.png)] bg-contain bg-no-repeat bg-left ml-[10%]'></div>
+                    <img
+                        src={logoSipelarang.src}
+                        alt="SIPELARANG"
+                        className="h-auto w-[210px] max-w-[85%] object-contain object-left ml-[10%]"
+                    />
                 }
             </div>
         </Menu>
@@ -202,13 +212,13 @@ export const SidebarComponent = () => {
                 >
                     <span className='font-robotoregular text-sm'>Penjualan Tiket</span>
                 </MenuItem>
-                <MenuItem 
+                {/* <MenuItem
                     active={router?.includes('/layanan-sandar')} 
                     component={<Link href={'/layanan-sandar'} />} 
                     icon={<ShipStoreIcon fill={router?.includes('/layanan-sandar') || mode == 'dark' ? 'white' : undefined} />}
                 >
                     <span className='font-robotoregular text-sm'>Layanan Sandar</span>
-                </MenuItem>
+                </MenuItem> */}
                 <MenuItem 
                     active={router?.includes('/edit-invoice')} 
                     component={<Link href={'/edit-invoice'} />} 

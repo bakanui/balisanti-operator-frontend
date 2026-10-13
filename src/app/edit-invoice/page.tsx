@@ -15,11 +15,23 @@ import { LoadingOverlay } from "../components/LoadingOverlay";
 import { useInvoiceDetail } from "@/hooks/invoice.hook";
 import { useError } from "@/hooks/global.hook";
 
+type InvoiceAction = 'edit' | 'cancel';
+
+const parseDepartureDate = (tanggal?: string, waktu?: string) => {
+    if (!tanggal || !waktu) return null;
+
+    const [year, month, day] = tanggal.split('-').map(Number);
+    const [hour = 0, minute = 0, second = 0] = waktu.split(':').map(Number);
+    const result = new Date(year, month - 1, day, hour, minute, second);
+
+    return Number.isNaN(result.getTime()) ? null : result;
+};
+
 export default function EditInvoice() {
     const router = useRouter();
-    const [selectedInvoice, setSelectedInvoice] = useState({value: '', label: 'Pilih Data'});
+    const [selectedInvoice, setSelectedInvoice] = useState<{ value: string; label: string } | null>(null);
     const [detail, getDetail, loadingDetail] = useInvoiceDetail({});
-    const [menu, setMenu] = useState("");
+    const [menu, setMenu] = useState<InvoiceAction | null>(null);
 
     const searchInvoice = async(inputValue: string) => {
         const auth: IAuth = getStorageValue('auth');
@@ -48,55 +60,56 @@ export default function EditInvoice() {
     });
 
     useEffect(() => {
-        console.log('useEffect triggered with detail:', detail);
+        if (!detail || !menu) return;
 
-        if (detail) {
-            let berangkat = detail.detail_jadwal.tanggal_berangkat + ' ' + detail.detail_jadwal.waktu_berangkat;
-            let berangkatDate = new Date(berangkat);
-            let leewayDate = new Date(berangkatDate.getTime() + 2 * 60 * 60 * 1000); // Add 2 hours    
-            console.log(berangkat)
-            console.log(berangkatDate)
-            console.log(leewayDate)
-            if (detail.length == 0) {
-                toast.error('Nomor Invoice Tidak Ditemukan!');
-                return;
-            }
-            // if (detail.pembayaran.status_lunas == "Belum Lunas") {
-            //     console.log('Invoice already paid');
-            //     toast.error('Invoice sudah dibayar. Tidak dapat diedit!');
-            //     return;
-            // }
-            if (leewayDate < new Date()) {
-                toast.error('Kapal sudah berangkat. Tidak dapat diedit!');
-            }else if (menu == "cancel") {
-                router.push('/edit-invoice/edit?invoice=' + detail.pembayaran.no_invoice);
-            }else if (menu == "edit") {
-                let tmp = selectedInvoice.value.split('/')[0];
-                router.push('/edit-invoice/edit/invoice?invoice='+tmp);
-            }
+        if (!detail.penumpang || detail.penumpang.length === 0) {
+            toast.error('Nomor invoice tidak ditemukan atau seluruh tiket telah dibatalkan.');
+            return;
         }
-    }, [detail]);
+
+        const jadwal = detail.detail_jadwal || {};
+        const departureDate = parseDepartureDate(
+            jadwal.tanggal_berangkat || detail.penumpang[0]?.tanggal,
+            jadwal.waktu_berangkat || detail.penumpang[0]?.jam
+        );
+
+        if (!departureDate) {
+            toast.error('Waktu keberangkatan invoice tidak valid. Periksa data jadwal terlebih dahulu.');
+            return;
+        }
+
+        // Tidak ada toleransi tambahan: invoice hanya dapat diubah sebelum waktu
+        // keberangkatan yang tercatat pada jadwal.
+        if (departureDate.getTime() <= Date.now()) {
+            toast.error('Kapal sudah berangkat. Invoice tidak dapat diedit!');
+            return;
+        }
+
+        const invoice = detail.pembayaran?.no_invoice;
+        if (!invoice) {
+            toast.error('Nomor invoice tidak tersedia.');
+            return;
+        }
+
+        router.push(
+            menu === 'cancel'
+                ? '/edit-invoice/edit?invoice=' + invoice
+                : '/edit-invoice/edit/invoice?invoice=' + invoice
+        );
+    }, [detail, menu, router]);
 
     useEffect(() => {
         document.title = "Edit Invoice | SIPELARANG";
     }, [])
 
-    const getDataInvoice = async () => {
-        if(!selectedInvoice.value) {
+    const getDataInvoice = (action: InvoiceAction) => {
+        if(!selectedInvoice?.value) {
             toast.error('Pilih data invoice terlebih dahulu!');
             return;
         }
+        setMenu(action);
         const tmp = selectedInvoice.value.split('/')[0];
         getDetail(tmp);
-    }
-
-    const editCoreInvoice = () => {
-        if(!selectedInvoice.value) {
-            toast.error('Pilih data invoice terlebih dahulu!');
-            return;
-        }
-        const tmp = selectedInvoice.value.split('/')[0];
-        router.push('/edit-invoice/edit/invoice?invoice='+tmp);
     }
 
     return(
@@ -108,7 +121,7 @@ export default function EditInvoice() {
                     cacheOptions
                     loadOptions={promiseOptions}
                     defaultOptions
-                    onChange={setSelectedInvoice}
+                    onChange={(option) => setSelectedInvoice(option)}
                     placeholder="Masukkan kode invoice atau nama pemesan"
                     classNames={{
                         control: () => 'text-input text-sm font-robotoregular mb-4 cursor-pointer dark:bg-[#3b3b3b] text-white',
@@ -118,13 +131,13 @@ export default function EditInvoice() {
                     }}
                 />
                 <div className="flex">
-                    <Button label="Edit Invoice" outline onClick={()=> {setMenu("edit"); getDataInvoice()}}/>
+                    <Button label="Edit Invoice" outline onClick={() => getDataInvoice('edit')}/>
                     <span className="ml-2"/>
-                    <Button label="Cancel Penumpang" onClick={()=> {setMenu("cancel"); getDataInvoice()}}/>
+                    <Button label="Cancel Penumpang" onClick={() => getDataInvoice('cancel')}/>
                 </div>
             </BaseCard>
-            <LoadingOverlay 
-                loading={loadingDetail} 
+            <LoadingOverlay
+                loading={loadingDetail}
                 title="Memuat Data"
             />
             <ToastContainer/>

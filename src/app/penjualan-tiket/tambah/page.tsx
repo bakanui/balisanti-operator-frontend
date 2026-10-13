@@ -69,10 +69,10 @@ export default function AddPenjualanTiket() {
             id: new Date().getTime(),
             jenisPenumpang: { value: '', label: 'Pilih Data' },
             nama: '',
-            noIdentitas: '0',
+            noIdentitas: '',
             noTelepon: '',
             jenisKelamin: { value: '', label: 'Pilih Data' },
-            email: 'test@example.com',
+            email: '',
             catatan: '',
             alamat: '',
             kewarnegaraan: { value: 'ID', label: 'Indonesia' },
@@ -124,6 +124,13 @@ export default function AddPenjualanTiket() {
 
     useEffect(() => {
         console.log('empty rendered');
+        const jadwalId = queryParams.get('id');
+        if (!jadwalId || !/^\d+$/.test(jadwalId)) {
+            toast.error('Jadwal tidak valid. Silakan pilih jadwal kembali.', toastErrorConfig);
+            router.replace('/penjualan-tiket');
+            return;
+        }
+
         let tmp = getStorageValue('auth');
         if (tmp) {
             setUser(tmp.user);
@@ -131,14 +138,19 @@ export default function AddPenjualanTiket() {
         setLoading(true);
         const currTiket = getStorageValue('tiket'),
             tglBerangkat = getStorageValue('tanggalKeberangkatan');
-        if (currTiket) {
-            setTiket(currTiket);
-            document.title = "Penjualan Tiket " + currTiket.waktu_berangkat + " | SIPELARANG";
-            if (tglBerangkat) {
-                setTanggalKeberangkatan(new Date(tglBerangkat));
-            } else {
-                setTanggalKeberangkatan(new Date());
-            }
+        if (!currTiket || String(currTiket.id_jadwal || currTiket.id) !== jadwalId) {
+            setLoading(false);
+            toast.error('Data jadwal tidak ditemukan. Silakan pilih jadwal kembali.', toastErrorConfig);
+            router.replace('/penjualan-tiket');
+            return;
+        }
+
+        setTiket(currTiket);
+        document.title = "Penjualan Tiket " + currTiket.waktu_berangkat + " | SIPELARANG";
+        if (tglBerangkat) {
+            setTanggalKeberangkatan(new Date(tglBerangkat));
+        } else {
+            setTanggalKeberangkatan(new Date());
         }
         getAgenAction(
             {
@@ -249,12 +261,13 @@ export default function AddPenjualanTiket() {
             jenisPenumpang: { value: '', label: 'Pilih Data' },
             nama: '',
             noIdentitas: '',
+            noTelepon: '',
             jenisKelamin: { value: '', label: 'Pilih Data' },
-            email: 'test@example.com',
+            email: '',
             catatan: '-',
             alamat: '',
             kewarnegaraan: { value: '', label: 'Pilih Data' },
-            jenisPembayaran: { value: '', label: 'Pilih Data' }
+            jenisPembayaran: { value: 'tunai', label: 'Tunai' }
         }]);
     }
 
@@ -474,9 +487,64 @@ export default function AddPenjualanTiket() {
           }
     }
 
+    const validatePenumpangs = () => {
+        for (let index = 0; index < rombongan.length; index++) {
+            const penumpang = rombongan[index];
+            const nomor = index + 1;
+            const isMancanegara = penumpang.jenisPenumpang.label.includes('Mancanegara');
+
+            if (!penumpang.jenisPenumpang.value) {
+                toast.error(`Pilih jenis penumpang ke-${nomor}.`, toastErrorConfig);
+                return false;
+            }
+            if (!penumpang.nama.trim()) {
+                toast.error(`Nama penumpang ke-${nomor} wajib diisi.`, toastErrorConfig);
+                return false;
+            }
+            if (!penumpang.noTelepon.trim()) {
+                toast.error(`Nomor telepon penumpang ke-${nomor} wajib diisi.`, toastErrorConfig);
+                return false;
+            }
+            if (!penumpang.noIdentitas.trim()) {
+                toast.error(`Nomor identitas penumpang ke-${nomor} wajib diisi.`, toastErrorConfig);
+                return false;
+            }
+            if (isMancanegara && !penumpang.kewarnegaraan.value) {
+                toast.error(`Negara asal penumpang ke-${nomor} wajib dipilih.`, toastErrorConfig);
+                return false;
+            }
+            if (!isMancanegara && !penumpang.alamat.trim()) {
+                toast.error(`Alamat penumpang ke-${nomor} wajib diisi.`, toastErrorConfig);
+                return false;
+            }
+            if (!penumpang.jenisKelamin.value) {
+                toast.error(`Pilih jenis kelamin penumpang ke-${nomor}.`, toastErrorConfig);
+                return false;
+            }
+            if (!penumpang.email.trim() || !/^\S+@\S+\.\S+$/.test(penumpang.email)) {
+                toast.error(`Email penumpang ke-${nomor} tidak valid.`, toastErrorConfig);
+                return false;
+            }
+            if (!penumpang.jenisPembayaran.value) {
+                toast.error(`Pilih jenis pembayaran penumpang ke-${nomor}.`, toastErrorConfig);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     const save = () => {
+        const jadwalId = queryParams.get('id');
+        if (!jadwalId || !/^\d+$/.test(jadwalId)) {
+            toast.error('Jadwal tidak valid. Silakan pilih jadwal kembali.', toastErrorConfig);
+            return;
+        }
         if (!tiket) {
             toast.error('Jadwal tidak ditemukan!', toastErrorConfig);
+            return;
+        }
+        if (!validatePenumpangs()) {
             return;
         }
         if ((agenHolder && agenHolder.sisa_limit) && agenHolder.sisa_limit < total) {
@@ -810,6 +878,7 @@ export default function AddPenjualanTiket() {
                                         <Input
                                             label="No. Telepon Penumpang"
                                             placeholder="Masukkan nomor telpon penumpang"
+                                            required
                                             value={item.noTelepon}
                                             onChangeText={(e) => {
                                                 setRombongan(rombongan.map((itm, idx) => {
@@ -842,10 +911,12 @@ export default function AddPenjualanTiket() {
                                             value={item.jenisPenumpang}
                                             onChange={(e) => onJenisPenumpangChanged(e, index)}
                                             onValueHasChanged={onValueChanged}
+                                            required
                                         />
                                         <Input
                                             label="Nama Penumpang"
                                             placeholder="Masukkan nama penumpang"
+                                            required
                                             value={item.nama}
                                             onChangeText={(e) => setRombongan(rombongan.map((itm, idx) => {
                                                 if (index == idx) {
@@ -860,6 +931,7 @@ export default function AddPenjualanTiket() {
                                         <Input
                                             label="No. Identitas Penumpang (No. KTP / No. Paspor)"
                                             placeholder="Masukkan nomor identitas penumpang"
+                                            required
                                             value={item.noIdentitas}
                                             onChangeText={(e) => setRombongan(rombongan.map((itm, idx) => {
                                                 if (index == idx) {
@@ -874,6 +946,7 @@ export default function AddPenjualanTiket() {
                                         {item.jenisPenumpang.label.includes("Mancanegara") ? <SelectBox
                                             label="Negara Asal"
                                             placeholder="Pilih data"
+                                            required
                                             option={KEWARNEGARAAN}
                                             value={item.kewarnegaraan}
                                             onChange={(e) => setRombongan(rombongan.map((itm, idx) => {
@@ -889,6 +962,7 @@ export default function AddPenjualanTiket() {
                                         /> : <Input
                                             label="Alamat"
                                             placeholder="Masukkan alamat penumpang"
+                                            required
                                             value={item.alamat}
                                             onChangeText={(e) => setRombongan(rombongan.map((itm, idx) => {
                                                 if (index == idx) {
@@ -904,6 +978,7 @@ export default function AddPenjualanTiket() {
                                         <SelectBox
                                             label="Jenis Kelamin"
                                             placeholder="Pilih data"
+                                            required
                                             option={JENIS_KELAMIN}
                                             value={item.jenisKelamin}
                                             onChange={(e) => setRombongan(rombongan.map((itm, idx) => {
@@ -923,6 +998,7 @@ export default function AddPenjualanTiket() {
                                             subtitle={'*(Digunakan untuk mengirimkan kode booking)'}
                                             placeholder="Masukkan email penumpang"
                                             type='email'
+                                            required
                                             value={item.email}
                                             onChangeText={(e) => setRombongan(rombongan.map((itm, idx) => {
                                                 if (index == idx) {
@@ -937,6 +1013,7 @@ export default function AddPenjualanTiket() {
                                         <SelectBox
                                             label="Jenis Pembayaran"
                                             placeholder="Pilih data"
+                                            required
                                             option={JENIS_PEMBAYARAN}
                                             value={item.jenisPembayaran}
                                             onChange={(e) => setRombongan(rombongan.map((itm, idx) => {
@@ -981,6 +1058,7 @@ export default function AddPenjualanTiket() {
                                     <Input
                                         label="No. Telepon Penumpang"
                                         placeholder="Masukkan nomor telpon penumpang"
+                                        required
                                         value={item.noTelepon}
                                         onChangeText={(e) => {
                                             setRombongan(rombongan.map((itm, idx) => {
@@ -1007,6 +1085,7 @@ export default function AddPenjualanTiket() {
                                         <SelectBox
                                             label="Jenis Penumpang"
                                             placeholder="Pilih data"
+                                            required
                                             option={jenisPenumpang}
                                             value={item.jenisPenumpang}
                                             onChange={(e) => onJenisPenumpangChanged(e, index)}
@@ -1015,6 +1094,7 @@ export default function AddPenjualanTiket() {
                                         <Input
                                             label="Nama Penumpang"
                                             placeholder="Masukkan nama penumpang"
+                                            required
                                             value={item.nama}
                                             onChangeText={(e) => setRombongan(rombongan.map((itm, idx) => {
                                                 if (index == idx) {
@@ -1029,6 +1109,7 @@ export default function AddPenjualanTiket() {
                                         <Input
                                             label="No. Identitas Penumpang (No. KTP / No. Paspor)"
                                             placeholder="Masukkan nomor identitas penumpang"
+                                            required
                                             value={item.noIdentitas}
                                             onChangeText={(e) => setRombongan(rombongan.map((itm, idx) => {
                                                 if (index == idx) {
@@ -1043,6 +1124,7 @@ export default function AddPenjualanTiket() {
                                         {item.jenisPenumpang.label.includes("Mancanegara") ? <SelectBox
                                             label="Negara Asal"
                                             placeholder="Pilih data"
+                                            required
                                             option={KEWARNEGARAAN}
                                             value={item.kewarnegaraan}
                                             onChange={(e) => setRombongan(rombongan.map((itm, idx) => {
@@ -1058,6 +1140,7 @@ export default function AddPenjualanTiket() {
                                         /> : <Input
                                             label="Alamat"
                                             placeholder="Masukkan alamat penumpang"
+                                            required
                                             value={item.alamat}
                                             onChangeText={(e) => setRombongan(rombongan.map((itm, idx) => {
                                                 if (index == idx) {
@@ -1073,6 +1156,7 @@ export default function AddPenjualanTiket() {
                                         <SelectBox
                                             label="Jenis Kelamin"
                                             placeholder="Pilih data"
+                                            required
                                             option={JENIS_KELAMIN}
                                             value={item.jenisKelamin}
                                             onChange={(e) => setRombongan(rombongan.map((itm, idx) => {
@@ -1091,6 +1175,7 @@ export default function AddPenjualanTiket() {
                                         subtitle={'*(Digunakan untuk mengirimkan kode booking)'}
                                         placeholder="Masukkan email penumpang"
                                         type='email'
+                                        required
                                         value={item.email}
                                         onChangeText={(e) => setRombongan(rombongan.map((itm, idx) => {
                                             if (index == idx) {
