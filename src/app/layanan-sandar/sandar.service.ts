@@ -1,6 +1,6 @@
 import { IAuth } from '@/app/types/auth';
 import { IJadwal } from '@/app/types/jadwal';
-import { API_LAYANAN_SANDAR, API_MASTER_DATA, API_SIWALATRI, BASE_AUTH_SIWALATRI } from '@/app/utils/api';
+import { API_LAYANAN_SANDAR } from '@/app/utils/api';
 import { getStorageValue } from '@/app/utils/localstoreage';
 import { errorHandler } from '@/app/utils/utility';
 import axios from 'axios';

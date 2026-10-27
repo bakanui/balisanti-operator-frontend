@@ -68,7 +68,12 @@ export const createKapalSiwalatriAction = (
 ) => {
     const auth: IAuth = getStorageValue('auth');
     axios.post<IAuth>(API_SIWALATRI.MASTER_KAPAL, 
-        {...params}
+        {...params},
+        {
+            headers: {
+                Authorization: `Bearer ${auth.authorisation.token}`
+            }
+        }
     )
     .then((response)=> {
         onSuccess(response.data);

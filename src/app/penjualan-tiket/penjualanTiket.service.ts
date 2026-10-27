@@ -103,8 +103,14 @@ export const createPenjualanSiwalatriAction = (
     onSuccess: (data: any) => void,
     onFailed: (error:any) => void
 ) => {
+    const auth: IAuth = getStorageValue('auth');
     axios.post(API_SIWALATRI.PENUMPANG_GROUP, 
-        {...params}
+        {...params},
+        {
+            headers: {
+                Authorization: `Bearer ${auth.authorisation.token}`
+            }
+        }
     )
     .then((response)=> {
         onSuccess(response.data);

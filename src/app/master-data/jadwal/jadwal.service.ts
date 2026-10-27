@@ -1,6 +1,6 @@
 import { IAuth } from '@/app/types/auth';
 import { IJadwal } from '@/app/types/jadwal';
-import { API_MASTER_DATA, API_SIWALATRI, BASE_AUTH_SIWALATRI } from '@/app/utils/api';
+import { API_MASTER_DATA, API_SIWALATRI } from '@/app/utils/api';
 import { getStorageValue } from '@/app/utils/localstoreage';
 import { errorHandler } from '@/app/utils/utility';
 import axios from 'axios';
@@ -58,8 +58,14 @@ export const createjadwalSiwalatriAction = (
     onSuccess: (data: any) => void,
     onFailed: (error:any) => void
 ) => {
+    const auth: IAuth = getStorageValue('auth');
     axios.post(API_SIWALATRI.JADWAL_KEBERANGKATAN, 
-        {...params}
+        {...params},
+        {
+            headers: {
+                Authorization: `Bearer ${auth.authorisation.token}`
+            }
+        }
     )
     .then((response)=> {
         onSuccess(response.data);
@@ -157,7 +163,7 @@ export const editjadwalSiwalatriAction = (
         {...params},
         {
             headers: {
-                Authorization: `Bearer ${BASE_AUTH_SIWALATRI}`
+                Authorization: `Bearer ${auth.authorisation.token}`
             }
         }
     )

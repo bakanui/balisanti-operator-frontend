@@ -1,5 +1,7 @@
-export const BASE_URL = "https://sipelarang.geriyakalkoen.com/api";
-export const BASE_URL_SIWALATRI = "https://siwalatri.geriyakalkoen.com/api";
+export const BASE_URL = process.env.NEXT_PUBLIC_OPERATOR_API_URL || "http://localhost:8000/api";
+// Siwalatri diakses melalui proxy backend operator agar tetap berada di
+// jaringan internal Docker dan tidak dipanggil langsung oleh browser.
+export const BASE_URL_SIWALATRI = `${BASE_URL}/siwalatri`;
 export const BASE_ARMADA = '60dff1192581b';
 export const BASE_AUTH_SIWALATRI = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTkyLjE2OC4wLjE5OTo4ODg4L2FwaS9hdXRoL2xvZ2luIiwiaWF0IjoxNzEwODM2NzgzLCJuYmYiOjE3MTA4MzY3ODMsImp0aSI6IjZqRDhEWEIweDRkd0NXZ1MiLCJzdWIiOiIxIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.aqLHxxeoorC7yProw_8BrBB3kj0miwlsXF-lx-TtsfA";
 
