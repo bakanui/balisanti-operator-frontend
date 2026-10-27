@@ -124,7 +124,7 @@ export default function PenjualanTiket(){
     const gotoDetail = (item: IPenjualanTiket) => {
         setStorageValue('tiket', JSON.stringify(item));
         setStorageValue('tanggalKeberangkatan', tanggalKeberangkatan);
-        router.push('/penjualan-tiket/tambah?id='+item.id_jadwal);
+        router.push('/penjualan-tiket/tambah?id_jadwal='+encodeURIComponent(item.id_jadwal));
     }
 
     const cariData = () => {

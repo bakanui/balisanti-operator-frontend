@@ -26,7 +26,7 @@ export interface IJadwal {
 
 export interface IHargaTiket {
     id: number;
-    id_jadwal: number;
+    id_jadwal: string;
     id_jenis_penumpang: number;
     tiket: number;
     jr: number;

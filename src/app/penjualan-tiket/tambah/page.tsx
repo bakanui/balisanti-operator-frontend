@@ -124,8 +124,8 @@ export default function AddPenjualanTiket() {
 
     useEffect(() => {
         console.log('empty rendered');
-        const jadwalId = queryParams.get('id');
-        if (!jadwalId || !/^\d+$/.test(jadwalId)) {
+        const jadwalId = queryParams.get('id_jadwal');
+        if (!jadwalId) {
             toast.error('Jadwal tidak valid. Silakan pilih jadwal kembali.', toastErrorConfig);
             router.replace('/penjualan-tiket');
             return;
@@ -138,7 +138,7 @@ export default function AddPenjualanTiket() {
         setLoading(true);
         const currTiket = getStorageValue('tiket'),
             tglBerangkat = getStorageValue('tanggalKeberangkatan');
-        if (!currTiket || String(currTiket.id_jadwal || currTiket.id) !== jadwalId) {
+        if (!currTiket || String(currTiket.id_jadwal) !== jadwalId) {
             setLoading(false);
             toast.error('Data jadwal tidak ditemukan. Silakan pilih jadwal kembali.', toastErrorConfig);
             router.replace('/penjualan-tiket');
@@ -164,7 +164,7 @@ export default function AddPenjualanTiket() {
                 })));
                 setAgenOrigin(data.data);
                 getJenisPenumpangByIdAction(
-                    queryParams.get('id'),
+                    jadwalId,
                     (data) => {
                         setJenisPenumpang(data.data.map((item: any) => ({
                             value: item.id_jenis_penumpang,
@@ -535,8 +535,8 @@ export default function AddPenjualanTiket() {
     }
 
     const save = () => {
-        const jadwalId = queryParams.get('id');
-        if (!jadwalId || !/^\d+$/.test(jadwalId)) {
+        const jadwalId = queryParams.get('id_jadwal');
+        if (!jadwalId) {
             toast.error('Jadwal tidak valid. Silakan pilih jadwal kembali.', toastErrorConfig);
             return;
         }
@@ -595,7 +595,7 @@ export default function AddPenjualanTiket() {
                 email: item.email,
                 freepass: 0,
                 harga_tiket: 100000,
-                id_jadwal: queryParams.get('id'),
+                id_jadwal: jadwalId,
                 id_jns_penum: jenisPenumpangSiwalatri(item.jenisPenumpang.label),
                 id_tiket: 1,
                 id_tujuan: "1",

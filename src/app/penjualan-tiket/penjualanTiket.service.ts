@@ -49,13 +49,13 @@ export const cetakTiket = (
 }
 
 export const getJenisPenumpangByIdAction = (
-    id_tiket: number,
+    id_jadwal: string,
     onSuccess: (data: any) => void,
     onFailed: (error:any) => void,
     onUnAuth?: () => void
 ) => {
     const auth: IAuth = getStorageValue('auth');
-    axios.get<IPenjualanTiket[]>(API_PENJUALAN_TIKET.JENIS_PENUMPANG+''+id_tiket,
+    axios.get<IPenjualanTiket[]>(API_PENJUALAN_TIKET.JENIS_PENUMPANG+encodeURIComponent(id_jadwal),
     {
         headers: {
             Authorization: `Bearer ${auth.authorisation.token}`,
