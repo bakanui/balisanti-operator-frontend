@@ -255,6 +255,12 @@ export const SidebarComponent = () => {
                         icon={<UserIcon fill={router?.includes('/laporan/penumpang') || mode == 'dark' ? 'white' : undefined} />}
                         href='/laporan/penumpang'
                     />
+                    <SideMenuItem
+                        text='Jasa Tambat'
+                        path={router}
+                        icon={<ShipStoreIcon fill={router?.includes('/laporan/jasa-tambat') || mode == 'dark' ? 'white' : undefined} />}
+                        href='/laporan/jasa-tambat'
+                    />
                     {/* <SideMenuItem
                         text='Agen'
                         path={router}
@@ -336,6 +342,12 @@ export const SidebarComponent = () => {
                             path={router}
                             icon={<UserIcon fill={router?.includes('/laporan/penumpang') || mode == 'dark' ? 'white' : undefined} />}
                             href='/laporan/penumpang'
+                        />
+                        <SideMenuItem
+                            text='Jasa Tambat'
+                            path={router}
+                            icon={<ShipStoreIcon fill={router?.includes('/laporan/jasa-tambat') || mode == 'dark' ? 'white' : undefined} />}
+                            href='/laporan/jasa-tambat'
                         />
                     </SubMenu>
                 </>

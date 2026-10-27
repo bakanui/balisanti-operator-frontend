@@ -36,6 +36,7 @@ export const API_SIWALATRI = {
     PENUMPANG_GROUP: `${BASE_URL_SIWALATRI}/penumpang-group`,
     JADWAL_KEBERANGKATAN: `${BASE_URL_SIWALATRI}/jadwal_keberangkatan`,
     MASTER_KAPAL: `${BASE_URL_SIWALATRI}/operator/kapal`,
+    JASA_TAMBAT: `${BASE_URL_SIWALATRI}/jasa_tambat`
 }
 
 export const API_PEMBAYARAN = {

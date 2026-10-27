@@ -40,10 +40,10 @@ export const useDashboard = () => {
     const [params, setParams] = useState(null);
 
     useEffect(()=> {
-        if (params) {
+        if (params && token) {
             getData(params);
         }
-    }, [params]);
+    }, [params, token]);
 
     const getData: any = async (
         params: any,
