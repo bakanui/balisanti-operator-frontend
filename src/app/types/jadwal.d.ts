@@ -35,6 +35,7 @@ export interface IHargaTiket {
     pass: number;
     dermaga: number;
     kuota: number | null;
+    kirim_siwalatri: number;
     tipe_penumpang: string;
     jenis_penumpang: string;
     jumlah: number;

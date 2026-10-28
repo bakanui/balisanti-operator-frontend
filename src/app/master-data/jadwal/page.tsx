@@ -19,6 +19,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { deletejadwalAction, getjadwalAction } from "./jadwal.service";
+import { KuotaTiketCell } from "./components/KuotaTiketCell";
 
 export default function Jadwal(){
     const router = useRouter();
@@ -152,6 +153,7 @@ export default function Jadwal(){
                             <th className="text-sm font-robotomedium py-2">Waktu</th>
                             <th className="text-sm font-robotomedium py-2">Jenis</th>
                             <th className="text-sm font-robotomedium py-2">Loket</th>
+                            <th className="text-sm font-robotomedium py-2 pr-4">Kuota Tiket</th>
                             <th className="text-sm font-robotomedium py-2">Status</th>
                             <th className="text-sm font-robotomedium py-2">Aksi</th>
                         </tr>
@@ -169,6 +171,7 @@ export default function Jadwal(){
                                 <td className="py-2">{item.waktu_berangkat}</td>
                                 <td className="py-2">{item.jenis_jadwal}</td>
                                 <td className="py-2">{item.rute?.nama_dermaga_awal}</td>
+                                <td className="py-2 pr-4 align-middle"><KuotaTiketCell hargaTiket={item.harga_tiket} /></td>
                                 <td className="py-2">
                                     <Badge 
                                        text={item.status_jadwal == 1 ? 'Aktif' : 'Tidak Aktif'}

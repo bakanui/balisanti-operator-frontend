@@ -32,6 +32,7 @@ import { BASE_ARMADA } from "@/app/utils/api";
 export default function AddJadwal(){
     interface HargaTiketItem {
         id: number;
+        kirim_siwalatri: number;
         id_jadwal: string;
         id_jenis_penumpang: number;
         harga: number;
@@ -52,7 +53,8 @@ export default function AddJadwal(){
             jpb: '',
             pass: '',
             dermaga: '',
-            kuota: ''
+            kuota: '',
+            kirim: true
         }
     ]);
     const [jenisPenumpang, setJenisPenumpang] = useState<IOptions[]>([]);
@@ -177,7 +179,8 @@ export default function AddJadwal(){
                     jpb: convertLabelPriceToNumeberPrice(item.jpb),
                     pass: convertLabelPriceToNumeberPrice(item.pass),
                     dermaga: convertLabelPriceToNumeberPrice(item.dermaga),
-                    kuota: item.kuota === '' ? null : Number(item.kuota)
+                    kuota: item.kuota === '' ? null : Number(item.kuota),
+                    kirim_siwalatri: item.kirim ? 1 : 0
                 }))
             },
             (res) => {
@@ -193,7 +196,7 @@ export default function AddJadwal(){
                         id_loket: 88,
                         status: "Berlayar",
                         ekstra: 0,
-                        harga_tiket: res.harga_tiket.map((item: HargaTiketItem) => ({
+                        harga_tiket: res.harga_tiket.filter((item: HargaTiketItem) => item.kirim_siwalatri != 0).map((item: HargaTiketItem) => ({
                             nama_tiket: item.tipe_penumpang,
                             id_jns_penum: jenisPenumpangSpawner(item.jenis_penumpang),
                             harga: item.harga,
@@ -229,7 +232,7 @@ export default function AddJadwal(){
     }
 
     const addTiket = () => {
-        setTiket([...tiket, {id: new Date().getTime() , penumpang: {value: '', label: 'Pilih Data', jenis: '', tipe: ''}, tiket: '0', jr: '0', jpk: '0', jpb: '0', pass: '0', dermaga: '0', kuota: '' }]);
+        setTiket([...tiket, {id: new Date().getTime() , penumpang: {value: '', label: 'Pilih Data', jenis: '', tipe: ''}, tiket: '0', jr: '0', jpk: '0', jpb: '0', pass: '0', dermaga: '0', kuota: '', kirim: true }]);
     }
 
     const deleteTiket = (index: number) => {
@@ -273,6 +276,12 @@ export default function AddJadwal(){
     const setPassTiket = (value: string, index: number) => {
         let tmp = JSON.parse(JSON.stringify(tiket));
         tmp[index].pass = value;
+        setTiket(tmp);
+    }
+
+    const setKirimTiket = (value: boolean, index: number) => {
+        let tmp = JSON.parse(JSON.stringify(tiket));
+        tmp[index].kirim = value;
         setTiket(tmp);
     }
 
@@ -376,6 +385,9 @@ export default function AddJadwal(){
                             dermagaChange={(val)=>setDermagaTiket(val, index)}
                             kuotaValue={item.kuota}
                             kuotaChange={(val)=>setKuotaTiket(val, index)}
+                            kirimValue={item.kirim}
+                            kirimChange={(val)=>setKirimTiket(val, index)}
+                            nomor={index+1}
                         />
                     );
                 })}
