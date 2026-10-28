@@ -51,7 +51,8 @@ export default function AddJadwal(){
             jpk: '',
             jpb: '',
             pass: '',
-            dermaga: ''
+            dermaga: '',
+            kuota: ''
         }
     ]);
     const [jenisPenumpang, setJenisPenumpang] = useState<IOptions[]>([]);
@@ -175,7 +176,8 @@ export default function AddJadwal(){
                     jpk: convertLabelPriceToNumeberPrice(item.jpk),
                     jpb: convertLabelPriceToNumeberPrice(item.jpb),
                     pass: convertLabelPriceToNumeberPrice(item.pass),
-                    dermaga: convertLabelPriceToNumeberPrice(item.dermaga)
+                    dermaga: convertLabelPriceToNumeberPrice(item.dermaga),
+                    kuota: item.kuota === '' ? null : Number(item.kuota)
                 }))
             },
             (res) => {
@@ -227,7 +229,7 @@ export default function AddJadwal(){
     }
 
     const addTiket = () => {
-        setTiket([...tiket, {id: new Date().getTime() , penumpang: {value: '', label: 'Pilih Data', jenis: '', tipe: ''}, tiket: '0', jr: '0', jpk: '0', jpb: '0', pass: '0', dermaga: '0' }]);
+        setTiket([...tiket, {id: new Date().getTime() , penumpang: {value: '', label: 'Pilih Data', jenis: '', tipe: ''}, tiket: '0', jr: '0', jpk: '0', jpb: '0', pass: '0', dermaga: '0', kuota: '' }]);
     }
 
     const deleteTiket = (index: number) => {
@@ -271,6 +273,12 @@ export default function AddJadwal(){
     const setPassTiket = (value: string, index: number) => {
         let tmp = JSON.parse(JSON.stringify(tiket));
         tmp[index].pass = value;
+        setTiket(tmp);
+    }
+
+    const setKuotaTiket = (value: string, index: number) => {
+        let tmp = JSON.parse(JSON.stringify(tiket));
+        tmp[index].kuota = value;
         setTiket(tmp);
     }
 
@@ -366,6 +374,8 @@ export default function AddJadwal(){
                             passChange={(val)=>setPassTiket(val, index)}
                             dermagaValue={item.dermaga}
                             dermagaChange={(val)=>setDermagaTiket(val, index)}
+                            kuotaValue={item.kuota}
+                            kuotaChange={(val)=>setKuotaTiket(val, index)}
                         />
                     );
                 })}

@@ -12,6 +12,7 @@ export const API_AUTH = {
 export const API_MASTER_DATA = {
     KAPAL: `${BASE_URL}/master/kapal`,
     JENIS_PENUMPANG: `${BASE_URL}/master/jenis-penumpang`,
+    OPSI_PENUMPANG: `${BASE_URL}/master/opsi-penumpang`,
     JENIS_KAPAL: `${BASE_URL}/master/jenis-kapal`,
     DERMAGA: `${BASE_URL}/master/dermaga`,
     RUTE: `${BASE_URL}/master/rute`,

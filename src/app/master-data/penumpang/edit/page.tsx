@@ -11,10 +11,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { editJenisPenumpangAction, getDetailJenisPenumpangAction } from "../penumpang.service";
+import { useOpsiPenumpang } from "../components/useOpsiPenumpang";
 
 export default function EditJenisPenumpang(){
     const router = useRouter();
     const queryParams: any = useSearchParams();
+    const { tipeOptions, jenisOptions } = useOpsiPenumpang();
     const [tipe, setTipe] = useState({ value: '', label: 'Pilih Data' });
     const [jenis, setJenis] = useState({ value: '', label: 'Pilih Data' });
     const [status, setStatus] = useState({ value: '1', label: 'Aktif' });
@@ -88,20 +90,14 @@ export default function EditJenisPenumpang(){
                 <SelectBox 
                     label="Tipe Penumpang"
                     placeholder="Pilih tipe penumpang"
-                    option={[
-                        {value: 'Dewasa', label: 'Dewasa'},
-                        {value: 'Anak-anak', label: 'Anak-anak'},
-                    ]}
+                    option={tipeOptions}
                     value={tipe}
                     onChange={setTipe}
                 />
                 <SelectBox 
                     label="Jenis Penumpang"
                     placeholder="Pilih jenis penumpang"
-                    option={[
-                        {value: 'Lokal', label: 'Lokal'},
-                        {value: 'Mancanegara', label: 'Mancanegara'},
-                    ]}
+                    option={jenisOptions}
                     value={jenis}
                     onChange={setJenis}
                 />

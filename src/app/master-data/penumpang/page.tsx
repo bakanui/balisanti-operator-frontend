@@ -19,6 +19,13 @@ import { toast, ToastContainer } from "react-toastify";
 import { deleteJenisPenumpangAction, getJenisPenumpangAction } from "./penumpang.service";
 import { CustomPagination } from "@/app/components/CustomPagination";
 import { Empty } from "@/app/components/Empty";
+import { OpsiPenumpangTab } from "./components/OpsiPenumpangTab";
+
+const TABS = [
+    {key: 'jenis-penumpang', label: 'Jenis Penumpang'},
+    {key: 'tipe', label: 'Opsi Tipe Penumpang'},
+    {key: 'jenis', label: 'Opsi Jenis Penumpang'},
+] as const;
 
 export default function Penumpang(){
     const router = useRouter();
@@ -37,6 +44,7 @@ export default function Penumpang(){
     const [limit, setLimit] = useState({value: 10, label: '10'});
     const [showAlert, setShowAlert] = useState(false);
     const [loadingDelete, setLoadingDelete] = useState(false);
+    const [tab, setTab] = useState<typeof TABS[number]['key']>('jenis-penumpang');
 
     const debouncedSearch = useRef(
         debounce(async (e) => {
@@ -118,7 +126,20 @@ export default function Penumpang(){
         <BaseContainer>
             <CustomBreadcumb title="Jenis Penumpang"/>
             <BaseCard>
-            
+                <div className="flex flex-row flex-wrap border-b border-gray-200 mb-4">
+                    {TABS.map((item)=>(
+                        <button
+                            key={item.key}
+                            onClick={()=>setTab(item.key)}
+                            className={`px-4 py-2 text-sm -mb-px border-b-2 ${tab == item.key ? 'border-primary text-primary font-robotomedium' : 'border-transparent font-robotoregular hover:text-primary'}`}
+                        >
+                            {item.label}
+                        </button>
+                    ))}
+                </div>
+                {tab == 'tipe' ? <OpsiPenumpangTab kategori="tipe" title="Tipe Penumpang" /> : null}
+                {tab == 'jenis' ? <OpsiPenumpangTab kategori="jenis" title="Jenis Penumpang" /> : null}
+                {tab == 'jenis-penumpang' ? <>
                 <div className="w-[220px] mb-4">
                     <Button 
                         label="Tambah Jenis Penumpang"
@@ -153,8 +174,8 @@ export default function Penumpang(){
                             return(
                                 <TableRow key={item.id} strip={index%2 == 1}>
                                     <td className="pl-4 py-2">{startingNumber+index+1}</td>
-                                    <td className="py-2">{item.jenis}</td>
                                     <td className="py-2">{item.tipe}</td>
+                                    <td className="py-2">{item.jenis}</td>
                                     <td className="py-2">
                                         <Badge 
                                             text={item.status_jenis_penumpang == 1 ? 'Aktif' : 'Tidak Aktif'}
@@ -190,6 +211,7 @@ export default function Penumpang(){
                     currentPage={pagination.currentPage}
                 />
                 </>}
+                </> : null}
             </BaseCard>
             <Alert
                 title="Hapus Jenis Penumpang"

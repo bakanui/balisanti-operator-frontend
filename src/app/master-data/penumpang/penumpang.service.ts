@@ -1,5 +1,5 @@
 import { IAuth } from '@/app/types/auth';
-import { IJenisPenumpang, IPenumpang } from '@/app/types/penumpang';
+import { IJenisPenumpang, IOpsiPenumpang, IPenumpang } from '@/app/types/penumpang';
 import { API_MASTER_DATA } from '@/app/utils/api';
 import { getStorageValue } from '@/app/utils/localstoreage';
 import { errorHandler } from '@/app/utils/utility';
@@ -152,6 +152,107 @@ export const editJenisPenumpangAction = (
     .then((response)=> {
         process.env.NODE_ENV && console.log('edit JENIS PENUMPANG = ', response);
 
+        onSuccess(response.data);
+    })
+    .catch(function (error) {
+        console.log(error);
+        let err = errorHandler(error, ()=> onUnAuth && onUnAuth());
+        onFailed(err);
+    });
+}
+
+export const getOpsiPenumpangAction = (
+    params: any,
+    onSuccess: (data: any) => void,
+    onFailed: (error:any) => void,
+    onUnAuth?: () => void
+) => {
+    const auth: IAuth = getStorageValue('auth');
+    axios.get(API_MASTER_DATA.OPSI_PENUMPANG,
+    {
+        headers: {
+            Authorization: `Bearer ${auth.authorisation.token}`,
+        },
+        params
+    })
+    .then((response)=> {
+        onSuccess(response.data);
+    })
+    .catch(function (error) {
+        console.log(error);
+        let err = errorHandler(error, ()=> onUnAuth && onUnAuth());
+        onFailed(err);
+    });
+}
+
+export const createOpsiPenumpangAction = (
+    params: {kategori: string, nama: string},
+    onSuccess: (data: IOpsiPenumpang) => void,
+    onFailed: (error:any) => void,
+    onUnAuth?: () => void
+) => {
+    const auth: IAuth = getStorageValue('auth');
+    axios.post<IOpsiPenumpang>(API_MASTER_DATA.OPSI_PENUMPANG,
+        {...params},
+        {
+            headers: {
+                Authorization: `Bearer ${auth.authorisation.token}`
+            }
+        }
+    )
+    .then((response)=> {
+        onSuccess(response.data);
+    })
+    .catch(function (error) {
+        console.log(error);
+        let err = errorHandler(error, ()=> onUnAuth && onUnAuth());
+        onFailed(err);
+    });
+}
+
+export const editOpsiPenumpangAction = (
+    params: {id: number, nama: string},
+    onSuccess: (data: IOpsiPenumpang) => void,
+    onFailed: (error:any) => void,
+    onUnAuth?: () => void
+) => {
+    const auth: IAuth = getStorageValue('auth');
+    axios.put<IOpsiPenumpang>(API_MASTER_DATA.OPSI_PENUMPANG,
+        {...params},
+        {
+            headers: {
+                Authorization: `Bearer ${auth.authorisation.token}`
+            }
+        }
+    )
+    .then((response)=> {
+        onSuccess(response.data);
+    })
+    .catch(function (error) {
+        console.log(error);
+        let err = errorHandler(error, ()=> onUnAuth && onUnAuth());
+        onFailed(err);
+    });
+}
+
+export const deleteOpsiPenumpangAction = (
+    id: number,
+    onSuccess: (data: any) => void,
+    onFailed: (error:any) => void,
+    onUnAuth?: () => void
+) => {
+    const auth: IAuth = getStorageValue('auth');
+    axios.delete(API_MASTER_DATA.OPSI_PENUMPANG,
+        {
+            headers: {
+                Authorization: `Bearer ${auth.authorisation.token}`
+            },
+            params: {
+                id
+            }
+        }
+    )
+    .then((response)=> {
         onSuccess(response.data);
     })
     .catch(function (error) {

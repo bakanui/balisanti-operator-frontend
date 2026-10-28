@@ -23,6 +23,8 @@ interface IProps {
     passChange: (text: string)=> void;
     dermagaValue: string;
     dermagaChange: (text: string)=> void;
+    kuotaValue: string;
+    kuotaChange: (text: string)=> void;
 }
 export const TiketPriceInput = (props: IProps) => {
     return(
@@ -84,6 +86,17 @@ export const TiketPriceInput = (props: IProps) => {
                         onChangeText={props.dermagaChange}
                         value={props.dermagaValue === "0" || props.dermagaValue == null || props.dermagaValue == undefined  ? "" : props.dermagaValue}
                         disabled={false}
+                    />
+                </div>
+                <div className="sm:flex sm:flex-col w-[130px] shrink-0" style={{marginLeft: 10}}>
+                    <div className="font-robotomedium mb-2 text-sm whitespace-nowrap" title="Kosongkan jika tanpa batas">Kuota Tiket</div>
+                    <input
+                        value={props.kuotaValue ?? ''}
+                        onChange={(e)=> props.kuotaChange(e.target.value.replace(/[^0-9]/g, ''))}
+                        className="text-input text-sm mb-4 border-primary"
+                        placeholder="∞ Tanpa batas"
+                        title="Kosongkan jika tanpa batas"
+                        inputMode="numeric"
                     />
                 </div>
                 {props.deleteAble ? 

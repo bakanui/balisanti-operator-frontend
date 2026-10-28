@@ -53,7 +53,8 @@ export default function EditJadwal(){
             jpk: '',
             jpb: '',
             pass: '',
-            dermaga: ''
+            dermaga: '',
+            kuota: ''
         }
     ]);
     const [jenisPenumpang, setJenisPenumpang] = useState<IOptions[]>([]);
@@ -175,6 +176,7 @@ export default function EditJadwal(){
             jpk: `${item.jpk}`,
             pass: `${item.pass}`,
             dermaga: `${item.dermaga}`,
+            kuota: item.kuota == null ? '' : `${item.kuota}`,
         }));
         setJenisJawal({value: `${data.jenis_jadwal}`, label: data.jenis_jadwal});
         setselectedKapal({value: `${data.id_kapal}`, label: data.nama_kapal});
@@ -204,7 +206,8 @@ export default function EditJadwal(){
                     jpk: convertLabelPriceToNumeberPrice(item.jpk),
                     jpb: convertLabelPriceToNumeberPrice(item.jpb),
                     pass: convertLabelPriceToNumeberPrice(item.pass),
-                    dermaga: convertLabelPriceToNumeberPrice(item.dermaga)
+                    dermaga: convertLabelPriceToNumeberPrice(item.dermaga),
+                    kuota: item.kuota === '' ? null : Number(item.kuota)
                 })))
             },
             (res)=>{
@@ -254,7 +257,7 @@ export default function EditJadwal(){
     }
 
     const addTiket = () => {
-        setTiket([...tiket, {id: new Date().getTime() , penumpang: {value: '', label: 'Pilih Data'}, tiket: '0', jr: '0', jpk: '0', jpb: '0', pass: '0', dermaga: '0' }]);
+        setTiket([...tiket, {id: new Date().getTime() , penumpang: {value: '', label: 'Pilih Data'}, tiket: '0', jr: '0', jpk: '0', jpb: '0', pass: '0', dermaga: '0', kuota: '' }]);
     }
 
     const deleteTiket = (index: number) => {
@@ -298,6 +301,12 @@ export default function EditJadwal(){
     const setPassTiket = (value: string, index: number) => {
         let tmp = JSON.parse(JSON.stringify(tiket));
         tmp[index].pass = value;
+        setTiket(tmp);
+    }
+
+    const setKuotaTiket = (value: string, index: number) => {
+        let tmp = JSON.parse(JSON.stringify(tiket));
+        tmp[index].kuota = value;
         setTiket(tmp);
     }
 
@@ -448,6 +457,8 @@ export default function EditJadwal(){
                             passChange={(val)=>setPassTiket(val, index)}
                             dermagaValue={item.dermaga}
                             dermagaChange={(val)=>setDermagaTiket(val, index)}
+                            kuotaValue={item.kuota}
+                            kuotaChange={(val)=>setKuotaTiket(val, index)}
                         />
                     );
                 })}

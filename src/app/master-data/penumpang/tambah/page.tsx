@@ -5,17 +5,17 @@ import { ButtonGroup } from "@/app/components/ButtonGroup";
 import { BaseContainer } from "@/app/components/Container";
 import { LoadingOverlay } from "@/app/components/LoadingOverlay";
 import { SelectBox } from "@/app/components/SelectBox";
-import { JENIS_PENUMPANG } from "@/app/constants/jenisPenumpang";
 import { STATUS } from "@/app/constants/status";
-import { TIPE_PENUMPANG } from "@/app/constants/tipePenumpang";
 import { toastErrorConfig, toastSuccessConfig } from "@/app/utils/utility";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { createJenisPenumpangAction } from "../penumpang.service";
+import { useOpsiPenumpang } from "../components/useOpsiPenumpang";
 
 export default function AddJenisPenumpang(){
     const router = useRouter();
+    const { tipeOptions, jenisOptions } = useOpsiPenumpang();
     const [tipe, setTipe] = useState({ value: '', label: 'Pilih Data' });
     const [jenis, setJenis] = useState({ value: '', label: 'Pilih Data' });
     const [status, setStatus] = useState({ value: '1', label: 'Aktif' });
@@ -59,14 +59,14 @@ export default function AddJenisPenumpang(){
                 <SelectBox 
                     label="Tipe Penumpang"
                     placeholder="Pilih tipe penumpang"
-                    option={TIPE_PENUMPANG}
+                    option={tipeOptions}
                     value={tipe}
                     onChange={setTipe}
                 />
                 <SelectBox 
                     label="Jenis Penumpang"
                     placeholder="Pilih jenis penumpang"
-                    option={JENIS_PENUMPANG}
+                    option={jenisOptions}
                     value={jenis}
                     onChange={setJenis}
                 />

@@ -5,6 +5,12 @@ export interface IJenisPenumpang {
     status_jenis_penumpang: number;
 }
 
+export interface IOpsiPenumpang {
+    id: number;
+    kategori: 'tipe' | 'jenis';
+    nama: string;
+}
+
 export interface IPenumpang {
     id: number,
     nama: string,
