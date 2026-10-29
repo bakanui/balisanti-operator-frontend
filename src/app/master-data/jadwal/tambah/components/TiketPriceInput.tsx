@@ -25,43 +25,10 @@ interface IProps {
     dermagaChange: (text: string)=> void;
     kuotaValue: string;
     kuotaChange: (text: string)=> void;
-    kirimValue: boolean;
-    kirimChange: (value: boolean)=> void;
-    nomor?: number;
 }
 export const TiketPriceInput = (props: IProps) => {
     return(
-        <div className={`mb-5 rounded-xl border ${props.kirimValue ? 'border-gray-200' : 'border-dashed border-gray-300'}`}>
-            <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 rounded-t-xl bg-gray-50 dark:bg-slate-700 border-b border-gray-200">
-                <div className="flex items-center gap-3 min-w-0">
-                    {props.nomor ?
-                        <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary text-white text-xs font-robotomedium shrink-0">{props.nomor}</span>
-                    : null}
-                    <span className="font-robotomedium text-sm truncate">{props.value?.value ? props.value.label : 'Tiket baru'}</span>
-                </div>
-                <div className="flex items-center gap-4">
-                    <label className="flex items-center gap-2 cursor-pointer select-none" title="Kirim harga tiket ini ke Siwalatri">
-                        <span className={`text-xs font-robotoregular ${props.kirimValue ? 'text-primary' : 'text-gray-500'}`}>
-                            {props.kirimValue ? 'Dikirim ke Siwalatri' : 'Tidak dikirim ke Siwalatri'}
-                        </span>
-                        <button
-                            type="button"
-                            role="switch"
-                            aria-checked={props.kirimValue}
-                            onClick={()=> props.kirimChange(!props.kirimValue)}
-                            className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${props.kirimValue ? 'bg-primary' : 'bg-gray-300'}`}
-                        >
-                            <span className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${props.kirimValue ? 'translate-x-[22px]' : 'translate-x-[2px]'}`}/>
-                        </button>
-                    </label>
-                    {props.deleteAble ?
-                        <button type="button" onClick={props.onDelete} title="Hapus tiket" className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50">
-                            <FontAwesomeIcon className="text-primary" icon={faTrashCan}/>
-                        </button>
-                    : null}
-                </div>
-            </div>
-            <div className="px-5 pt-4">
+        <div className="sm:grid">
             <SelectBox
                 label="Jenis Penumpang"
                 placeholder="Pilih data"
@@ -132,7 +99,11 @@ export const TiketPriceInput = (props: IProps) => {
                         inputMode="numeric"
                     />
                 </div>
-            </div>
+                {props.deleteAble ? 
+                    <div onClick={props.onDelete} className="w-[30px] h-[48px] flex items-center justify-center mt-2 cursor-pointer">
+                        <FontAwesomeIcon className="text-primary" icon={faTrashCan}/>
+                    </div>
+                : null}
             </div>
         </div>
     );
